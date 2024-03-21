@@ -1,5 +1,5 @@
-from marrmot_model import MARRMoT_model
-from ..Flux import evap_7, saturation_1
+from models.marrmot_model import MARRMoT_model
+from models.flux import evap_7, saturation_1
 
 class M_01_Collie1_1p_1s(MARRMoT_model):
     """

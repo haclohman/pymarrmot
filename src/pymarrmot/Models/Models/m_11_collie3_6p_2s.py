@@ -1,7 +1,7 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_7, evap_3, split_1, saturation_1, baseflow_2, interflow_9)
-from Models.UnitHydro import (route, uh_4_full, update_uh)
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_7, evap_3, split_1, saturation_1, baseflow_2, interflow_9)
+from models.unit_hydro import (route, uh_4_full, update_uh)
 
 class M11Collie3_6p_2s(MARRMoT_model):
     """

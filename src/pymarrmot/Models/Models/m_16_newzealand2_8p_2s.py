@@ -1,8 +1,8 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_1, evap_6, evap_5, interception_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_1, evap_6, evap_5, interception_1,
                          saturation_1, baseflow_1, interflow_9)
-from Models.UnitHydro import (route, uh_4_full, update_uh)
+from models.unit_hydro import (route, uh_4_full, update_uh)
 
 class m_16_newzealand_28p_2s(MARRMoT_model):
     """

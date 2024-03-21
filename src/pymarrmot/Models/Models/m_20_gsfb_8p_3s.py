@@ -1,6 +1,6 @@
 import numpy as np
-from .marrmot_model import MARRMoT_model
-from Flux import evap_20, saturation_1, interflow_11, baseflow_9, baseflow_1, recharge_5
+from models.marrmot_model import MARRMoT_model
+from models.flux import evap_20, saturation_1, interflow_11, baseflow_9, baseflow_1, recharge_5
 
 class m_20_gsfb_8p_3s(MARRMoT_model):
     """

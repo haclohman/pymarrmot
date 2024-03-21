@@ -1,7 +1,7 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (snowfall_1, rainfall_1, melt_1, evap_7, saturation_1,
-                    recharge_3, baseflow_1)
+from models.marrmot_model import MARRMoT_model
+from models.flux import (snowfall_1, rainfall_1, melt_1, evap_7, saturation_1,
+                         recharge_3, baseflow_1)
 
 class M30_MOPEX2_7P_5S(MARRMoT_model):
     """

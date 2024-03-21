@@ -1,8 +1,8 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_1, saturation_3, split_1, interception_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_1, saturation_3, split_1, interception_1,
                          evap_3, percolation_2, baseflow_1)
-from Models.UnitHydro import (route, uh_3_half, update_uh)
+from models.unit_hydro import (route, uh_3_half, update_uh)
 
 class FlexiModel(MARRMoT_model):
     """

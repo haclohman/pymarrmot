@@ -1,5 +1,5 @@
-from marrmot_model import MARRMoT_model
-from Models.Flux import(snowfall_1, rainfall_1, melt_1, evap_7, interception_4, saturation_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import(snowfall_1, rainfall_1, melt_1, evap_7, interception_4, saturation_1,
                         recharge_3, baseflow_1)
 
 class M32Mopex410p5s(MARRMoT_model):

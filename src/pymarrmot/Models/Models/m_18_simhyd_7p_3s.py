@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_1, infiltration_1, interflow_1, interception_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_1, infiltration_1, interflow_1, interception_1,
                          recharge_1, evap_2, saturation_1, baseflow_1)
 
 class m_18_simhyd_7p_3s(MARRMoT_model):

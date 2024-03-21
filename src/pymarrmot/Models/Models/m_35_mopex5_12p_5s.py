@@ -1,7 +1,7 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import(phenology_1, snowfall_1, rainfall_1, melt_1, evap_7, interception_4,
-    saturation_1, recharge_3, baseflow_1)
+from models.marrmot_model import MARRMoT_model
+from models.flux import(phenology_1, snowfall_1, rainfall_1, melt_1, evap_7, interception_4,
+                        saturation_1, recharge_3, baseflow_1)
 
 
 class Mopem_35_mopex5_12p_5s(MARRMoT_model):

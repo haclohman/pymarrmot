@@ -1,8 +1,8 @@
-from marrmot_model import MARRMoT_model
-from Models.Flux import (
+from models.marrmot_model import MARRMoT_model
+from models.flux import (
     split_1, soilmoisture_1, evap_7, saturation_1, 
     interflow_5, evap_1, percolation_4, soilmoisture_2, baseflow_1)
-from Models.Auxiliary import deficit_based_distribution
+from models.auxiliary import deficit_based_distribution
 
 class m_33_sacramento_11p_5s(MARRMoT_model):
     """Class for hydrologic conceptual model: Sacramento-SMA

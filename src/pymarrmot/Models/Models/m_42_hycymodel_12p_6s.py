@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (baseflow_7, interflow_3, split_1, effective_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (baseflow_7, interflow_3, split_1, effective_1,
                          evap_1, interception_1, saturation_13, recharge_3, evap_3)
 
 class m_42_hycymodel_12p_6s(MARRMoT_model):

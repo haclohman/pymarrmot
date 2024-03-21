@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (snowfall_1, interflow_3, split_1, effective_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (snowfall_1, interflow_3, split_1, effective_1,
                          rainfall_1, melt_1, saturation_9, melt_3, baseflow_1,
                          infiltration_6, evap_19)
 

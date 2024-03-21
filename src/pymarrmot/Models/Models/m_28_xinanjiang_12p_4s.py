@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_21, saturation_14, split_1, saturation_2,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_21, saturation_14, split_1, saturation_2,
                          interflow_5, baseflow_1)
 
 class m_28_xinanjiang_12p_4s(MARRMoT_model):

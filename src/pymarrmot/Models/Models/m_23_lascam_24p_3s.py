@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_1, area_1, infiltration_5, interception_5, recharge_3, 
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_1, area_1, infiltration_5, interception_5, recharge_3, 
                          effective_1, saturation_11, infiltration_4, saturation_12, evap_19,
                          recharge_4, baseflow_8)
 

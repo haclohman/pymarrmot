@@ -1,6 +1,7 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.UnitHydro import(uh_4_full, update_uh)
+from models.marrmot_model import MARRMoT_model
+from models.unit_hydro import(uh_4_full, update_uh)
+
 class m_37_hbv_15p_5s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: HBV-96

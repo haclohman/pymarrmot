@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import evap_1, interflow_8, baseflow_1, recharge_3
+from models.marrmot_model import MARRMoT_model
+from models.flux import evap_1, interflow_8, baseflow_1, recharge_3
 
 class m_27_tank_12p_4s(MARRMoT_model):
     """

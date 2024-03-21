@@ -1,5 +1,5 @@
-from marrmot_model import MARRMoT_model
-from ..Flux import interception_2, evap_1, saturation_2, baseflow_1
+from models.marrmot_model import MARRMoT_model
+from models.flux import interception_2, evap_1, saturation_2, baseflow_1
 
 class M_02_Wetland_4p_1s(MARRMoT_model):
     """

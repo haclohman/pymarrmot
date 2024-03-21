@@ -1,6 +1,6 @@
 import numpy as np
-from marrmot_model import MARRMoT_model
-from Models.Flux import (evap_18, saturation_9, split_1, effective_1,
+from models.marrmot_model import MARRMoT_model
+from models.flux import (evap_18, saturation_9, split_1, effective_1,
                          saturation_1, evap_1, baseflow_1)
 
 class MClassic12p8s(MARRMoT_model):

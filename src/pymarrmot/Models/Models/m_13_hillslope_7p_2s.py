@@ -1,0 +1,141 @@
+import numpy as np
+from marrmot_model import MARRMoT_model
+from Models.Flux import (evap_1, interception_2, split_1, saturation_2,
+                         capillary_2, baseflow_1)
+from Models.UnitHydro import (route, uh_3_half, update_uh)
+
+class M13Hillslope7p2s(MARRMoT_model):
+    """
+    Class for hydrologic conceptual model: Hillslope model
+
+    Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
+    This file is part of the Modular Assessment of Rainfall-Runoff Models
+    Toolbox (MARRMoT).
+    MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
+    WARRANTY. See <https://www.gnu.org/licenses/> for details.
+
+    Model reference:
+    Savenije, H. H. G. (2010). “Topography driven conceptual modelling 
+    (FLEX-Topo).” Hydrology and Earth System Sciences, 14(12), 2681–2692. 
+    https://doi.org/10.5194/hess-14-2681-2010
+    """
+
+    def __init__(self, delta_t=None, theta=None):
+        """
+        creator method
+        """
+        self.numStores = 2  # number of model stores
+        self.numFluxes = 10  # number of model fluxes
+        self.numParams = 7
+        
+        self.JacobPattern = np.array([[1, 1],
+                                      [1, 1]])  # Jacobian matrix of model store ODEs
+
+        self.parRanges = np.array([[0, 5],      # Dw, interception capacity [mm]
+                                    [0, 10],     # Betaw, soil misture distribution parameter [-]
+                                    [1, 2000],   # Swmax, soil misture depth [mm]
+                                    [0, 1],      # a, surface/groundwater division [-]
+                                    [1, 120],    # th, time delay for routing [d]
+                                    [0, 4],      # c, capillary rise [mm/d]
+                                    [0, 1]])     # kw, base flow time parameter [d-1]
+        
+        self.StoreNames = ["S1", "S2"]  # Names for the stores
+        self.FluxNames = ["pe", "ei", "ea", "qse", "qses",
+                          "qseg", "c", "qhgw", "qhsrf", "qt"]  # Names for the fluxes
+        
+        self.FluxGroups = {"Ea": [2, 3],   # Index or indices of fluxes to add to Actual ET
+                           "Q": [10]}       # Index or indices of fluxes to add to Streamflow
+
+        # setting delta_t and theta triggers the function obj.init()
+        if delta_t is not None:
+            self.delta_t = delta_t
+        if theta is not None:
+            self.theta = theta
+
+    def init(self):
+        """
+        INITialisation function
+        """
+        # parameters
+        theta = self.theta
+        delta_t = self.delta_t
+        th = theta[4]  # Routing delay [d]
+        
+        # initialise the unit hydrographs and still-to-flow vectors            
+        uh = uh_3_half(th, delta_t)
+        
+        self.uhs = [uh]
+
+    def model_fun(self, S):
+        """
+        MODEL_FUN are the model governing equations in state-space formulation
+
+        Parameters:
+            S (numpy.array): State variables
+
+        Returns:
+            tuple: Tuple containing the change in state variables and fluxes
+        """
+        # parameters
+        theta = self.theta
+        dw = theta[0]     # Daily interception [mm]
+        betaw = theta[1]  # Soil moisture storage distribution parameter [-]
+        swmax = theta[2]  # Maximum soil moisture storage [mm]
+        a = theta[3]      # Division parameter for surface and groundwater flow [-]
+        c = theta[5]      # Rate of capillary rise [mm/d]
+        kh = theta[6]     # Groundwater runoff coefficient [d-1]
+        
+        # delta_t
+        delta_t = self.delta_t
+        
+        # unit hydrographs and still-to-flow vectors
+        uh = self.uhs[0]
+        
+        # stores
+        S1 = S[0]
+        S2 = S[1]
+        
+        # climate input
+        t = self.t  # this time step
+        climate_in = self.input_climate[t, :]  # climate at this step
+        P = climate_in[0]
+        Ep = climate_in[1]
+        
+        # fluxes functions
+        flux_pe = interception_2(P, dw)
+        flux_ei = P - flux_pe  # tracks 'intercepted' rainfall
+        flux_ea = evap_1(S1, Ep, delta_t)
+        flux_qse = saturation_2(S1, swmax, betaw, flux_pe)
+        flux_qses = split_1(a, flux_qse)
+        flux_qseg = split_1(1 - a, flux_qse)
+        flux_c = capillary_2(c, S2, delta_t)
+        flux_qhgw = baseflow_1(kh, S2)
+        flux_qhsrf = route(flux_qses, uh)
+        flux_qt = flux_qhsrf + flux_qhgw
+        
+        # stores ODEs
+        dS1 = flux_pe + flux_c - flux_ea - flux_qse
+        dS2 = flux_qseg - flux_c - flux_qhgw
+        
+        # outputs
+        dS = np.array([dS1, dS2])
+        fluxes = np.array([flux_pe, flux_ei, flux_ea, flux_qse, flux_qses,
+                           flux_qseg, flux_c, flux_qhgw, flux_qhsrf, flux_qt])
+        
+        return dS, fluxes
+
+    def step(self):
+        """
+        STEP runs at the end of every timestep.
+        """
+        # unit hydrographs and still-to-flow vectors
+        uh = self.uhs[0]
+        
+        # input fluxes to the unit hydrographs 
+        fluxes = self.fluxes[self.t, :] 
+        flux_qses = fluxes[4]
+        
+        # update still-to-flow vectors using fluxes at current step and
+        # unit hydrographs
+        uh = update_uh(uh, flux_qses)
+        self.uhs = [uh]

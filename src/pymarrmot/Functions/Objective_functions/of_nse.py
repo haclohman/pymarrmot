@@ -1,5 +1,5 @@
 import numpy as np
-import check_and_select
+from pymarrmot.functions.objective_functions import check_and_select
 from typing import Tuple
 
 def of_nse(obs: np.ndarray, sim: np.ndarray, idx: np.ndarray = None) -> Tuple[float, np.ndarray]:

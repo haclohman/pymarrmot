@@ -1,5 +1,5 @@
 import numpy as np
-import check_and_select
+from pymarrmot.functions.objective_functions import check_and_select
 from typing import Tuple
 
 def of_inverse_KGE(obs: np.array, sim: np.array, idx: np.array=None, w: float=None) -> Tuple[float,np.array,np.array,np.array]:

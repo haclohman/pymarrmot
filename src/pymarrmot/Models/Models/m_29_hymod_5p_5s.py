@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_7, saturation_2, split_1, baseflow_1)
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_7, saturation_2, split_1, baseflow_1)
 
 class m_29_hymod_5p_5s(MARRMoT_model):
     """
@@ -11,6 +11,7 @@ class m_29_hymod_5p_5s(MARRMoT_model):
         """
         Creator method.
         """
+        super().__init__()
         self.numStores = 5                                           # number of model stores
         self.numFluxes = 8                                           # number of model fluxes
         self.numParams = 5

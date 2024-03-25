@@ -1,8 +1,8 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (interception_2, infiltration_4, evap_4, capillary_2,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (interception_2, infiltration_4, evap_4, capillary_2,
                          saturation_1, baseflow_1)
-from models.unit_hydro import (route, uh_3_half, update_uh)
+from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
 
 class m_15_plateau_8p_2s(MARRMoT_model):
     """

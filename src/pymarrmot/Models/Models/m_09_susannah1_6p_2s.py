@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_5, evap_6, saturation_1, interflow_7,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_5, evap_6, saturation_1, interflow_7,
                          baseflow_1, baseflow_2)
 
 class m_09_susannah1_6p_2s(MARRMoT_model):

@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (phenology_2, evap_7, excess_1, interception_1,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (phenology_2, evap_7, excess_1, interception_1,
                          saturation_2, effective_1, saturation_1, percolation_5, baseflow_5)
 
 class m_22_vic_10p_3s(MARRMoT_model):

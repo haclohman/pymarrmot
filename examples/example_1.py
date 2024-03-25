@@ -1,26 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from MARRMoT_example_data import data_MARRMoT_examples
-from src.pymarrmot.models.models import m_29_hymod_5p_5s
-from MARRMoT_model import feval
-from src.pymarrmot.Functions.Objective_functions import of_kge, of_inverse_kge, of_mean_hilo_kge
+#from MARRMoT_example_data import data_MARRMoT_examples
+from pymarrmot.models.models.m_29_hymod_5p_5s import m_29_hymod_5p_5s
+#from MARRMoT_model import feval
+from pymarrmot.functions.objective_functions import of_kge, of_inverse_kge, of_mean_hilo_kge
+import pandas as pd
+
 
 # 1. Prepare data
 # Load the data
-precipitation = data_MARRMoT_examples['precipitation']
-temperature = data_MARRMoT_examples['temperature']
-potential_evapotranspiration = data_MARRMoT_examples['potential_evapotranspiration']
-
+# precipitation = data_MARRMoT_examples['precipitation']
+# temperature = data_MARRMoT_examples['temperature']
+# potential_evapotranspiration = data_MARRMoT_examples['potential_evapotranspiration']
+df = pd.read_csv('c:/users/ssheeder/repos/pymarrmot/examples/Example_DataSet.csv')
 # Create a climatology data input structure
 input_climatology = {
-    'precip': precipitation,  # Daily data: P rate [mm/d]
-    'temp': temperature,      # Daily data: mean T [degree C]
-    'pet': potential_evapotranspiration,  # Daily data: Ep rate [mm/d]
-    'delta_t': 1                          # time step size of the inputs: 1 [d]
+    'precip': df['Precip'].to_xarray,   # Daily data: P rate [mm/d]
+    'temp': df['Temp'].to_xarray,       # Daily data: mean T [degree C]
+    'pet': df['PET'].to_xarray,         # Daily data: Ep rate [mm/d]
+    'delta_t': 1                        # time step size of the inputs: 1 [d]
 }
 
 # 2. Define the model settings
-model = 'm_29_hymod_5p_5s'
+# model = 'm_29_hymod_5p_5s'
 
 # Parameter values
 input_theta = np.array([35,   # Soil moisture depth [mm]
@@ -44,7 +46,7 @@ input_solver_opts = {
 
 # 4. Create a model object
 # m = feval(model) - original code
-m = m_29_hymod_5p_5s
+m = m_29_hymod_5p_5s()
 
 # Set up the model
 m.theta = input_theta
@@ -57,14 +59,15 @@ m.S0 = input_s0
 
 # 6. Analyze the outputs
 # Prepare a time vector
-t = data_MARRMoT_examples['dates_as_datenum']
+#t = data_MARRMoT_examples['dates_as_datenum']
+t = df['Date'].to_xarray
 
 # Compare simulated and observed streamflow
-tmp_obs = data_MARRMoT_examples['streamflow']
+tmp_obs = df['Q'].to_xarray
 tmp_sim = output_ex['Q']
-tmp_kge = of_KGE(tmp_obs, tmp_sim)  # KGE on regular flows
-tmp_kgei = of_inverse_KGE(tmp_obs, tmp_sim)  # KGE on inverse flows
-tmp_kgem = of_mean_hilo_KGE(tmp_obs, tmp_sim)  # Average of KGE(Q) and KGE(1/Q)
+tmp_kge = of_kge(tmp_obs, tmp_sim)  # KGE on regular flows
+tmp_kgei = of_inverse_kge(tmp_obs, tmp_sim)  # KGE on inverse flows
+tmp_kgem = of_mean_hilo_kge(tmp_obs, tmp_sim)  # Average of KGE(Q) and KGE(1/Q)
 
 # Plot simulated and observed streamflow
 plt.figure(figsize=(10, 6))

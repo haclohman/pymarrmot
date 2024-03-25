@@ -1,5 +1,5 @@
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_6, evap_5, saturation_1, interflow_9, baseflow_1)
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_6, evap_5, saturation_1, interflow_9, baseflow_1)
 
 class M_04_NewZealand1_6P_1S(MARRMoT_model):
     """

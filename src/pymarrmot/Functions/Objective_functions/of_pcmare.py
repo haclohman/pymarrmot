@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Tuple
-import check_and_select
+from pymarrmot.functions.objective_functions import check_and_select
 
 def of_pcmare(obs: np.ndarray, sim: np.ndarray, idx: np.ndarray = None) -> Tuple[float, np.ndarray]:
     """

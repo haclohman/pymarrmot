@@ -1,6 +1,11 @@
 import numpy as np
-from scipy.optimize import fsolve, lsqnonlin
+from scipy import optimize
 from scipy.sparse import csr_matrix
+from scipy.optimize import fsolve, least_squares
+from scipy.sparse.linalg import spsolve
+from scipy.linalg import solve
+
+from pymarrmot.functions.solver_functions import NewtonRaphsonTake1 as nr
 
 class MARRMoT_model:
     """
@@ -8,7 +13,7 @@ class MARRMoT_model:
     """
     
     def __init__(self):
-        #static attributes, set for each models in the model definition
+        #static attributes, set for each model in the model definition
         self.numStores = None           #number of model stores
         self.numFluxes = None           #number of model fluxes
         self.numParams = None           #number of model parameters
@@ -38,6 +43,9 @@ class MARRMoT_model:
         self.status = None              #0 = model created, 1 = simulation ended
     
     def __setattr__(self, name, value):
+        """
+        Set methods with checks on inputs for attributes set by the user
+        """
         if name == 'delta_t':
             if isinstance(value, (int, float)) or value is None:
                 self.delta_t = value
@@ -88,19 +96,25 @@ class MARRMoT_model:
         else:
             super().__setattr__(name, value)
 
-    #RESET is called any time that a user-specified input is changed
-    #(t, delta_t, input_climate, S0, solver_options) and resets any
-    #previous simulation ran on the object.
-    #This is to prevent human error in analysing results.
     def reset(self):
-        self.t = None
-        self.fluxes = None
-        self.stores = None
-        self.uhs = None
-        self.solver_data = None
-        self.status = None
+        """
+        RESET is called any time that a user-specified input is changed 
+        (t, delta_t, input_climate, S0, solver_options) and resets any
+        previous simulation ran on the object.
+        This is to prevent human error in analysing results.
+        """
+        self.t = None             # current timestep
+        self.fluxes = None        # vector of all fluxes
+        self.stores = None        # vector of all stores
+        self.uhs = None           # unit hydrographs and still-to-flow fluxes
+        self.solver_data = None   # step-by-step info of solver used and residuals
+        self.status = 0           # 0 = model created, 1 = simulation ended
 
     def init_(self):
+        """
+        INIT_ runs before each model run to initialise store limits,
+        auxiliary parameters etc. it calls INIT which is model specific
+        """
         self.store_min = np.zeros((self.numStores, 1))
         self.store_max = np.inf * np.ones((self.numStores, 1))
         t_end = self.input_climate.shape[0]
@@ -114,46 +128,480 @@ class MARRMoT_model:
         self.init()
 
     def ODE_approx_IE(self, S):
-        S = S.reshape(-1, 1)
+        """
+        ODE approximation with Implicit Euler time-stepping scheme.
+
+        Parameters:
+        -----------
+        S : numpy.ndarray
+            State variables.
+
+        Returns:
+        --------
+        err : numpy.ndarray
+            Error in the approximation.
+        """
+        S = S.ravel()
         delta_S = self.model_fun(S)
-        Sold = self.S0 if self.t == 1 else self.stores[self.t - 1].reshape(-1, 1)
-        return (S - Sold) / self.delta_t - delta_S
+        if self.t == 1:
+            Sold = self.S0.ravel()
+        else:
+            Sold = self.stores[self.t - 1, :].ravel()
+        err = (S - Sold) / self.delta_t - delta_S.T
+        return err
 
-    def solve_stores(self, Sold):
+    def solve_stores(self, s_old):
+        """
+        SOLVE_STORES solves the stores ODEs
+        
+        Parameters:
+        -----------
+        self : object
+            Instance of the class containing solver options.
+        Sold : array_like
+            Array of shape (numStores,) containing the initial storage values.
+
+        Returns:
+        --------
+        tuple
+            A tuple containing the following:
+                Snew : ndarray
+                    Array of shape (numStores,) containing the new storage values.
+                resnorm : float
+                    The residual norm of the solution.
+                solver : str
+                    The name of the solver used ('NewtonRaphson', 'fsolve', or 'lsqnonlin').
+                iter : int
+                    Number of iterations taken by the solver.
+        """
         solver_opts = self.solver_opts
-        resnorm_tolerance = solver_opts['resnorm_tolerance'] * (np.min(np.abs(Sold)) + 1e-5)
-        resnorm_maxiter = solver_opts['resnorm_maxiter']
 
+        # Reduce tolerance to a fraction of the smallest store
+        resnorm_tolerance = solver_opts.resnorm_tolerance * min(abs(s_old)) + 1E-5
+
+        # Create vectors for each solver
         Snew_v = np.zeros((3, self.numStores))
-        resnorm_v = np.inf * np.ones(3)
-        iter_v = np.ones(3)
+        resnorm_v = np.full(3, np.inf)
+        iter_v = np.ones(3, dtype=int)
 
-        tmp_Snew, tmp_fval = fsolve(self.ODE_approx_IE, Sold, full_output=True)[:2]
+        # Solve using Newton-Raphson
+        tmp_Snew, tmp_fval = nr.NewtonRaphson_from_matlab(self.ODE_approx_IE, s_old, solver_opts.NewtonRaphson)
         tmp_resnorm = np.sum(tmp_fval**2)
-        Snew_v[0] = tmp_Snew.reshape(-1)
-        resnorm_v[0] = tmp_resnorm
 
+        Snew_v[0, :], resnorm_v[0] = tmp_Snew, tmp_resnorm
+
+        # If NewtonRaphson doesn't find a good enough solution, run fsolve
         if tmp_resnorm > resnorm_tolerance:
-            tmp_Snew, tmp_fval, _, tmp_info = fsolve(self.ODE_approx_IE, tmp_Snew, full_output=True)[:4]
+            tmp_Snew, tmp_fval, _, tmp_iter = self.rerunSolver('fsolve', tmp_Snew, s_old)
             tmp_resnorm = np.sum(tmp_fval**2)
-            Snew_v[1] = tmp_Snew.reshape(-1)
-            resnorm_v[1] = tmp_resnorm
-            iter_v[1] = tmp_info['nfev']
 
+            Snew_v[1, :], resnorm_v[1], iter_v[1] = tmp_Snew, tmp_resnorm, tmp_iter
+
+            # If fsolve doesn't find a good enough solution, run lsqnonlin
             if tmp_resnorm > resnorm_tolerance:
-                tmp_Snew, tmp_fval, _, tmp_info = lsqnonlin(self.ODE_approx_IE, tmp_Snew, bounds=(self.store_min.flatten(), self.store_max.flatten()), full_output=True)[:4]
+                tmp_Snew, tmp_fval, _, tmp_iter = self.rerunSolver('lsqnonlin', tmp_Snew, s_old)
                 tmp_resnorm = np.sum(tmp_fval**2)
-                Snew_v[2] = tmp_Snew.reshape(-1)
-                resnorm_v[2] = tmp_resnorm
-                iter_v[2] = tmp_info['nfev']
 
-        best_iter = np.argmin(resnorm_v)
-        Snew = Snew_v[best_iter].reshape(-1, 1)
-        resnorm = resnorm_v[best_iter]
-        iter_ = iter_v[best_iter]
+                Snew_v[2, :], resnorm_v[2], iter_v[2] = tmp_Snew, tmp_resnorm, tmp_iter
 
-        return Snew, resnorm, iter_
+        # Get the best solution
+        best_solver_id = np.argmin(resnorm_v)
+        Snew, resnorm, iter = Snew_v[best_solver_id], resnorm_v[best_solver_id], iter_v[best_solver_id]
 
+        solver = ["NewtonRaphson", "fsolve", "lsqnonlin"][best_solver_id]
+
+        return Snew, resnorm, solver, iter
+
+    def rerunSolver(obj, solverName, initGuess, Sold):
+        """
+        RERUNSOLVER Restarts a root-finding solver with different starting points.
+        
+        Parameters:
+        -----------
+        obj : object
+            Instance of the class containing solver options.
+        solverName : str
+            Name of the solver to be used ('fsolve' or 'lsqnonlin').
+        initGuess : array_like
+            Initial guess for the solution.
+        Sold : array_like
+            Array of shape (numStores,) containing the previous storage values.
+
+        Returns:
+        --------
+        tuple
+            A tuple containing the following:
+                Snew : ndarray
+                    Array of shape (numStores,) containing the new storage values.
+                fval : ndarray
+                    The value of the function at the solution.
+                stopflag : int
+                    Flag indicating the reason for stopping the solver (0 for iteration count exceeded, 1 for normal function run).
+                stopiter : int
+                    Number of iterations taken by the solver.
+        """
+        solver_opts = obj.solver_opts[solverName]
+        solve_fun = obj.ODE_approx_IE
+        max_iter = obj.solver_opts.resnorm_maxiter
+        resnorm_tolerance = obj.solver_opts.resnorm_tolerance * min(abs(Sold)) + 1E-5
+
+        iter_count = 1
+        resnorm = resnorm_tolerance + 1
+        numStores = obj.numStores
+        stopflag = 1
+        Snew = -np.ones(numStores)
+        
+        Snew_v = np.zeros((numStores, max_iter))
+        fval_v = np.full((numStores, max_iter), np.inf)
+        resnorm_v = np.full(max_iter, np.inf)
+
+        while resnorm > resnorm_tolerance:
+            if iter_count == 1:
+                x0 = initGuess
+            elif iter_count == 2:
+                x0 = Sold
+            elif iter_count == 3:
+                x0 = np.maximum(-2 * 10**4, obj.store_min)
+            elif iter_count == 4:
+                x0 = np.minimum(2 * 10**4, obj.store_max)
+            else:
+                x0 = np.maximum(0, Sold + np.random.randn(numStores) * Sold / 10)
+
+            if solverName.lower() == 'fsolve':
+                Snew_v[:, iter_count - 1], fval_v[:, iter_count - 1], _, stopflag = fsolve(solve_fun, x0, **solver_opts)
+            elif solverName.lower() == 'lsqnonlin':
+                res = least_squares(solve_fun, x0, bounds=(obj.store_min, np.inf), method='trf', **solver_opts)
+                Snew_v[:, iter_count - 1] = res.x
+                fval_v[:, iter_count - 1] = res.fun
+                stopflag = res.status
+            else:
+                raise ValueError("Only fsolve and lsqnonlin are supported.")
+
+            resnorm_v[iter_count - 1] = np.sum(fval_v[:, iter_count - 1]**2)
+            min_resnorm_idx = np.argmin(resnorm_v)
+            resnorm = resnorm_v[min_resnorm_idx]
+            fval = fval_v[:, min_resnorm_idx]
+            Snew = Snew_v[:, min_resnorm_idx]
+
+            if iter_count >= max_iter:
+                stopflag = 0
+                break
+
+            iter_count += 1
+
+        return Snew, fval, stopflag, iter_count
+    
+    def run(obj, input_climate=None, S0=None, theta=None, solver_opts=None):
+        """
+        RUN runs the model with a given climate input, initial stores, parameter set, and solver settings.
+
+        Parameters:
+        -----------
+        input_climate : array_like, optional
+            Climate input data. Default is None.
+        S0 : array_like, optional
+            Initial stores. Default is None.
+        theta : array_like, optional
+            Parameter set. Default is None.
+        solver_opts : dict, optional
+            Solver settings. Default is None.
+
+        Returns:
+        --------
+        None
+        """
+        if solver_opts is not None:
+            obj.solver_opts = solver_opts
+        if theta is not None:
+            obj.theta = theta
+        if S0 is not None:
+            obj.S0 = S0
+        if input_climate is not None:
+            obj.input_climate = input_climate
+
+        obj.init_()
+
+        t_end = obj.input_climate.shape[0]
+
+        for t in range(t_end):
+            obj.t = t
+            if t == 0:
+                Sold = obj.S0.ravel()
+            else:
+                Sold = obj.stores[t - 1, :].ravel()
+
+            Snew, resnorm, solver, iter = obj.solve_stores(Sold)
+
+            dS, f = obj.model_fun(Snew)
+
+            obj.fluxes[t, :] = f * obj.delta_t
+            obj.stores[t, :] = Sold + dS.T * obj.delta_t
+
+            obj.solver_data['resnorm'][t] = resnorm
+            obj.solver_data['solver'][t] = solver
+            obj.solver_data['iter'][t] = iter
+
+            obj.step()
+
+        obj.status = 1
+
+    def get_output(obj, *args):
+        """
+        GET_OUTPUT runs the model exactly like RUN, but output is consistent with current MARRMoT.
+
+        Parameters:
+        -----------
+        *args : array_like, optional
+            Additional arguments.
+
+        Returns:
+        --------
+        fluxOutput : dict
+            Fluxes leaving the model.
+        fluxInternal : dict
+            Fluxes internal to the model.
+        storeInternal : dict
+            Stores internal to the model.
+        waterBalance : dict, optional
+            Water balance data if requested.
+        solverSteps : dict, optional
+            Step-by-step data of the solver if requested.
+        """
+        if args or obj.status is None or obj.status == 0:
+            obj.run(*args)
+
+        fluxOutput = {}
+        for fg in obj.FluxGroups:
+            idx = np.abs(obj.FluxGroups[fg])
+            signs = np.sign(obj.FluxGroups[fg])
+            fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx], axis=1)
+
+        fluxInternal = {obj.FluxNames[i]: obj.fluxes[:, i] for i in range(obj.numFluxes)}
+
+        storeInternal = {obj.StoreNames[i]: obj.stores[:, i] for i in range(obj.numStores)}
+
+        waterBalance = obj.check_waterbalance() if len(args) >= 4 else None
+
+        solverSteps = obj.solver_data if len(args) == 5 else None
+
+        return fluxOutput, fluxInternal, storeInternal, waterBalance, solverSteps
+
+    def check_waterbalance(obj, *args):
+        """
+        CHECK_WATERBALANCE returns the water balance.
+
+        Parameters:
+        -----------
+        *args : array_like, optional
+            Additional arguments.
+
+        Returns:
+        --------
+        out : float
+            Water balance value.
+        """
+        if args or not obj.status or obj.status == 0:
+            obj.run(*args)
+
+        P = obj.input_climate[:, 0]
+        fg = obj.FluxGroups.keys()
+        OutFluxes = np.zeros(len(fg))
+        for k in range(len(fg)):
+            idx = np.abs(obj.FluxGroups[fg[k]])
+            signs = np.sign(obj.FluxGroups[fg[k]])
+            OutFluxes[k] = np.sum(np.sum(signs * obj.fluxes[:, idx], 1), 2)
+        
+        if obj.StoreSigns.size == 0:
+            obj.StoreSigns = np.ones(obj.numStores)
+        dS = obj.StoreSigns * (obj.stores[-1] - obj.S0)
+        R = np.sum([np.sum(uh[1]) for uh in obj.uhs], axis=0)
+
+        out = np.sum(P) - np.sum(OutFluxes) - np.sum(dS) - np.sum(R)
+
+        print('Total P  =', np.sum(P), 'mm.')
+        for k, fg_k in enumerate(fg):
+            print('Total', fg_k, '=', -OutFluxes[k], 'mm.')
+        for s in range(obj.numStores):
+            if obj.StoreSigns[s] == -1:
+                ending = ' (deficit store).'
+            else:
+                ending = '.'
+            print('Delta S{} ='.format(s + 1), -dS[s], 'mm', ending)
+        if R.size != 0:
+            print('On route =', -np.sum(R), 'mm.')
+
+        print('-------------')
+        print('Water balance =', out, 'mm.')
+        return out
+
+    def get_streamflow(obj, *args):
+        """
+        GET_STREAMFLOW only returns the streamflow, runs the model if it hadn't run already.
+
+        Parameters:
+        -----------
+        *args : array_like, optional
+            Additional arguments.
+
+        Returns:
+        --------
+        Q : array_like
+            Streamflow values.
+        """
+        if args or not obj.status or obj.status == 0:
+            obj.run(*args)
+
+        Q = np.sum(obj.fluxes[:, obj.FluxGroups['Q']], axis=1)
+        return Q
+        
+    def calibrate(obj, Q_obs, cal_idx, optim_fun, par_ini=None, optim_opts=None, of_name=None,
+              inverse_flag=None, display=None, *args):
+        """
+        CALIBRATE uses the chosen algorithm to find the optimal parameter set, given model inputs, objective function,
+        and observed streamflow.
+
+        Parameters:
+        -----------
+        obj : object
+            The instance of the model.
+        Q_obs : array_like
+            Observed streamflow.
+        cal_idx : array_like
+            Timesteps to use for model calibration.
+        optim_fun : function
+            Function to use for optimization.
+        par_ini : array_like, optional
+            Initial parameter estimates. Default is None.
+        optim_opts : dict, optional
+            Options for the optimization function. Default is None.
+        of_name : function, optional
+            Name of the objective function to use. Default is None.
+        inverse_flag : int, optional
+            If the objective function should be inversed. Default is None.
+        display : bool, optional
+            If information about the calibration should be displayed. Default is None.
+        *args : array_like
+            Additional arguments to the objective function.
+
+        Returns:
+        --------
+        par_opt : array_like
+            Optimal parameter set.
+        of_cal : float
+            Value of the objective function at par_opt.
+        stopflag : int
+            Flag indicating the reason the algorithm stopped.
+        output : dict
+            Output, see the documentation of the optimization function for detail.
+        """
+        if (not obj.input_climate) or (not obj.delta_t) or (not obj.S0) or (not obj.solver_opts):
+            raise ValueError('input_climate, delta_t, S0, and solver_opts attributes must be specified before calling calibrate.')
+
+        if not cal_idx:
+            cal_idx = np.arange(len(Q_obs)) + 1
+
+        if display is None:
+            display = True
+
+        if isinstance(cal_idx, np.ndarray):
+            cal_idx = cal_idx.tolist()
+        if isinstance(cal_idx, list):
+            cal_idx = sorted(cal_idx)
+
+        cal_idx_str = ', '.join(map(str, cal_idx))
+
+        if display:
+            print('---')
+            print(f'Starting calibration of model {type(obj)}.')
+            print(f'Simulation will run for timesteps 1-{max(cal_idx)}.')
+            print(f'Objective function {of_name} will be calculated in time steps {cal_idx_str}.')
+            print(f'The optimiser {optim_fun} will be used to optimise the objective function.')
+            print('Options passed to the optimiser:')
+            print(optim_opts)
+            print('All other options are left to their default, check the source code of the optimiser to find these default values.')
+            print('---')
+
+        input_climate_all = obj.input_climate.copy()
+        obj.input_climate = input_climate_all[:max(cal_idx)]
+        Q_obs = Q_obs[:max(cal_idx)]
+
+        if par_ini is None:
+            par_ini = np.mean(obj.parRanges, axis=1)
+
+        def fitness_fun(par):
+            Q_sim = obj.get_streamflow(par=par)
+            return (-1) ** inverse_flag * of_name(Q_obs, Q_sim, cal_idx, *args)
+
+        [par_opt, of_cal, stopflag, output] = optim_fun(fitness_fun, par_ini, **optim_opts)
+
+        of_cal = (-1) ** inverse_flag * of_cal
+
+        obj.input_climate = input_climate_all
+
+        return par_opt, of_cal, stopflag, output
+
+    def default_solver_opts(obj):
+        """
+        Function to return default solver options.
+
+        Returns:
+        --------
+        solver_opts : dict
+            Dictionary containing default solver options.
+        """
+        solver_opts = {
+            'resnorm_tolerance': 0.1,  # Root-finding convergence tolerance
+            'resnorm_maxiter': 6,      # Maximum number of re-runs used in rerunSolver
+            'NewtonRaphson': {'MaxIter': obj.numStores * 10}
+        }
+
+        if not obj.isOctave:
+            solver_opts['fsolve'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern}
+            solver_opts['lsqnonlin'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
+        else:
+            solver_opts['fsolve'] = {'Display': 'off'}
+            solver_opts['lsqnonlin'] = {'Display': 'off', 'MaxFunEvals': 1000}
+
+        return solver_opts
+
+    def add_to_def_opts(self, opts=None):
+        """
+        Function to add new solver options to the default ones.
+
+        Parameters:
+        -----------
+        opts : dict, optional
+            New solver options to add. Default is None.
+
+        Returns:
+        --------
+        solver_opts : dict
+            Dictionary containing the merged solver options.
+        """
+        def_opts = self.default_solver_opts()
+        if opts is None:
+            solver_opts = def_opts
+        else:
+            solver_opts = {}
+            for field, default_value in def_opts.items():
+                if field not in opts or opts[field] is None:
+                    solver_opts[field] = default_value
+                elif isinstance(default_value, dict):
+                    solver_opts[field] = {**default_value, **opts[field]}
+                else:
+                    solver_opts[field] = opts[field]
+        return solver_opts
+
+    
+    
+    
+    
+    
+    
+    
+    
+'''
+Not sure if this stuff is used, but not ready to get rid of it yet...
     def solve_fluxes(self, Sold):
         fluxes = np.zeros((self.numFluxes, 1))
         fluxes[self.uhs] = Sold[self.uhs] / self.theta[self.uhs]
@@ -255,3 +703,4 @@ class MARRMoT_model:
 
     def init(self):
         raise NotImplementedError
+'''

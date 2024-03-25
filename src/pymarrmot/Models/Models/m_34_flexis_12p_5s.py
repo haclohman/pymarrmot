@@ -1,7 +1,7 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.unit_hydro import (uh_3_half, route, update_uh)
-from models.flux import (snowfall_1, rainfall_1, melt_1, 
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.unit_hydro import (uh_3_half, route, update_uh)
+from pymarrmot.models.flux import (snowfall_1, rainfall_1, melt_1, 
                          interception_1, evap_1, saturation_3, evap_3,
                          percolation_2, split_1, baseflow_1)
 

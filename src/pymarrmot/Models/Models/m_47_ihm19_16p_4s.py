@@ -1,8 +1,8 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_1, interflow_3, split_1, interception_1,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_1, interflow_3, split_1, interception_1,
                          split_2, infiltration_3, infiltration_7, evap_23, interflow_9)
-from models.unit_hydro import (route, uh_4_full, update_uh)
+from pymarrmot.models.unit_hydro import (route, uh_4_full, update_uh)
 
 class m_47_IHM19_16p_4s(MARRMoT_model):
     """

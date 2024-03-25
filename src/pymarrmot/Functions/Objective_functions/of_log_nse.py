@@ -1,5 +1,5 @@
 import numpy as np
-import check_and_select
+from pymarrmot.functions.objective_functions import check_and_select
 from typing import Tuple
 
 def of_log_nse(obs: np.array, sim: np.array, idx: np.array=None) -> Tuple[float, np.array]:

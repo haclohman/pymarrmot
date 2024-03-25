@@ -1,8 +1,8 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_1, interception_2, split_1, saturation_2,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_1, interception_2, split_1, saturation_2,
                          capillary_2, baseflow_1)
-from models.unit_hydro import (route, uh_3_half, update_uh)
+from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
 
 class M13Hillslope7p2s(MARRMoT_model):
     """

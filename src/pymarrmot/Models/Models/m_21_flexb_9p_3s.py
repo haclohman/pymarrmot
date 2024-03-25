@@ -1,7 +1,7 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import saturation_3, evap_3, percolation_2, split_1, baseflow_1
-from models.unit_hydro import route, uh_3_half, update_uh
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import saturation_3, evap_3, percolation_2, split_1, baseflow_1
+from pymarrmot.models.unit_hydro import route, uh_3_half, update_uh
 
 class m_21_flexb_9p_3s(MARRMoT_model):
     """

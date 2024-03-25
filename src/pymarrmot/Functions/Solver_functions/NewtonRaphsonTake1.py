@@ -1,6 +1,6 @@
 import numpy as np
 
-def NewtonRaphson(fun, x0, options=None):
+def NewtonRaphson_from_matlab(fun, x0, options=None):
     """
     Solve set of non-linear equations using Newton-Raphson method.
 
@@ -126,6 +126,43 @@ def NewtonRaphson(fun, x0, options=None):
         exitflag = 0
 
     return x.flatten(), F.flatten(), exitflag
+
+def NewtonRaphson_openai(func, x0, options):
+    """
+    Newton-Raphson method for solving nonlinear equations.
+    
+    Parameters:
+    -----------
+    func : callable
+        The function to find the root of.
+    x0 : array_like
+        Initial guess for the solution.
+    options : dict
+        Dictionary containing options for the solver.
+
+    Returns:
+    --------
+    tuple
+        A tuple containing the following:
+            x : ndarray
+                The solution.
+            fval : ndarray
+                The value of the function at the solution.
+    """
+    max_iter = options.max_iter
+    tol = options.tol
+
+    x = x0.copy()
+    for i in range(max_iter):
+        fval = func(x)
+        J = obj.ODE_Jacobian(x)
+        delta_x = solve(J, -fval)
+        x += delta_x
+
+        if np.linalg.norm(delta_x) < tol:
+            break
+
+    return x, fval
 
 def jacobian(fun, x, nf, funx=None):
     """

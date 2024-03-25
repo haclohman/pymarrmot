@@ -1,5 +1,5 @@
-from models.marrmot_model import MARRMoT_model
-from models.flux import (
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (
     split_1, soilmoisture_1, evap_7, saturation_1, 
     interflow_5, evap_1, percolation_4, soilmoisture_2, baseflow_1)
 from models.auxiliary import deficit_based_distribution

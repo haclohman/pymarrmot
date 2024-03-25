@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (capillary_3, interflow_8, exchange_2, evap_1, baseflow_1, recharge_3)
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (capillary_3, interflow_8, exchange_2, evap_1, baseflow_1, recharge_3)
 
 class m_38_tank2_16p_5s(MARRMoT_model):
     """

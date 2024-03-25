@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import evap_7, saturation_1, excess_1, interflow_3, recharge_3
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import evap_7, saturation_1, excess_1, interflow_3, recharge_3
 
 class m_19_australia_8p_3s(MARRMoT_model):
     """

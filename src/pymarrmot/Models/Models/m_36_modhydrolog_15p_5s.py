@@ -1,5 +1,5 @@
-from models.marrmot_model import MARRMoT_model
-from models.flux import(evap_1, interception_1, infiltration_1,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import(evap_1, interception_1, infiltration_1,
                         infiltration_2, interflow_1, recharge_1, evap_2,
                         saturation_1, depression_1, baseflow_1, exchange_3, exchange_1)
 

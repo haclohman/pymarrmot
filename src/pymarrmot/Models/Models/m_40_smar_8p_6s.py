@@ -1,8 +1,8 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_13, evap_14, split_1, baseflow_1, effective_1,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_13, evap_14, split_1, baseflow_1, effective_1,
                          saturation_6, infiltration_4, saturation_1)
-from models.unit_hydro import (uh_6_gamma, update_uh, route)
+from pymarrmot.models.unit_hydro import (uh_6_gamma, update_uh, route)
 
 class SmarModel(MARRMoT_model):
     """

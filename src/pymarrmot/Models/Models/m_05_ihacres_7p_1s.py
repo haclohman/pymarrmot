@@ -1,6 +1,6 @@
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_12, split_1, saturation_5)
-from models.unit_hydro import (uh_5_half, uh_8_delay, route, update_uh)
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_12, split_1, saturation_5)
+from pymarrmot.models.unit_hydro import (uh_5_half, uh_8_delay, route, update_uh)
 
 class M_05_IHACRES_7P_1S(MARRMoT_model):
     """

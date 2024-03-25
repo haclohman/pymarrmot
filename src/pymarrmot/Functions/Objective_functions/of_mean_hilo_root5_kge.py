@@ -1,7 +1,7 @@
 import numpy as np
-import check_and_select
-import of_kge
-import of_root5_kge
+from pymarrmot.functions.objective_functions import check_and_select
+from pymarrmot.functions.objective_functions import of_kge
+from pymarrmot.functions.objective_functions import of_root5_kge
 from typing import Tuple
 
 def of_mean_hilo_root5_KGE(obs: np.array, sim: np.array, idx: np.array=None, w: np.array=None) -> Tuple[float, np.array, np.array, np.array]:

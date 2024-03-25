@@ -1,6 +1,6 @@
 import numpy as np
-from models.marrmot_model import MARRMoT_model
-from models.flux import (evap_1, snowfall_1, rainfall_1, melt_1,
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux import (evap_1, snowfall_1, rainfall_1, melt_1,
                          saturation_1, baseflow_1)
 
 class M06Alpine1_4p_2s(MARRMoT_model):

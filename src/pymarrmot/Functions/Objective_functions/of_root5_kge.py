@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Tuple
-import check_and_select
+from pymarrmot.functions.objective_functions import check_and_select
 
 def of_root5_kge(obs: np.array, sim: np.array, idx: np.array = None, w: np.array = None) -> Tuple[float, np.array, np.array, np.array]:
     """

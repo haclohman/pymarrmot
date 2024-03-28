@@ -1,4 +1,5 @@
 import numpy as np
+import numbers
 from scipy import optimize
 from scipy.sparse import csr_matrix
 from scipy.optimize import fsolve, least_squares
@@ -13,6 +14,7 @@ class MARRMoT_model:
     """
     
     def __init__(self):
+
         #static attributes, set for each model in the model definition
         self.numStores = None           #number of model stores
         self.numFluxes = None           #number of model fluxes
@@ -46,53 +48,58 @@ class MARRMoT_model:
         """
         Set methods with checks on inputs for attributes set by the user
         """
-        if name == 'delta_t':
-            if isinstance(value, (int, float)) or value is None:
-                self.delta_t = value
-                self.reset()
+        if name == 'theta':
+            if value is not None:
+                if value.size == self.numParams:
+                    super().__setattr__(name, value)
+                    self.reset()
+                else:
+                    raise ValueError(f'theta must have {self.numParams} elements')
             else:
-                raise ValueError('delta_t must be a scalar')
-        elif name == 'theta':
-            if isinstance(value, np.ndarray) and value.size == self.numParams or value is None:
-                self.theta = value.reshape(-1, 1)
-                self.reset()
+                super().__setattr__(name, value)   
+        elif name == 'delta_t':
+            if value is not None:
+                if isinstance(value, numbers.Number):
+                    super().__setattr__(name, value)
+                    self.reset()
+                else:
+                    raise ValueError('delta_t must be a scalar')
             else:
-                raise ValueError(f'theta must have {self.numParams} elements')
+                super().__setattr__(name, value)       
         elif name == 'input_climate':
-            if isinstance(value, np.ndarray):
-                if value.shape[1] == 3:
-                    self.input_climate = value
-                    self.reset()
-                else:
-                    raise ValueError('Input climate must have 3 columns: precip, pet, temp')
-            elif isinstance(value, dict):
-                if all(key in value for key in ['precip', 'pet', 'temp']):
-                    P = value['precip'] / self.delta_t
-                    Ea = value['pet'] / self.delta_t
-                    T = value['temp'] / self.delta_t
-                    self.input_climate = np.column_stack((P, Ea, T))
-                    self.reset()
-                else:
-                    raise ValueError('Input climate struct must contain fields: precip, pet, temp')
-            elif value is None:
-                self.input_climate = value
-                self.reset()
+            if value is not None:
+                if isinstance(value, dict):
+                    if all(key in value for key in ('precip', 'pet', 'temp')):
+                        value['precip'] = value['precip'] / self.delta_t
+                        value['pet'] = value['pet'] / self.delta_t
+                        
+                        # ERROR? Why divide temperature by delta-t?
+                        value['temp'] = value['temp'] / self.delta_t
+                        
+                        super().__setattr__(name, value)
+                        self.reset()
+                    else:
+                        raise ValueError('Input climate dictionary must contain fields: precip, pet, temp')
             else:
-                raise ValueError('Input climate must either be a dict or a numpy array of shape (n, 3)')
+                super().__setattr__(name, value)
         elif name == 'S0':
-            if isinstance(value, np.ndarray) and value.size == self.numStores or value is None:
-                self.S0 = value.reshape(-1, 1)
-                self.reset()
+            if value is not None:
+                if value.size == self.numStores:
+                    super().__setattr__(name, value)
+                    self.reset()
+                else:
+                    raise ValueError(f'S0 must have {self.numStores} elements')
             else:
-                raise ValueError(f'S0 must have {self.numStores} elements')
+                super().__setattr__(name, value)
         elif name == 'solver_opts':
-            if value is None:
-                self.solver_opts = value
-            elif isinstance(value, dict):
-                self.solver_opts = self.add_to_def_opts(value)
-                self.reset()
+            if value is not None:
+                if isinstance(value, dict):
+                    super().__setattr__(name, self.add_to_def_opts(value))
+                    self.reset()
+                else:
+                    raise ValueError('solver_opts must be a dictionary')
             else:
-                raise ValueError('solver_opts must be a dictionary')
+                super().__setattr__(name, value)
         else:
             super().__setattr__(name, value)
 
@@ -552,15 +559,18 @@ class MARRMoT_model:
         solver_opts = {
             'resnorm_tolerance': 0.1,  # Root-finding convergence tolerance
             'resnorm_maxiter': 6,      # Maximum number of re-runs used in rerunSolver
-            'NewtonRaphson': {'MaxIter': obj.numStores * 10}
+            'NewtonRaphson': {'MaxIter': obj.numStores * 10},
+            'JacobPattern': obj.JacobPattern,
+            'MaxFunEvals': 1000,
         }
 
-        if not obj.isOctave:
-            solver_opts['fsolve'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern}
-            solver_opts['lsqnonlin'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
-        else:
-            solver_opts['fsolve'] = {'Display': 'off'}
-            solver_opts['lsqnonlin'] = {'Display': 'off', 'MaxFunEvals': 1000}
+        # In the original code there were two separate
+        # if not obj.isOctave:
+        #     solver_opts['fsolve'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern}
+        #     solver_opts['lsqnonlin'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
+        # else:
+        #     solver_opts['fsolve'] = {'Display': 'off'}
+        #     solver_opts['lsqnonlin'] = {'Display': 'off', 'MaxFunEvals': 1000}
 
         return solver_opts
 

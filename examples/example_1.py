@@ -15,10 +15,9 @@ import pandas as pd
 df = pd.read_csv('c:/users/ssheeder/repos/pymarrmot/examples/Example_DataSet.csv')
 # Create a climatology data input structure
 input_climatology = {
-    'precip': df['Precip'].to_xarray,   # Daily data: P rate [mm/d]
-    'temp': df['Temp'].to_xarray,       # Daily data: mean T [degree C]
-    'pet': df['PET'].to_xarray,         # Daily data: Ep rate [mm/d]
-    'delta_t': 1                        # time step size of the inputs: 1 [d]
+    'precip': df['Precip'].to_numpy(),   # Daily data: P rate [mm/d]
+    'temp': df['Temp'].to_numpy(),       # Daily data: mean T [degree C]
+    'pet': df['PET'].to_numpy(),         # Daily data: Ep rate [mm/d]
 }
 
 # 2. Define the model settings
@@ -49,13 +48,14 @@ input_solver_opts = {
 m = m_29_hymod_5p_5s()
 
 # Set up the model
+m.delta_t = 1                        # time step size of the inputs: 1 [d]
 m.theta = input_theta
 m.input_climate = input_climatology
 m.solver_opts = input_solver_opts
 m.S0 = input_s0
 
 # 5. Run the model and extract all outputs
-(output_ex, output_in, output_ss, output_waterbalance) = m.get_output()
+(output_ex, output_in, output_ss, output_waterbalance) = m.get_output(m)
 
 # 6. Analyze the outputs
 # Prepare a time vector

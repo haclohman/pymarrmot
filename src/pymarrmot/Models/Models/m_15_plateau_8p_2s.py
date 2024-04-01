@@ -1,7 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (interception_2, infiltration_4, evap_4, capillary_2,
-                         saturation_1, baseflow_1)
+from pymarrmot.models.flux.interception import interception_2
+from pymarrmot.models.flux.infiltration import infiltration_4
+from pymarrmot.models.flux.evaporation import evap_4
+from pymarrmot.models.flux.capillary import capillary_2
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.baseflow import baseflow_1
 from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
 
 class m_15_plateau_8p_2s(MARRMoT_model):
@@ -90,11 +95,12 @@ class m_15_plateau_8p_2s(MARRMoT_model):
         # stores
         S1, S2 = S
 
-        # climate input
-        t = self.t                             # this time step
-        climate_in = self.input_climate[t,:]   # climate at this step
-        P, Ep, T = climate_in
-
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
+        
         # fluxes functions
         flux_pe = interception_2(P, dp)
         flux_ei = P - flux_pe  # track 'intercepted' water

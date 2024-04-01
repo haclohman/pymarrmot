@@ -1,6 +1,11 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import evap_20, saturation_1, interflow_11, baseflow_9, baseflow_1, recharge_5
+from pymarrmot.models.flux.evaporation import evap_20
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interflow import interflow_11
+from pymarrmot.models.flux.baseflow import baseflow_9, baseflow_1
+from pymarrmot.models.flux.recharge import recharge_5
 
 class m_20_gsfb_8p_3s(MARRMoT_model):
     """
@@ -71,10 +76,11 @@ class m_20_gsfb_8p_3s(MARRMoT_model):
         # stores
         S1, S2, S3 = S
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t,:]  # climate at this step
-        P, Ep = climate_in[0], climate_in[1]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_ea = evap_20(emax, ndc, S1, smax, Ep, delta_t)

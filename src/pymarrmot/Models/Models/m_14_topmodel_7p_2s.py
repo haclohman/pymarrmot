@@ -1,7 +1,10 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (saturation_7, evap_3, saturation_1, interflow_10,
-                         baseflow_4)
+from pymarrmot.models.flux.saturation import saturation_1, saturation_7
+from pymarrmot.models.flux.evaporation import evap_3
+from pymarrmot.models.flux.interflow import interflow_10
+from pymarrmot.models.flux.baseflow import baseflow_4
 
 class m_14_topmodel_7p_2s(MARRMoT_model):
     """
@@ -101,11 +104,11 @@ class m_14_topmodel_7p_2s(MARRMoT_model):
         S1 = S[0]
         S2 = S[1]
         
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
         
         # fluxes functions
         flux_qof = saturation_7(chi, phi, 3, lambda_, f, S2, P)

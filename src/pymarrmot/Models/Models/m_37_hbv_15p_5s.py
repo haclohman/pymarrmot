@@ -1,4 +1,5 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from models.unit_hydro import(uh_4_full, update_uh)
 
@@ -107,8 +108,10 @@ class m_37_hbv_15p_5s(MARRMoT_model):
         else:
             S2old = self.stores[t - 1, 1]
 
-        # climate input
-        climate_in = self.input_climate(t, :)
+        # climate input at time t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
 
     def step(self):

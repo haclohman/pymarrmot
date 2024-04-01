@@ -1,7 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, saturation_3, split_1, interception_1,
-                         evap_3, percolation_2, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_1, evap_3
+from pymarrmot.models.flux.saturation import saturation_3
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.percolation import percolation_2
+from pymarrmot.models.flux.baseflow import baseflow_1
 from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
 
 class FlexiModel(MARRMoT_model):
@@ -88,10 +93,11 @@ class FlexiModel(MARRMoT_model):
         # stores
         S1, S2, S3, S4 = S
 
-        # climate input
-        t = self.t                                 # this time step
-        climate_in = self.input_climate[t, :]      # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_peff = interception_1(P, S1, imax)

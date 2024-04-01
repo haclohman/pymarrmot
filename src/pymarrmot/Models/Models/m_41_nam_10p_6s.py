@@ -1,7 +1,14 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (snowfall_1, rainfall_1, split_1, baseflow_1, melt_1,
-                         evap_1, interflow_6, saturation_1, evap_15, interflow_5)
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.melt import melt_1
+from pymarrmot.models.flux.evaporation import evap_1, evap_15
+from pymarrmot.models.flux.interflow import interflow_5, interflow_6
+from pymarrmot.models.flux.saturation import saturation_1
 from pymarrmot.models.unit_hydro import (uh_6_gamma, update_uh, route)
 
 class m_41_nam_10p_6s(MARRMoT_model):
@@ -97,10 +104,11 @@ class m_41_nam_10p_6s(MARRMoT_model):
         # stores
         S1, S2, S3, S4, S5, S6 = S
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P, Ep, T = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_ps = snowfall_1(P, T, 0)

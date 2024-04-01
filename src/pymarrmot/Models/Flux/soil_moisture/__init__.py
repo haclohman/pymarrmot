@@ -1,0 +1,2 @@
+from soilmoisture_1 import soilmoisture_1
+from soilmoisture_2 import soilmoisture_2

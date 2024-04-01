@@ -1,5 +1,8 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_6, evap_5, saturation_1, interflow_9, baseflow_1)
+from pymarrmot.models.flux.evaporation import (evap_6, evap_5)
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interflow import interflow_9
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class M_04_NewZealand1_6P_1S(MARRMoT_model):
     """
@@ -75,12 +78,11 @@ class M_04_NewZealand1_6P_1S(MARRMoT_model):
         # stores
         S1 = S[0]
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_veg = evap_6(m, sfc, S1, s1max, Ep, delta_t)

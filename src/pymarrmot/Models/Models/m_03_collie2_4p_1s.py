@@ -1,6 +1,7 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_7, evap_3, saturation_1, interflow_8)
-
+from pymarrmot.models.flux.evaporation import (evap_7, evap_3)
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interflow import interflow_8
 class m_03_collie2_4p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Collie River v2
@@ -71,11 +72,11 @@ class m_03_collie2_4p_1s(MARRMoT_model):
 
         S1 = S[0]
 
+        # climate input at time t
         t = self.t
-        climate_in = self.input_climate[t, :]
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         flux_eb = evap_7(S1, S1max, (1 - M) * Ep, delta_t)
         flux_ev = evap_3(Sfc, S1, S1max, M * Ep, delta_t)

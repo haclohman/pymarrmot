@@ -1,7 +1,11 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_18, saturation_9, split_1, effective_1,
-                         saturation_1, evap_1, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_18, evap_1
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.saturation import saturation_1, saturation_9
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class MClassic12p8s(MARRMoT_model):
     """
@@ -119,11 +123,11 @@ class MClassic12p8s(MARRMoT_model):
         S7 = S[6]
         S8 = S[7]
 
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # Fluxes functions
         flux_pp = split_1(fap, P)

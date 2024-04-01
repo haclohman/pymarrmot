@@ -1,8 +1,16 @@
+import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (
-    split_1, soilmoisture_1, evap_7, saturation_1, 
-    interflow_5, evap_1, percolation_4, soilmoisture_2, baseflow_1)
-from models.auxiliary import deficit_based_distribution
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.soil_moisture import soilmoisture_1
+from pymarrmot.models.flux.evaporation import evap_7
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interflow import interflow_5
+from pymarrmot.models.flux.evaporation import evap_1
+from pymarrmot.models.flux.percolation import percolation_4
+from pymarrmot.models.flux.soil_moisture import soilmoisture_2
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.auxiliary.deficit_based_distribution import deficit_based_distribution
 
 class m_33_sacramento_11p_5s(MARRMoT_model):
     """Class for hydrologic conceptual model: Sacramento-SMA
@@ -74,7 +82,7 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
                              pbase, zperc]
         self.store_max = [uztwm,uzfwm,lztwm,lzfwpm,lzfwsm]
 
-    def model_fun(self, S: List[float]) -> Tuple[List[float], List[float]]:
+    def model_fun(self, S: list[float]) -> tuple[list[float], list[float]]:
         theta   = self.theta
         pctim   = theta[0]     # Fraction impervious area [-]
         kuz     = theta[4]     # Interflow runoff coefficient [d-1]
@@ -98,10 +106,11 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
         S4 = S[3]
         S5 = S[4]
 
+        # climate input at time t
         t = self.t
-        climate_in = self.input_climate[t,:]
-        P  = climate_in[0]
-        Ep = climate_in[1]
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         flux_qdir    = split_1(pctim,P)
         flux_peff    = split_1(1-pctim,P)

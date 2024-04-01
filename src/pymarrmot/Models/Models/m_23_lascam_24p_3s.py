@@ -1,8 +1,14 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, area_1, infiltration_5, interception_5, recharge_3, 
-                         effective_1, saturation_11, infiltration_4, saturation_12, evap_19,
-                         recharge_4, baseflow_8)
+from pymarrmot.models.flux.evaporation import evap_1, evap_19
+from pymarrmot.models.flux.area_1 import area_1
+from pymarrmot.models.flux.infiltration import infiltration_4, infiltration_5
+from pymarrmot.models.flux.interception import interception_5
+from pymarrmot.models.flux.recharge import recharge_3, recharge_4
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.saturation import saturation_11, saturation_12
+from pymarrmot.models.flux.baseflow import baseflow_8
 
 class M_23_LASCAM_24p_3s(MARRMoT_model):
     """
@@ -103,10 +109,11 @@ class M_23_LASCAM_24p_3s(MARRMoT_model):
         # Stores
         S1, S2, S3 = S
 
-        # Climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # Fluxes functions
         tmp_phiss = area_1(ass, bss, S2, aux_theta[3], amax)

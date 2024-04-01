@@ -1,7 +1,11 @@
-from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_5, evap_8, evap_9, evap_10,
-    saturation_1, interception_3, excess_1, baseflow_1)
 import numpy as np
+
+from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux.evaporation import evap_5, evap_8, evap_9, evap_10
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interception import interception_3
+from pymarrmot.models.flux import excess_1
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class M08_US1_5P_2S(MARRMoT_model):
     """
@@ -42,9 +46,11 @@ class M08_US1_5P_2S(MARRMoT_model):
         # stores
         S1, S2 = S
 
-        # climate input
-        t = self.t  # this time step
-        P, Ep, T = self.input_climate[t]  # climate at this step
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_eusei = interception_3(alpha_ei, P)

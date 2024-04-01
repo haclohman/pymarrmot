@@ -1,6 +1,12 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import(snowfall_1, rainfall_1, melt_1, evap_7, interception_4, saturation_1,
-                        recharge_3, baseflow_1)
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.melt import melt_1
+from pymarrmot.models.flux.evaporation import evap_7
+from pymarrmot.models.flux.interception import interception_4
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.recharge import recharge_3
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class M32Mopex410p5s(MARRMoT_model):
     """
@@ -78,9 +84,11 @@ class M32Mopex410p5s(MARRMoT_model):
         # Stores
         S1, S2, S3, S4, S5 = S
 
-        # Climate input
+        # climate input at time t
         t = self.t
-        P, Ep, T = self.input_climate(t)
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # Fluxes functions
         flux_ps = snowfall_1(P, T, tcrit)

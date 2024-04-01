@@ -1,7 +1,13 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, infiltration_1, interflow_1, interception_1,
-                         recharge_1, evap_2, saturation_1, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_1, evap_2
+from pymarrmot.models.flux.infiltration import infiltration_1
+from pymarrmot.models.flux.interflow import interflow_1
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.recharge import recharge_1
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class m_18_simhyd_7p_3s(MARRMoT_model):
     """
@@ -67,10 +73,11 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
         # stores
         S1, S2, S3 = S
 
-        # climate input
-        t = self.t                             # this time step
-        climate_in = self.input_climate[t,:]   # climate at this step
-        P, Ep = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         # Original formulation using MARRMoT fluxes is slow on simhyd,

@@ -1,7 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, effective_1, split_1, evap_16,
-                         saturation_1, saturation_9, baseflow_1, abstraction_1, baseflow_6)
+from pymarrmot.models.flux.evaporation import evap_1, evap_16
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.saturation import saturation_1, saturation_9
+from pymarrmot.models.flux.baseflow import baseflow_1, baseflow_6
+from pymarrmot.models.flux.abstraction_1 import abstraction_1
 
 class m_25_tcm_6p_4s(MARRMoT_model):
     """
@@ -74,10 +79,11 @@ class m_25_tcm_6p_4s(MARRMoT_model):
         # stores
         S1, S2, S3, S4 = S
 
-        # climate input
-        t = self.t                                 # this time step
-        climate_in = self.input_climate[t, :]      # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_pn = effective_1(P, Ep)

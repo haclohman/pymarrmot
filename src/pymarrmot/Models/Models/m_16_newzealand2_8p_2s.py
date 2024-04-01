@@ -1,7 +1,11 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, evap_6, evap_5, interception_1,
-                         saturation_1, baseflow_1, interflow_9)
+from pymarrmot.models.flux.evaporation import evap_1, evap_6, evap_5
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.interflow import interflow_9
 from pymarrmot.models.unit_hydro import (route, uh_4_full, update_uh)
 
 class m_16_newzealand_28p_2s(MARRMoT_model):
@@ -92,11 +96,12 @@ class m_16_newzealand_28p_2s(MARRMoT_model):
         # stores
         S1, S2 = S
 
-        # climate input
-        t = self.t                             # this time step
-        climate_in = self.input_climate[t,:]   # climate at this step
-        P, Ep, T = climate_in
-
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
+        
         # fluxes functions
         flux_eint = evap_1(S1, Ep, delta_t)
         flux_qtf = interception_1(P, S1, s1max)

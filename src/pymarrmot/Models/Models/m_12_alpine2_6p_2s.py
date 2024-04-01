@@ -1,7 +1,13 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, snowfall_1, rainfall_1, melt_1,
-                         saturation_1, interflow_8, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_1
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.melt import melt_1
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.interflow import interflow_8
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class M12Alpine2_6p_2s(MARRMoT_model):
     """
@@ -82,12 +88,11 @@ class M12Alpine2_6p_2s(MARRMoT_model):
         S1 = S[0]
         S2 = S[1]
         
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
         
         # fluxes functions
         flux_ps = snowfall_1(P, T, tt)

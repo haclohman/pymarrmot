@@ -1,5 +1,6 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import evap_7, saturation_1
+from pymarrmot.models.flux.evaporation import evap_7
+from pymarrmot.models.flux.saturation import saturation_1
 
 class M_01_Collie1_1p_1s(MARRMoT_model):
     """
@@ -27,20 +28,24 @@ class M_01_Collie1_1p_1s(MARRMoT_model):
         # parameters
         theta = self.theta
         S1max = theta[0]  # Maximum soil moisture storage [mm]
-        # delta_t
+
         delta_t = self.delta_t
+        
         # stores
         S1 = S[0]
+        
         # climate input
         t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        
         # fluxes functions
         flux_ea = evap_7(S1, S1max, Ep, delta_t)
         flux_qse = saturation_1(P, S1, S1max)
+        
         # stores ODEs
         dS1 = P - flux_ea - flux_qse
+        
         # outputs
         dS = [dS1]
         fluxes = [flux_ea, flux_qse]

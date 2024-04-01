@@ -1,5 +1,8 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import interception_2, evap_1, saturation_2, baseflow_1
+from pymarrmot.models.flux.interception import interception_2
+from pymarrmot.models.flux.evaporation import evap_1
+from pymarrmot.models.flux.saturation import saturation_2
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class M_02_Wetland_4p_1s(MARRMoT_model):
     """
@@ -35,12 +38,11 @@ class M_02_Wetland_4p_1s(MARRMoT_model):
         delta_t = self.delta_t
         # stores
         S1 = S[0]
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
         # fluxes functions
         flux_pe = interception_2(P, dw)
         flux_ei = P - flux_pe

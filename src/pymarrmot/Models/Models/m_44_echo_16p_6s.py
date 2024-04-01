@@ -1,9 +1,18 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (snowfall_1, rainfall_1, melt_1, effective_1,
-                         evap_1, interception_1, refreeze_1, melt_2, saturation_1,
-                         excess_1, infiltration_4, evap_22, recharge_6, recharge_7,
-                         baseflow_1)
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.melt import melt_1, melt_2
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.evaporation import evap_1, evap_22
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.refreeze_1 import refreeze_1
+from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.excess_1 import excess_1
+from pymarrmot.models.flux.infiltration import infiltration_4
+from pymarrmot.models.flux.recharge import recharge_6, recharge_7
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class m_44_echo_16p_6s(MARRMoT_model):
     """
@@ -108,8 +117,13 @@ class m_44_echo_16p_6s(MARRMoT_model):
             S3old = self.S0[2]
         else:
             S3old = self.stores[t-1][2]
-        climate_in = self.input_climate[t]
-        P, Ep, T = climate_in
+       
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
+
         flux_ei = evap_1(S1, Ep, delta_t)
         flux_pn = interception_1(P, S1, rho)
         flux_ps = snowfall_1(flux_pn, T, ts)

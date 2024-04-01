@@ -1,6 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (capillary_3, interflow_8, exchange_2, evap_1, baseflow_1, recharge_3)
+from pymarrmot.models.flux.capillary import capillary_3
+from pymarrmot.models.flux.interflow import interflow_8
+from pymarrmot.models.flux.exchange import exchange_2
+from pymarrmot.models.flux.evaporation import evap_1
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.recharge import recharge_3
 
 class m_38_tank2_16p_5s(MARRMoT_model):
     """
@@ -121,10 +127,11 @@ class m_38_tank2_16p_5s(MARRMoT_model):
         # stores
         S1, S2, S3, S4, S5 = S
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate(t)  # climate at this step
-        P, Ep, T = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_t1 = capillary_3(k1, sm1, S1, S2, delta_t)

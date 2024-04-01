@@ -1,7 +1,11 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_1, interflow_3, split_1, interception_1,
-                         split_2, infiltration_3, infiltration_7, evap_23, interflow_9)
+from pymarrmot.models.flux.evaporation import evap_1, evap_23
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.split import split_1, split_2
+from pymarrmot.models.flux.infiltration import (infiltration_3, infiltration_7)
+from pymarrmot.models.flux.interflow import interflow_3, interflow_9
 from pymarrmot.models.unit_hydro import (route, uh_4_full, update_uh)
 
 class m_47_IHM19_16p_4s(MARRMoT_model):
@@ -108,12 +112,11 @@ class m_47_IHM19_16p_4s(MARRMoT_model):
         # stores
         S1, S2, S3, S4 = S
 
-        # climate input
-        t = self.t  # this time
-        climate_in = self.input_climate[t, :] # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_ei = evap_1(S1, Ep, delta_t)

@@ -1,9 +1,16 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
+from pymarrmot.models.flux.saturation import saturation_3
+from pymarrmot.models.flux.evaporation import evap_1, evap_3
+from pymarrmot.models.flux.percolation import percolation_2
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.melt import melt_1
+from pymarrmot.models.flux.interception import interception_1
 from pymarrmot.models.unit_hydro import (uh_3_half, route, update_uh)
-from pymarrmot.models.flux import (snowfall_1, rainfall_1, melt_1, 
-                         interception_1, evap_1, saturation_3, evap_3,
-                         percolation_2, split_1, baseflow_1)
 
 class M34FlexIS(MARRMoT_model):
     def __init__(self):
@@ -83,12 +90,11 @@ class M34FlexIS(MARRMoT_model):
         S4 = S[3]
         S5 = S[4]
             
-        # climate input
-        t = self.t                             # this time step
-        climate_in = self.input_climate[t, :]   # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
             
         # fluxes functions
         flux_ps = snowfall_1(P, T, tt)

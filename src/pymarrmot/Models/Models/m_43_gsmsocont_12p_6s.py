@@ -1,8 +1,16 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (snowfall_1, interflow_3, split_1, effective_1,
-                         rainfall_1, melt_1, saturation_9, melt_3, baseflow_1,
-                         infiltration_6, evap_19)
+from pymarrmot.models.flux.snowfall import snowfall_1
+from pymarrmot.models.flux.interflow import interflow_3
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.rainfall import rainfall_1
+from pymarrmot.models.flux.melt import melt_1, melt_3
+from pymarrmot.models.flux.saturation import saturation_9
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.infiltration import infiltration_6
+from pymarrmot.models.flux.evaporation import evap_19
 
 class m_43_gsmsocont_12p_6s(MARRMoT_model):
     """
@@ -98,12 +106,13 @@ class m_43_gsmsocont_12p_6s(MARRMoT_model):
         S4 = S[3]
         S5 = S[4]
         S6 = S[5]
-        # climate input
-        t = self.t                             # this time step
-        climate_in = self.input_climate[t, :]   # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
-        T = climate_in[2]
+        
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
+        
         # fluxes functions
         flux_pice = split_1(fice, P)
         flux_pices = snowfall_1(flux_pice, T, t0)

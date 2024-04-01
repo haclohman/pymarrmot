@@ -1,7 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_21, saturation_14, split_1, saturation_2,
-                         interflow_5, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_21
+from pymarrmot.models.flux.saturation import saturation_14
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.saturation import saturation_2
+from pymarrmot.models.flux.interflow import interflow_5
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class m_28_xinanjiang_12p_4s(MARRMoT_model):
     """
@@ -69,10 +74,11 @@ class m_28_xinanjiang_12p_4s(MARRMoT_model):
         # stores
         S1, S2, S3, S4 = S
 
-        # climate input
-        t = self.t                                                   # this time step
-        climate_in = self.input_climate[t, :]                        # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_rb = split_1(aim, P)

@@ -1,6 +1,11 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import saturation_3, evap_3, percolation_2, split_1, baseflow_1
+from pymarrmot.models.flux.saturation import saturation_3
+from pymarrmot.models.flux.evaporation import evap_3
+from pymarrmot.models.flux.percolation import percolation_2
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.baseflow import baseflow_1
 from pymarrmot.models.unit_hydro import route, uh_3_half, update_uh
 
 class m_21_flexb_9p_3s(MARRMoT_model):
@@ -85,10 +90,11 @@ class m_21_flexb_9p_3s(MARRMoT_model):
         # stores
         S1, S2, S3 = S
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate(t)  # climate at this step
-        P, Ep = climate_in[0], climate_in[1]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_ru = saturation_3(S1, s1max, beta, P)

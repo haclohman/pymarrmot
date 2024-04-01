@@ -1,7 +1,10 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (saturation_4, evap_11, percolation_3,  recharge_2,
-                    baseflow_3)
+from pymarrmot.models.flux.saturation import saturation_4
+from pymarrmot.models.flux.evaporation import evap_11
+from pymarrmot.models.flux.percolation import percolation_3
+from pymarrmot.models.flux.recharge import recharge_2
+from pymarrmot.models.flux.baseflow import baseflow_3
 from pymarrmot.models.unit_hydro import (uh_1_half, uh_2_full, route, update_uh)
 
 class M07_GR4J_4P_2S(MARRMoT_model):
@@ -73,10 +76,12 @@ class M07_GR4J_4P_2S(MARRMoT_model):
         # stores
         S1, S2 = S
 
-        # climate input
-        t = self.t  # this time step
-        P, Ep, T = self.input_climate[t]  # climate at this step
-
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
+        
         # fluxes functions
         flux_pn = max(P - Ep, 0)
         flux_en = max(Ep - P, 0)

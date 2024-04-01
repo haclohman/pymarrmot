@@ -1,6 +1,10 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_7, saturation_2, split_1, baseflow_1)
+from pymarrmot.models.flux.evaporation import evap_7
+from pymarrmot.models.flux.saturation import saturation_2
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.baseflow import baseflow_1
 
 class m_29_hymod_5p_5s(MARRMoT_model):
     """
@@ -53,10 +57,11 @@ class m_29_hymod_5p_5s(MARRMoT_model):
         # stores
         S1, S2, S3, S4, S5 = S
 
-        # climate input
-        t = self.t                                                   # this time step
-        climate_in = self.input_climate[t, :]                        # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        
 
         # fluxes functions
         flux_ea = evap_7(S1, smax, Ep, delta_t)

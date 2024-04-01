@@ -1,7 +1,12 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_13, evap_14, split_1, baseflow_1, effective_1,
-                         saturation_6, infiltration_4, saturation_1)
+from pymarrmot.models.flux.evaporation import evap_13, evap_14
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.saturation import saturation_6, saturation_1
+from pymarrmot.models.flux.infiltration import infiltration_4
 from pymarrmot.models.unit_hydro import (uh_6_gamma, update_uh, route)
 
 class SmarModel(MARRMoT_model):
@@ -93,9 +98,11 @@ class SmarModel(MARRMoT_model):
 
         S1, S2, S3, S4, S5, S6 = S
 
-        t = self.t  # this time step
-        climate_in = self.input_climate(t, :)  # climate at this step
-        P, Ep, T = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         flux_pstar = effective_1(P, Ep)
         flux_estar = effective_1(Ep, P)
@@ -149,4 +156,3 @@ class SmarModel(MARRMoT_model):
 
         uh = update_uh(uh, flux_r1 + flux_r2 + flux_r3star)
         self.uhs = [uh]
-

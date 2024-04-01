@@ -124,7 +124,7 @@ class MARRMoT_model:
         """
         self.store_min = np.zeros((self.numStores, 1))
         self.store_max = np.inf * np.ones((self.numStores, 1))
-        t_end = self.input_climate.shape[0]
+        t_end = self.input_climate['precip'].shape[0]
         self.stores = np.zeros((t_end, self.numStores))
         self.fluxes = np.zeros((t_end, self.numFluxes))
         self.solver_data = {
@@ -184,15 +184,14 @@ class MARRMoT_model:
         solver_opts = self.solver_opts
 
         # Reduce tolerance to a fraction of the smallest store
-        resnorm_tolerance = solver_opts.resnorm_tolerance * min(abs(s_old)) + 1E-5
-
+        resnorm_tolerance = solver_opts['resnorm_tolerance'] * min(abs(s_old)) + 1E-5
         # Create vectors for each solver
         Snew_v = np.zeros((3, self.numStores))
         resnorm_v = np.full(3, np.inf)
         iter_v = np.ones(3, dtype=int)
 
         # Solve using Newton-Raphson
-        tmp_Snew, tmp_fval = nr.NewtonRaphson_from_matlab(self.ODE_approx_IE, s_old, solver_opts.NewtonRaphson)
+        tmp_Snew, tmp_fval = nr.NewtonRaphson_from_matlab(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
         tmp_resnorm = np.sum(tmp_fval**2)
 
         Snew_v[0, :], resnorm_v[0] = tmp_Snew, tmp_resnorm
@@ -328,7 +327,7 @@ class MARRMoT_model:
 
         obj.init_()
 
-        t_end = obj.input_climate.shape[0]
+        t_end = obj.input_climate['precip'].shape[0]
 
         for t in range(t_end):
             obj.t = t

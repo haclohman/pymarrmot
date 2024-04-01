@@ -1,7 +1,14 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (baseflow_7, interflow_3, split_1, effective_1,
-                         evap_1, interception_1, saturation_13, recharge_3, evap_3)
+from pymarrmot.models.flux.baseflow import baseflow_7
+from pymarrmot.models.flux.interflow import interflow_3
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.evaporation import evap_1, evap_3
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.saturation import saturation_13
+from pymarrmot.models.flux.recharge import recharge_3
 
 class m_42_hycymodel_12p_6s(MARRMoT_model):
     """
@@ -110,10 +117,11 @@ class m_42_hycymodel_12p_6s(MARRMoT_model):
         # stores
         S1, S2, S3, S4, S5, S6 = S
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate(t)  # climate at this step
-        P, Ep, T = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_rc = split_1(c, P)

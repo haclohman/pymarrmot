@@ -1,7 +1,14 @@
 import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (phenology_2, evap_7, excess_1, interception_1,
-                         saturation_2, effective_1, saturation_1, percolation_5, baseflow_5)
+from pymarrmot.models.flux.saturation import saturation_1, saturation_2
+from pymarrmot.models.flux.evaporation import evap_7
+from pymarrmot.models.flux.excess_1 import excess_1
+from pymarrmot.models.flux.interception import interception_1
+from pymarrmot.models.flux.percolation import percolation_5
+from pymarrmot.models.flux.baseflow import baseflow_5
+from pymarrmot.models.flux.effective_1 import effective_1
+from pymarrmot.models.flux.phenology import phenology_2
 
 class m_22_vic_10p_3s(MARRMoT_model):
     """
@@ -89,10 +96,11 @@ class m_22_vic_10p_3s(MARRMoT_model):
         # Stores
         S1, S2, S3 = S
 
-        # Climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P, Ep, _ = climate_in
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # Fluxes functions
         aux_imax = phenology_2(ibar, idelta, ishift, self.t, tmax, delta_t)

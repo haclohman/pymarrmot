@@ -1,5 +1,7 @@
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux import (evap_12, split_1, saturation_5)
+from pymarrmot.models.flux.evaporation import evap_12
+from pymarrmot.models.flux.split import split_1
+from pymarrmot.models.flux.saturation import saturation_5
 from pymarrmot.models.unit_hydro import (uh_5_half, uh_8_delay, route, update_uh)
 
 class M_05_IHACRES_7P_1S(MARRMoT_model):
@@ -100,11 +102,11 @@ class M_05_IHACRES_7P_1S(MARRMoT_model):
         # stores
         S1 = S[0]
 
-        # climate input
-        t = self.t  # this time step
-        climate_in = self.input_climate[t, :]  # climate at this step
-        P = climate_in[0]
-        Ep = climate_in[1]
+        # climate input at time t
+        t = self.t
+        P = self.input_climate['precip'][t]
+        Ep = self.input_climate['pet'][t]
+        T = self.input_climate['temp'][t]
 
         # fluxes functions
         flux_ea = evap_12(S1, lp, Ep)

@@ -1,4 +1,3 @@
-
 def evap_1(S, Ep, dt):
     # Flux function
     # Description: Evaporation at the potential rate

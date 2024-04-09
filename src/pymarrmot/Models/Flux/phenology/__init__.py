@@ -1,2 +1,2 @@
-from phenology_1 import phenology_1
-from phenology_2 import phenology_2
+from pymarrmot.models.flux.phenology.phenology_1 import phenology_1
+from pymarrmot.models.flux.phenology.phenology_2 import phenology_2

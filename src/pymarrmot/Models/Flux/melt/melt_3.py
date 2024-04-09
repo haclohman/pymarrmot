@@ -1,4 +1,4 @@
-from functions.Flux_smoothing import smooth_threshold_storage_logistic
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic
 
 def melt_3(p1, p2, T, S1, S2, St, dt, *varargin):
     """

@@ -1,10 +1,4 @@
-
-# Function for capillary rise: linear relation
-# Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
-# This file is part of the Modular Assessment of Rainfall-Runoff Models
-# Toolbox (MARRMoT).
-# MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
-# WARRANTY. See <https://www.gnu.org/licenses/> for details.
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic
 
 def capillary_3(p1, p2, S1, S2, dt):
     # Flux function
@@ -15,4 +9,4 @@ def capillary_3(p1, p2, S1, S2, dt):
     #         S1   - current storage in receiving store [mm]
     #         S2   - current storage in supplying store [mm]
     #         dt   - time step size [d]
-    return min(S2/dt, p1*(1-S1/p2)*smoothThreshold_storage_logistic(S1, p2))
+    return min(S2/dt, p1*(1-S1/p2)*smooth_threshold_storage_logistic(S1, p2))

@@ -6,7 +6,7 @@ from scipy.optimize import fsolve, least_squares
 from scipy.sparse.linalg import spsolve
 from scipy.linalg import solve
 
-from pymarrmot.functions.solver_functions import NewtonRaphsonTake1 as nr
+from pymarrmot.functions.solver_functions import NewtonRaphson as nr
 
 class MARRMoT_model:
     """
@@ -129,7 +129,8 @@ class MARRMoT_model:
         self.fluxes = np.zeros((t_end, self.numFluxes))
         self.solver_data = {
             'resnorm': np.zeros(t_end),
-            'solver': np.zeros(t_end),
+            'solver': np.full(t_end, 'None'),
+            #'solver': np.zeros(t_end),
             'iter': np.zeros(t_end)
         }
         self.init()
@@ -149,12 +150,14 @@ class MARRMoT_model:
             Error in the approximation.
         """
         S = S.ravel()
-        delta_S = self.model_fun(S)
-        if self.t == 1:
+        # model_fun returns the ODEs (changes in storage) and fluxes
+        result = self.model_fun(S)
+        delta_S = result[0]
+        if self.t == 0:
             Sold = self.S0.ravel()
         else:
             Sold = self.stores[self.t - 1, :].ravel()
-        err = (S - Sold) / self.delta_t - delta_S.T
+        err = (S - Sold) / self.delta_t - delta_S
         return err
 
     def solve_stores(self, s_old):
@@ -191,7 +194,15 @@ class MARRMoT_model:
         iter_v = np.ones(3, dtype=int)
 
         # Solve using Newton-Raphson
-        tmp_Snew, tmp_fval = nr.NewtonRaphson_from_matlab(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
+
+        # from scipy.optimize import minimize
+        #tried the following, but am getting tripped up by the Jacobian required argument
+        #     #result = minimize(self.ODE_approx_IE, s_old, method='Newton-CG', jac=self.JacobPattern, options={'maxiter': 1000})
+        # result = minimize(self.ODE_approx_IE, s_old, method='SLSQP', options={'maxiter': 1000})
+        # if not result.success:
+        #     print(result.message)
+
+        tmp_Snew, tmp_fval, exit_flag = nr.NewtonRaphson(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
         tmp_resnorm = np.sum(tmp_fval**2)
 
         Snew_v[0, :], resnorm_v[0] = tmp_Snew, tmp_resnorm
@@ -248,8 +259,8 @@ class MARRMoT_model:
         """
         solver_opts = obj.solver_opts[solverName]
         solve_fun = obj.ODE_approx_IE
-        max_iter = obj.solver_opts.resnorm_maxiter
-        resnorm_tolerance = obj.solver_opts.resnorm_tolerance * min(abs(Sold)) + 1E-5
+        max_iter = obj.solver_opts['resnorm_maxiter']
+        resnorm_tolerance = obj.solver_opts['resnorm_tolerance'] * min(abs(Sold)) + 1E-5
 
         iter_count = 1
         resnorm = resnorm_tolerance + 1
@@ -559,8 +570,8 @@ class MARRMoT_model:
             'resnorm_tolerance': 0.1,  # Root-finding convergence tolerance
             'resnorm_maxiter': 6,      # Maximum number of re-runs used in rerunSolver
             'NewtonRaphson': {'MaxIter': obj.numStores * 10},
-            'JacobPattern': obj.JacobPattern,
-            'MaxFunEvals': 1000,
+            'fsolve': {'JacobPattern': obj.JacobPattern},
+            'lsqnonlin': {'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
         }
 
         # In the original code there were two separate

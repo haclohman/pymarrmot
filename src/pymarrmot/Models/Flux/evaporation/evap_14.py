@@ -1,3 +1,4 @@
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic
 
 def evap_14(p1, p2, Ep, S1, S2, S2min, dt):
     """
@@ -13,5 +14,5 @@ def evap_14(p1, p2, Ep, S1, S2, S2min, dt):
         S2min- threshold for evaporation deactivation [mm]
         dt   - time step size [d]
     """
-    out = min((p1 ** p2) * Ep, S1 / dt) * smoothThreshold_storage_logistic(S2, S2min)
+    out = min((p1 ** p2) * Ep, S1 / dt) * smooth_threshold_storage_logistic(S2, S2min)
     return out

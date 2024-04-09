@@ -1,8 +1,12 @@
 import numpy as np
 
-def NewtonRaphson_from_matlab(fun, x0, options=None):
+def NewtonRaphson(fun, x0, options=None):
     """
     Solve set of non-linear equations using Newton-Raphson method.
+    [X, RESNORM, F, EXITFLAG] = NEWTONRAPHSON(FUN, X0, OPTIONS)
+    FUN is a function handle that returns a vector of residuals equations, F,
+    and takes a vector, x, as its only argument. When the equations are
+    solved by x, then F(x) == zeros(size(F(:), 1)).
 
     Parameters:
     ----------
@@ -21,13 +25,25 @@ def NewtonRaphson_from_matlab(fun, x0, options=None):
         Residuals evaluated at x.
     exitflag : int
         An integer that corresponds to the output conditions.
+        -1 = Jacobian matrix contains NaN or Inf values.
+        0 = Maximum number of iterations reached without convergence.
+        1 = Convergence achieved.
+        2 = May have converged, but X is too close to XOLD
 
-    See also:
+    References:
     ----------
-    OPTIMSET, OPTIMGET, FMINSEARCH, FZERO, FMINBND, FSOLVE, LSQNONLIN
+    https://en.wikipedia.org/wiki/Newton's_method
+    
+    https://en.wikipedia.org/wiki/Newton's_method_in_optimization
+    
+    9.7 Globally Convergent Methods for Nonlinear Systems of Equations 383,
+    Numerical Recipes in C, Second Edition (1992)
     """
+
     # Initialize
+    x0 = np.array(x0).astype(float)
     x0 = np.array(x0).reshape(-1, 1)  # Ensure column vector
+    #x0 = np.array(x0).reshape(-1, 1)  # Ensure column vector
     defaultopt = {'TolX': 1e-12, 'TolFun': 1e-6, 'MaxIter': 1000}
     if options is None:
         options = defaultopt
@@ -69,6 +85,7 @@ def NewtonRaphson_from_matlab(fun, x0, options=None):
                 dx = np.linalg.pinv(J) @ (-F)
             else:
                 dx = -np.linalg.solve(J, F)
+            dx = np.array(dx).reshape(-1, 1) # Ensure column vector
 
             g = F.T @ J
             slope = g @ dx
@@ -79,7 +96,7 @@ def NewtonRaphson_from_matlab(fun, x0, options=None):
         if lambda_ < lambda_min:
             exitflag = 2
             break
-        elif np.any(np.isnan(dx)) or np.any(np.isinf(dx)):
+        if np.any(np.isnan(dx)) or np.any(np.isinf(dx)):
             exitflag = -1
             break
 
@@ -127,43 +144,6 @@ def NewtonRaphson_from_matlab(fun, x0, options=None):
 
     return x.flatten(), F.flatten(), exitflag
 
-def NewtonRaphson_openai(func, x0, options):
-    """
-    Newton-Raphson method for solving nonlinear equations.
-    
-    Parameters:
-    -----------
-    func : callable
-        The function to find the root of.
-    x0 : array_like
-        Initial guess for the solution.
-    options : dict
-        Dictionary containing options for the solver.
-
-    Returns:
-    --------
-    tuple
-        A tuple containing the following:
-            x : ndarray
-                The solution.
-            fval : ndarray
-                The value of the function at the solution.
-    """
-    max_iter = options.max_iter
-    tol = options.tol
-
-    x = x0.copy()
-    for i in range(max_iter):
-        fval = func(x)
-        J = obj.ODE_Jacobian(x)
-        delta_x = solve(J, -fval)
-        x += delta_x
-
-        if np.linalg.norm(delta_x) < tol:
-            break
-
-    return x, fval
-
 def jacobian(fun, x, nf, funx=None):
     """
     Estimate Jacobian matrix.
@@ -190,8 +170,9 @@ def jacobian(fun, x, nf, funx=None):
         funx = fun(x)
     J = np.zeros((nf, nx))
     for n in range(nx):
-        delta = np.zeros_like(x)
-        delta[n] = dx
+        delta = np.zeros(x.shape)
+        # delta = np.zeros_like(x)
+        delta[n,0] = dx
         dF = (fun(x + delta) - funx)
         J[:, n] = dF.flatten() / dx
 

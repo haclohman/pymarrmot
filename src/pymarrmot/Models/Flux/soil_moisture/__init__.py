@@ -1,2 +1,2 @@
-from soilmoisture_1 import soilmoisture_1
-from soilmoisture_2 import soilmoisture_2
+from pymarrmot.models.flux.soil_moisture.soilmoisture_1 import soilmoisture_1
+from pymarrmot.models.flux.soil_moisture.soilmoisture_2 import soilmoisture_2

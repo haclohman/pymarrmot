@@ -1,3 +1,4 @@
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic
 
 def saturation_1(In, S, Smax, *varargin):
     """
@@ -14,10 +15,10 @@ def saturation_1(In, S, Smax, *varargin):
     - out: calculated output
     """
     if len(varargin) == 0:
-        out = In * (1 - smoothThreshold_storage_logistic(S, Smax))
+        out = In * (1 - smooth_threshold_storage_logistic(S, Smax))
     elif len(varargin) == 1:
-        out = In * (1 - smoothThreshold_storage_logistic(S, Smax, varargin[0]))
+        out = In * (1 - smooth_threshold_storage_logistic(S, Smax, varargin[0]))
     elif len(varargin) == 2:
-        out = In * (1 - smoothThreshold_storage_logistic(S, Smax, varargin[0], varargin[1]))
+        out = In * (1 - smooth_threshold_storage_logistic(S, Smax, varargin[0], varargin[1]))
     
     return out

@@ -1,3 +1,4 @@
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic
 
 def saturation_11(p1, p2, S, Smin, Smax, In, *args):
     '''
@@ -22,8 +23,8 @@ def saturation_11(p1, p2, S, Smin, Smax, In, *args):
     '''
 
     if len(args) == 0:
-        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smoothThreshold_storage_logistic(S, Smin))
+        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smooth_threshold_storage_logistic(S, Smin))
     elif len(args) == 1:
-        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smoothThreshold_storage_logistic(S, Smin, args[0]))
+        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smooth_threshold_storage_logistic(S, Smin, args[0]))
     elif len(args) == 2:
-        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smoothThreshold_storage_logistic(S, Smin, args[0], args[1]))
+        return In * min(1, p1 * (max(0, S - Smin) / (Smax - Smin)) ** p2) * (1 - smooth_threshold_storage_logistic(S, Smin, args[0], args[1]))

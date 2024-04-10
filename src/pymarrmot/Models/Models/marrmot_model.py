@@ -231,7 +231,7 @@ class MARRMoT_model:
 
     def rerunSolver(obj, solverName, initGuess, Sold):
         """
-        RERUNSOLVER Restarts a root-finding solver with different starting points.
+        rerunSolver - Restarts a root-finding solver with different starting points.
         
         Parameters:
         -----------

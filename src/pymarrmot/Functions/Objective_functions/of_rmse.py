@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Tuple
-from pymarrmot.functions.objective_functions import check_and_select
+from pymarrmot.functions.objective_functions.check_and_select import check_and_select
 
 def of_rmse(obs: np.array, sim: np.array, idx: np.array = None) -> Tuple[float, np.array]:
     """

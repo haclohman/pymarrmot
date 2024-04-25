@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Tuple
 
-def check_and_select(sim: np.array, obs: np.array, idx: np.array=None) -> Tuple[np.array]:
+def check_and_select(sim: np.array, obs: np.array, idx: np.array=[None]) -> Tuple[np.array]:
     """
     Checks that sim and obs have the same number of elements, then filters them based on the values in idx AND on the steps
     where obs >= 0.
@@ -34,7 +34,7 @@ def check_and_select(sim: np.array, obs: np.array, idx: np.array=None) -> Tuple[
     idx_exists = [i for i in range(len(obs)) if obs[i] >= 0]
 
     # 3. Update those if needed with user-input indices
-    if idx is None:
+    if idx == [None] or len(idx) == 0:
         idx = idx_exists
     else:
         if isinstance(idx, np.ndarray) and idx.size == len(obs):
@@ -46,8 +46,8 @@ def check_and_select(sim: np.array, obs: np.array, idx: np.array=None) -> Tuple[
                              "a logical vector of the same size of Qsim and Qobs, or "
                              "a numeric vector of indices")
 
-    # 4. Filter to only selected indices
+    # 4. Filter array based on indices provided in idx
     obs = obs[idx]
     sim = sim[idx]
 
-    return list(sim), list(obs), list(idx)
+    return np.array(sim), np.array(obs), np.array(idx)

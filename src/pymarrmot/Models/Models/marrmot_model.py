@@ -362,14 +362,17 @@ class MARRMoT_model:
 
         obj.status = 1
 
-    def get_output(obj, *args):
+    def get_output(obj, nargout, *args):
         """
         GET_OUTPUT runs the model exactly like RUN, but output is consistent with current MARRMoT.
 
         Parameters:
         -----------
+        nargout : int
+            number of output arguments.
         *args : array_like, optional
             Additional arguments.
+            
 
         Returns:
         --------
@@ -391,17 +394,24 @@ class MARRMoT_model:
         for fg in obj.FluxGroups:
             idx = np.abs(obj.FluxGroups[fg])
             signs = np.sign(obj.FluxGroups[fg])
-            fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx], axis=1)
+            if idx.size == 1:
+                fluxOutput[fg] = signs * obj.fluxes[:, idx - 1]
+            else:
+                fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx - 1], axis=1)
 
         fluxInternal = {obj.FluxNames[i]: obj.fluxes[:, i] for i in range(obj.numFluxes)}
 
         storeInternal = {obj.StoreNames[i]: obj.stores[:, i] for i in range(obj.numStores)}
 
-        waterBalance = obj.check_waterbalance() if len(args) >= 4 else None
-
-        solverSteps = obj.solver_data if len(args) == 5 else None
-
-        return fluxOutput, fluxInternal, storeInternal, waterBalance, solverSteps
+        if nargout == 4:
+            waterBalance = obj.check_waterbalance()
+            return fluxOutput, fluxInternal, storeInternal, waterBalance
+        elif nargout == 5:
+            waterBalance = obj.check_waterbalance()
+            solverSteps = obj.solver_data
+            return fluxOutput, fluxInternal, storeInternal, waterBalance, solverSteps
+        else:
+            return fluxOutput, fluxInternal, storeInternal
 
     def check_waterbalance(obj, *args):
         """
@@ -420,21 +430,26 @@ class MARRMoT_model:
         if args or not obj.status or obj.status == 0:
             obj.run(*args)
 
-        P = obj.input_climate[:, 0]
+        P = obj.input_climate['precip'][()]
         fg = obj.FluxGroups.keys()
         OutFluxes = np.zeros(len(fg))
         for k in range(len(fg)):
-            idx = np.abs(obj.FluxGroups[fg[k]])
-            signs = np.sign(obj.FluxGroups[fg[k]])
-            OutFluxes[k] = np.sum(np.sum(signs * obj.fluxes[:, idx], 1), 2)
+            idx = np.abs(obj.FluxGroups[list(fg)[k]])
+            signs = np.sign(obj.FluxGroups[list(fg)[k]])
+            OutFluxes[k] = np.sum(signs*obj.fluxes[:,idx-1])
+            # OpenAI interpretation: OutFluxes[k] = np.sum(np.sum(signs * obj.fluxes[:, idx], 1), 2)
         
-        if obj.StoreSigns.size == 0:
+        if obj.StoreSigns is None:
             obj.StoreSigns = np.ones(obj.numStores)
         dS = obj.StoreSigns * (obj.stores[-1] - obj.S0)
-        R = np.sum([np.sum(uh[1]) for uh in obj.uhs], axis=0)
+        if obj.uhs is None:
+            R = np.array([])
+        else:
+            R = np.sum([np.sum(uh[1]) for uh in obj.uhs], axis=0)
 
         out = np.sum(P) - np.sum(OutFluxes) - np.sum(dS) - np.sum(R)
 
+        """ This piece was relevant in Matlab, but not in Python
         print('Total P  =', np.sum(P), 'mm.')
         for k, fg_k in enumerate(fg):
             print('Total', fg_k, '=', -OutFluxes[k], 'mm.')
@@ -448,7 +463,8 @@ class MARRMoT_model:
             print('On route =', -np.sum(R), 'mm.')
 
         print('-------------')
-        print('Water balance =', out, 'mm.')
+        print('Water balance =', out, 'mm.') """
+        
         return out
 
     def get_streamflow(obj, *args):

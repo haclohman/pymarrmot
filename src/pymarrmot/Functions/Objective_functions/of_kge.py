@@ -1,8 +1,8 @@
 import numpy as np
-from pymarrmot.functions.objective_functions import check_and_select
+from pymarrmot.functions.objective_functions.check_and_select import check_and_select
 from typing import Tuple
 
-def of_kge(obs: np.array, sim: np.array, idx: np.array=None, w=None) -> Tuple[float, np.array, np.array, np.array]:
+def of_kge(obs: np.array, sim: np.array, idx: np.array=None, w=None):
     """
     Calculates Kling-Gupta Efficiency of simulated streamflow (Gupta et al, 2009). Ignores time steps with negative flow values.
 
@@ -64,4 +64,4 @@ def of_kge(obs: np.array, sim: np.array, idx: np.array=None, w=None) -> Tuple[fl
     # Calculate value
     val = 1 - np.sqrt((w[0] * (c[0] - 1)) ** 2 + (w[1] * (c[1] - 1)) ** 2 + (w[2] * (c[2] - 1)) ** 2)
 
-    return Tuple[val, c, idx, w]
+    return val, c, idx, w

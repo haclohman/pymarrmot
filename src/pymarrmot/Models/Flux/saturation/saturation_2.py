@@ -12,7 +12,8 @@ def saturation_2(S, Smax, p1, In):
 
     # NOTE: When stores are very slightly below or over their maximum, the exponent can push this function into regions where no feasible solutions exist.
     # The min(max()) combination prevents this from happening.
+    # Matlab: out = (1- min(1,max(0,(1-S./Smax))).^p1) .*In
     
-    out = (1 - S / Smax)**p1 * max(In, 0)
+    out = (1 - min(1, max(0, (1 - S / Smax))) ** p1) * In
     
     return out

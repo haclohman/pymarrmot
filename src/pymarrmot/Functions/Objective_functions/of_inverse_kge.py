@@ -1,8 +1,8 @@
 import numpy as np
-from pymarrmot.functions.objective_functions import check_and_select
+from pymarrmot.functions.objective_functions.check_and_select import check_and_select
 from typing import Tuple
 
-def of_inverse_KGE(obs: np.array, sim: np.array, idx: np.array=None, w: float=None) -> Tuple[float,np.array,np.array,np.array]:
+def of_inverse_kge(obs: np.array, sim: np.array, idx: np.array=None, w: float=None):
     """
     OF_INVERSE_KGE Calculates Kling-Gupta Efficiency of the inverse of simulated streamflow (Gupta et al, 2009),
     intended to capture low flow aspects better (Pushpalatha et al, 2012). Ignores time steps with -999 values.
@@ -20,15 +20,17 @@ def of_inverse_KGE(obs: np.array, sim: np.array, idx: np.array=None, w: float=No
 
     Returns
     -------
-    val : float
-        Objective function value [1x1].
-    c : array
-        Components [r, alpha, beta] [3x1].
-    idx : array
-        Indices used for the calculation.
-    w : array
-        Weights [wr, wa, wb] [3x1].
-
+    tuple
+        Tuple containing:
+        - val : float
+            Objective function value [1x1].
+        - c : list
+            Components [r, alpha, beta] from high and low KGE.
+        - idx : numpy.array, optional
+            Indices used for the calculation.
+        - w : list
+            Weights [wr, wa, wb] from high and low KGE.
+    
     References
     ----------
     Gupta, H. V., Kling, H., Yilmaz, K. K., & Martinez, G. F. (2009).

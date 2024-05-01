@@ -12,21 +12,17 @@ import pandas as pd
 
 
 # 1. Prepare data
-# Load the data
-# precipitation = data_MARRMoT_examples['precipitation']
-# temperature = data_MARRMoT_examples['temperature']
-# potential_evapotranspiration = data_MARRMoT_examples['potential_evapotranspiration']
 df = pd.read_csv('c:/users/ssheeder/repos/pymarrmot/examples/Example_DataSet.csv')
+
 # Create a climatology data input structure
 input_climatology = {
-    'dates': df['Date'].to_numpy(),      # Daily data: date in 'yyyy-mm-dd' format
+    'dates': df['Date'].to_numpy(),      # Daily data: date in ??? format
     'precip': df['Precip'].to_numpy(),   # Daily data: P rate [mm/d]
     'temp': df['Temp'].to_numpy(),       # Daily data: mean T [degree C]
     'pet': df['PET'].to_numpy(),         # Daily data: Ep rate [mm/d]
 }
 
 # 2. Define the model settings
-# model = 'm_29_hymod_5p_5s'
 
 # Parameter values
 input_theta = np.array([35,   # Soil moisture depth [mm]
@@ -49,7 +45,6 @@ input_solver_opts = {
 }
 
 # 4. Create a model object
-# m = feval(model) - original code
 m = m_29_hymod_5p_5s()
 
 # Set up the model
@@ -63,9 +58,6 @@ m.S0 = input_s0
 (output_ex, output_in, output_ss, output_waterbalance) = m.get_output(nargout=4)
 
 # 6. Analyze the outputs
-# Prepare a time vector
-#t = data_MARRMoT_examples['dates_as_datenum']
-#t = df['Date'].to_xarray
 
 # Compare simulated and observed streamflow
 tmp_obs = df['Q'].to_numpy()

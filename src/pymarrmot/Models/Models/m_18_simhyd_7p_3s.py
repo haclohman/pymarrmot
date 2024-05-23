@@ -30,6 +30,7 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
         """
         creator method
         """
+        super().__init__()
         self.numStores = 3  # number of model stores
         self.numFluxes = 10  # number of model fluxes
         self.numParams = 7  # number of model parameters

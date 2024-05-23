@@ -1,8 +1,9 @@
+import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.evaporation import evap_7
 from pymarrmot.models.flux.saturation import saturation_1
 
-class M_01_Collie1_1p_1s(MARRMoT_model):
+class m_01_collie1_1p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Collie River 1 (traditional bucket model)
     Model reference:
@@ -12,11 +13,16 @@ class M_01_Collie1_1p_1s(MARRMoT_model):
     174–198. doi: 10.1016/S0022-1694(01)497-6.
     """
     def __init__(self):
+        super().__init__()
         self.numStores = 1                  # number of model stores
         self.numFluxes = 2                  # number of model fluxes
         self.numParams = 1
         self.JacobPattern = [1]             # Jacobian matrix of model store ODEs
-        self.parRanges = [1, 2000]          # Smax [mm]
+        #self.parRanges = [1, 2000]          # Smax [mm]
+
+        self.parRanges = np.array([[1, 2000]])   # Smax, Maximum soil moisture storage [mm]
+                                                              
+
         self.StoreNames = ["S1"]            # Names for the stores
         self.FluxNames = ["ea", "qse"]      # Names for the fluxes
         self.FluxGroups = {'Ea': 1, 'Q': 2} # Index or indices of fluxes to add to Actual ET and Streamflow
@@ -47,7 +53,7 @@ class M_01_Collie1_1p_1s(MARRMoT_model):
         dS1 = P - flux_ea - flux_qse
         
         # outputs
-        dS = [dS1]
+        dS = np.array([dS1])
         fluxes = [flux_ea, flux_qse]
         return dS, fluxes
 

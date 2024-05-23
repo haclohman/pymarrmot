@@ -1,12 +1,12 @@
 import numpy as np
 import numbers
-from scipy import optimize
-from scipy.sparse import csr_matrix
-from scipy.optimize import fsolve, least_squares
-from scipy.sparse.linalg import spsolve
-from scipy.linalg import solve
 
+from scipy.optimize import fsolve, least_squares
+
+import pymarrmot.functions.objective_functions as objective_functions
 from pymarrmot.functions.solver_functions import NewtonRaphson as nr
+
+import cma as cma
 
 class MARRMoT_model:
     """
@@ -484,7 +484,9 @@ class MARRMoT_model:
         if args or not obj.status or obj.status == 0:
             obj.run(*args)
 
-        Q = np.sum(obj.fluxes[:, obj.FluxGroups['Q']], axis=1)
+        q = [x - 1 for x in obj.FluxGroups['Q']]
+        Q = np.sum(obj.fluxes[:,q], axis=1)
+        #Q = np.sum(obj.fluxes[:, obj.FluxGroups['Q']], axis=1)
         return Q
         
     def calibrate(obj, Q_obs, cal_idx, optim_fun, par_ini=None, optim_opts=None, of_name=None,
@@ -527,11 +529,15 @@ class MARRMoT_model:
         output : dict
             Output, see the documentation of the optimization function for detail.
         """
-        if (not obj.input_climate) or (not obj.delta_t) or (not obj.S0) or (not obj.solver_opts):
+
+        
+        
+        if (obj.input_climate is None) or (obj.delta_t is None) or (obj.S0 is None) or (obj.solver_opts is None):
             raise ValueError('input_climate, delta_t, S0, and solver_opts attributes must be specified before calling calibrate.')
 
-        if not cal_idx:
-            cal_idx = np.arange(len(Q_obs)) + 1
+        # if the list of timesteps to use for calibration is empty, use all timesteps
+        if cal_idx is None:
+            cal_idx = np.arange(1,len(Q_obs)+1)
 
         if display is None:
             display = True
@@ -541,13 +547,11 @@ class MARRMoT_model:
         if isinstance(cal_idx, list):
             cal_idx = sorted(cal_idx)
 
-        cal_idx_str = ', '.join(map(str, cal_idx))
-
         if display:
             print('---')
             print(f'Starting calibration of model {type(obj)}.')
             print(f'Simulation will run for timesteps 1-{max(cal_idx)}.')
-            print(f'Objective function {of_name} will be calculated in time steps {cal_idx_str}.')
+            print(f'Objective function {of_name} will be calculated in time steps {cal_idx[0]} through {cal_idx[len(cal_idx)-1]}.')
             print(f'The optimiser {optim_fun} will be used to optimise the objective function.')
             print('Options passed to the optimiser:')
             print(optim_opts)
@@ -555,23 +559,36 @@ class MARRMoT_model:
             print('---')
 
         input_climate_all = obj.input_climate.copy()
-        obj.input_climate = input_climate_all[:max(cal_idx)]
+
+        # Use the data from the start to the last value of cal_idx to run the model
+        obj.input_climate.clear()
+        obj.input_climate['dates'] = input_climate_all['dates'][0:max(cal_idx)]
+        obj.input_climate['precip'] = input_climate_all['precip'][0:max(cal_idx)]
+        obj.input_climate['temp'] = input_climate_all['temp'][0:max(cal_idx)]
+        obj.input_climate['pet'] = input_climate_all['pet'][0:max(cal_idx)]
         Q_obs = Q_obs[:max(cal_idx)]
 
         if par_ini is None:
             par_ini = np.mean(obj.parRanges, axis=1)
 
+        # Helper function to calculate fitness given a set of parameters
         def fitness_fun(par):
-            Q_sim = obj.get_streamflow(par=par)
-            return (-1) ** inverse_flag * of_name(Q_obs, Q_sim, cal_idx, *args)
+            Q_sim = obj.get_streamflow(par)
+            obj_func = getattr(objective_functions, of_name)
+            result = obj_func(Q_obs, Q_sim, cal_idx, *args)
+            if inverse_flag:
+                fitness = (-1) * result[0]
+            else:
+                fitness = result[0]    
+            return fitness
 
-        [par_opt, of_cal, stopflag, output] = optim_fun(fitness_fun, par_ini, **optim_opts)
+        #Documentation states, to provide sigma values for each parameter, specify sigma = 1, then CMA_stds as multipliers for each parameter
+        xopt, es = cma.fmin2(fitness_fun, par_ini, 1, {'CMA_stds': optim_opts['insigma'], 'bounds': [optim_opts['LBounds'], optim_opts['UBounds']]})
 
-        of_cal = (-1) ** inverse_flag * of_cal
+        obj.input_climate.clear()
+        obj.input_climate = input_climate_all.copy()
 
-        obj.input_climate = input_climate_all
-
-        return par_opt, of_cal, stopflag, output
+        return es.best.x, es.best.f, es.stop(), es.result
 
     def default_solver_opts(obj):
         """

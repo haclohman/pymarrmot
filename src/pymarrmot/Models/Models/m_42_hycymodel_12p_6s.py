@@ -29,6 +29,7 @@ class m_42_hycymodel_12p_6s(MARRMoT_model):
         """
         Creator method.
         """
+        super().__init__()
         self.numStores = 6  # number of model stores
         self.numFluxes = 18  # number of model fluxes
         self.numParams = 12
@@ -152,7 +153,7 @@ class m_42_hycymodel_12p_6s(MARRMoT_model):
         dS6 = flux_rc - flux_qc
 
         # outputs
-        dS = [dS1, dS2, dS3, dS4, dS5, dS6]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5, dS6])
         fluxes = [flux_rc, flux_rg, flux_eic, flux_qie, flux_qis, flux_rt,
                   flux_eis, flux_rs, flux_rn, flux_esu, flux_re, flux_qin,
                   flux_esb, flux_qb, flux_qh, flux_qc, flux_ec, flux_qt]

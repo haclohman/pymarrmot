@@ -1,3 +1,4 @@
+import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.evaporation import (evap_7, evap_3)
 from pymarrmot.models.flux.saturation import saturation_1
@@ -85,7 +86,7 @@ class m_03_collie2_4p_1s(MARRMoT_model):
 
         dS1 = P - flux_eb - flux_ev - flux_qse - flux_qss
 
-        dS = [dS1]
+        dS = np.array([dS1])
         fluxes = [flux_eb, flux_ev, flux_qse, flux_qss]
 
         return dS, fluxes

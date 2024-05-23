@@ -38,6 +38,7 @@ class M07_GR4J_4P_2S(MARRMoT_model):
         """
         INITialisation function
         """
+        super().__init__()
         theta = self.theta
         delta_t = self.delta_t
         x1 = theta[0]  # Maximum soil moisture storage [mm]
@@ -102,7 +103,7 @@ class M07_GR4J_4P_2S(MARRMoT_model):
         dS2 = flux_q9 + flux_fr - flux_qr
 
         # outputs
-        dS = [dS1, dS2]
+        dS = np.array([dS1, dS2])
         fluxes = [flux_pn, flux_en, flux_ef, flux_ps, flux_es,
                   flux_perc, flux_q9, flux_q1, flux_fr, flux_fq,
                   flux_qr, flux_qt, flux_ex]

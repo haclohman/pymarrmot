@@ -8,4 +8,6 @@ def recharge_5(p1, p2, S1, S2):
     #            S1 - current storage in S1 [mm]
     #            S2 - current storage in S1 [mm]
     
-    return p1 * S1 * (1 - min(1, S2 / p2))
+    out = p1 * S1 * (1 - min(1, S2 / p2))
+    
+    return out

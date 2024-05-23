@@ -100,7 +100,7 @@ class M30_MOPEX2_7P_5S(MARRMoT_model):
         dS5 = flux_q2u - flux_qs
 
         # outputs
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_ps, flux_pr, flux_qn, flux_et1, flux_q1f,
                   flux_qw, flux_et2, flux_q2u, flux_qf, flux_qs]
 

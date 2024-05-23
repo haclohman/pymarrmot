@@ -134,7 +134,7 @@ class SmarModel(MARRMoT_model):
         dS6 = flux_rg - flux_qg
 
         # outputs
-        dS = [dS1, dS2, dS3, dS4, dS5, dS6]
+        dS = np.arry([dS1, dS2, dS3, dS4, dS5, dS6])
         fluxes = [flux_pstar, flux_estar, flux_evap, flux_r1, flux_i,
                   flux_r2, flux_e1, flux_e2, flux_e3, flux_e4,
                   flux_e5, flux_q1, flux_q2, flux_q3, flux_q4,

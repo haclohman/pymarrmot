@@ -17,6 +17,7 @@ class M06Alpine1_4p_2s(MARRMoT_model):
         """
         creator method
         """
+        super().__init__()
         self.numStores = 2  # number of model stores
         self.numFluxes = 6  # number of model fluxes
         self.numParams = 4

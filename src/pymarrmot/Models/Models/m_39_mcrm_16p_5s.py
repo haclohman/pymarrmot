@@ -140,7 +140,7 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
         dS4 = flux_uib - flux_uob - flux_qic
         dS5 = flux_uob - flux_qoc
 
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_ec, flux_qt, flux_qr, flux_er,
                   flux_qn, flux_qd, flux_qp, flux_qb,
                   flux_uib, flux_uob, flux_qic, flux_qoc]

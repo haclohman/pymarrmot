@@ -21,6 +21,7 @@ class m_38_tank2_16p_5s(MARRMoT_model):
         """
         creator method
         """
+        super().__init__()
         self.num_stores = 5  # number of model stores
         self.num_fluxes = 14  # number of model fluxes
         self.num_params = 16
@@ -157,7 +158,7 @@ class m_38_tank2_16p_5s(MARRMoT_model):
         dS5 = flux_t2
 
         # outputs
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_t1, flux_t2,
                   flux_y1, flux_y2, flux_y3, flux_y4, flux_y5,
                   flux_e1, flux_e2, flux_e3, flux_e4,

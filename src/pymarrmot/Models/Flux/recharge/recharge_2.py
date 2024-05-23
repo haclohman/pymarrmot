@@ -8,4 +8,6 @@ def recharge_2(p1, S, Smax, flux):
     #            Smax - maximum contributing storage [mm]
     #            flux - incoming flux [mm/d]
     
-    return flux * ((max(S, 0) / Smax) ** p1)
+    out = flux * ((max(S, 0) / Smax) ** p1)
+    
+    return out

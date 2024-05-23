@@ -39,6 +39,7 @@ class m_44_echo_16p_6s(MARRMoT_model):
         """
         creator method
         """
+        super().__init__()
         self.aux_theta = None
 
         self.numStores = 6
@@ -150,7 +151,7 @@ class m_44_echo_16p_6s(MARRMoT_model):
         dS4 = flux_fi - flux_et - flux_rd - flux_l
         dS5 = flux_lf - flux_rf
         dS6 = flux_ls - flux_rs
-        dS = [dS1, dS2, dS3, dS4, dS5, dS6]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5, dS6])
         fluxes = [flux_ei, flux_pn, flux_ps, flux_pr, flux_ms,
                   flux_fs, flux_gs, flux_mw, flux_ew, flux_eq,
                   flux_rh, flux_eps, flux_et, flux_fi, flux_rd,

@@ -1,7 +1,8 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from models.unit_hydro import(uh_4_full, update_uh)
+from models.unit_hydro.uh_4_full import(uh_4_full)
+from models.unit_hydro.update_uh import(update_uh)
 
 class m_37_hbv_15p_5s(MARRMoT_model):
     """
@@ -24,6 +25,7 @@ class m_37_hbv_15p_5s(MARRMoT_model):
         """
         Creator method
         """
+        super().__init__()
         self.num_stores = 5  # number of model stores
         self.num_fluxes = 13  # number of model fluxes
         self.num_params = 15

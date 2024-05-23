@@ -1,10 +1,10 @@
 import numpy as np
 from pymarrmot.functions.objective_functions.check_and_select import check_and_select
 from pymarrmot.functions.objective_functions.of_kge import of_kge
-from pymarrmot.functions.objective_functions.of_mean_hilo_root5_kge import of_root5_kge
+from pymarrmot.functions.objective_functions.of_root5_kge import of_root5_kge
 from typing import Tuple
 
-def of_mean_hilo_root5_KGE(obs: np.array, sim: np.array, idx: np.array=None, w: np.array=None) -> Tuple[float, np.array, np.array, np.array]:
+def of_mean_hilo_root5_kge(obs: np.array, sim: np.array, idx: np.array=None, w: np.array=None) -> Tuple[float, np.array, np.array, np.array]:
     """
     Calculates the average Kling-Gupta Efficiency of the untransformed and fifth root of streamflow
     (Gupta et al., 2009) of the untransformed and fifth root (Chiew et al., 1993) of

@@ -56,6 +56,7 @@ class m_15_plateau_8p_2s(MARRMoT_model):
         """
         INITialisation function
         """
+        super().__init__()
         # parameters
         theta = self.theta
         delta_t = self.delta_t

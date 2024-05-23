@@ -31,6 +31,7 @@ class m_41_nam_10p_6s(MARRMoT_model):
         """
         Creator method
         """
+        super().__init__()
         self.numStores = 6  # number of model stores
         self.numFluxes = 14  # number of model fluxes
         self.numParams = 10

@@ -1,3 +1,5 @@
+import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.snowfall import snowfall_1
 from pymarrmot.models.flux.rainfall import rainfall_1
@@ -112,7 +114,7 @@ class M32Mopex410p5s(MARRMoT_model):
         dS5 = flux_q2u - flux_qs
 
         # Outputs
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_ps, flux_pr, flux_qn, flux_et1,
                   flux_i, flux_q1f, flux_qw, flux_et2,
                   flux_q2f, flux_q2u, flux_qf, flux_qs]

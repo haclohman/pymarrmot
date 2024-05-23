@@ -31,6 +31,7 @@ class m_17_penman_4p_3s(MARRMoT_model):
         """
         creator method
         """
+        super().__init__()
         self.numStores = 3  # number of model stores
         self.numFluxes = 7  # number of model fluxes
         self.numParams = 4

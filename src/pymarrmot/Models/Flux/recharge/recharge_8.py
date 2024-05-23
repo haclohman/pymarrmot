@@ -9,5 +9,7 @@ def recharge_8(p1, S, Smax, p2, dt):
     #               Smax - maximum contributing storage [mm]
     #               p2   - maximum flux rate [mm/d]
     #               dt   - time step size [d]
+    
     out = min(p2*((max(S,0)/Smax)**p1),max(S/dt,0))
+    
     return out

@@ -23,6 +23,7 @@ class m_21_flexb_9p_3s(MARRMoT_model):
         """
         Creator method
         """
+        super().__init__()
         self.numStores = 3  # number of model stores
         self.numFluxes = 9  # number of model fluxes
         self.numParams = 9  # number of model parameters

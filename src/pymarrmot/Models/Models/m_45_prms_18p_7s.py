@@ -174,11 +174,11 @@ class M45Prms18p7s(MARRMoT_model):
         dS7 = flux_sep + flux_gad - flux_bas - flux_snk
         # outputs
         dS = np.array([dS1, dS2, dS3, dS4, dS5, dS6, dS7])
-        fluxes = np.array([flux_ps, flux_pr, flux_pim, flux_psm, flux_pby,
-                        flux_pin, flux_ptf, flux_m, flux_mim, flux_msm,
-                        flux_sas, flux_sro, flux_inf, flux_pc, flux_excs,
-                        flux_qres, flux_sep, flux_gad, flux_ras, flux_bas,
-                        flux_snk, flux_ein, flux_eim, flux_ea, flux_et])
+        fluxes = [flux_ps, flux_pr, flux_pim, flux_psm, flux_pby,
+                  flux_pin, flux_ptf, flux_m, flux_mim, flux_msm,
+                  flux_sas, flux_sro, flux_inf, flux_pc, flux_excs,
+                  flux_qres, flux_sep, flux_gad, flux_ras, flux_bas,
+                  flux_snk, flux_ein, flux_eim, flux_ea, flux_et]
         return dS, fluxes
 
     def step(self):

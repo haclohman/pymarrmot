@@ -1,3 +1,4 @@
+import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.interception import interception_2
 from pymarrmot.models.flux.evaporation import evap_1
@@ -11,6 +12,7 @@ class M_02_Wetland_4p_1s(MARRMoT_model):
     Savenije, H. H. G. (2010). “Topography driven conceptual modelling (FLEX-Topo).” Hydrology and Earth System Sciences, 14(12), 2681–2692. https://doi.org/10.5194/hess-14-2681-2010
     """
     def __init__(self):
+        super().__init__()
         self.num_stores = 1  # number of model stores
         self.num_fluxes = 5  # number of model fluxes
         self.num_params = 4
@@ -52,7 +54,7 @@ class M_02_Wetland_4p_1s(MARRMoT_model):
         # stores ODEs
         dS1 = flux_pe - flux_ew - flux_qwsof - flux_qwgw
         # outputs
-        dS = [dS1]
+        dS = np.array([dS1])
         fluxes = [flux_pe, flux_ei, flux_ew, flux_qwsof, flux_qwgw]
         return dS, fluxes
 

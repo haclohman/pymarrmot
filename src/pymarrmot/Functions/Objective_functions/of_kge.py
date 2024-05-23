@@ -55,8 +55,8 @@ def of_kge(obs: np.array, sim: np.array, idx: np.array=None, w=None):
     if w is None:
         w = w_default
     else:
-        if not (w.size == 3 and np.ndim(w) == 1):
-            raise ValueError('Weights should be a 3x1 or 1x3 vector.')
+        if not (len(w) == 3 and np.ndim(w) == 1):
+            raise ValueError('Weights should be a 1x3 vector.')
 
     # Calculate components
     c = np.array([np.corrcoef(obs, sim)[0, 1], np.std(sim) / np.std(obs), np.mean(sim) / np.mean(obs)])

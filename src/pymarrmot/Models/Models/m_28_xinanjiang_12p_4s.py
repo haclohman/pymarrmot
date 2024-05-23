@@ -17,6 +17,7 @@ class m_28_xinanjiang_12p_4s(MARRMoT_model):
         """
         Creator method.
         """
+        super().__init__()
         self.numStores = 4                                          # number of model stores
         self.numFluxes = 10                                         # number of model fluxes
         self.numParams = 12

@@ -1,3 +1,4 @@
+import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.evaporation import evap_12
 from pymarrmot.models.flux.split import split_1
@@ -121,7 +122,7 @@ class M_05_IHACRES_7P_1S(MARRMoT_model):
         dS1 = -P + flux_ea + flux_u
 
         # outputs
-        dS = dS1
+        dS = np.array([dS1])
         fluxes = [flux_ea, flux_u, flux_uq, flux_us, flux_xq, flux_xs, flux_xt]
 
         return dS, fluxes

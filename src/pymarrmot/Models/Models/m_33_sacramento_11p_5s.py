@@ -32,6 +32,7 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
     Beach, CA, (1), 103�106."""
     
     def __init__(self):
+        super().__init__()
         self.theta_derived = None
 
         self.numStores = 5
@@ -139,7 +140,7 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
         dS4 = flux_twexlp + flux_pcfwp - flux_rlp   - flux_qbfp
         dS5 = flux_twexls + flux_pcfws - flux_rls   - flux_qbfs
 
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_qdir, flux_peff, flux_ru, flux_euztw, flux_twexu,
                   flux_qsur, flux_qint, flux_euzfw, flux_pc, flux_pctw,
                   flux_elztw, flux_twexl, flux_twexlp, flux_twexls, flux_pcfwp,

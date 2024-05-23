@@ -68,7 +68,7 @@ class M08_US1_5P_2S(MARRMoT_model):
         dS2 = flux_rg + flux_se - flux_esatveg - flux_esatbs - flux_qse - flux_qss
 
         # outputs
-        dS = [dS1, dS2]
+        dS = np.array([dS1, dS2])
         fluxes = [flux_eusei, flux_eusveg, flux_eusbs,
                   flux_esatveg, flux_esatbs, flux_rg,
                   flux_se, flux_qse, flux_qss]

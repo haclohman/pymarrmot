@@ -163,7 +163,7 @@ class MClassic12p8s(MARRMoT_model):
         dS8 = flux_pie - flux_u
 
         # Outputs
-        dS = [dS1, dS2, dS3, dS4, dS5, dS6, dS7, dS8]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5, dS6, dS7, dS8])
         fluxes = [flux_pp, flux_ps, flux_pi, flux_epx, flux_ppx,
                   flux_epy, flux_ppe, flux_q, flux_psd, flux_psi,
                   flux_esx, flux_psx, flux_esy, flux_pse, flux_psq,

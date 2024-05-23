@@ -11,4 +11,5 @@ def recharge_6(p1, p2, S, dt):
     #               dt   - time step size [d]
 
     out = min(max(S/dt, 0), p1 * max(S, 0)**p2)
+    
     return out

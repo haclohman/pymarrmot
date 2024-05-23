@@ -7,4 +7,5 @@ def recharge_7(p1, fin):
     :param fin: incoming flux [mm/d]
     :return: minimum of p1 and fin
     '''
-    return min(p1, fin)
+    out = min(p1, fin)
+    return out

@@ -2,7 +2,7 @@ import numpy as np
 from pymarrmot.functions.objective_functions.check_and_select import check_and_select
 from typing import Tuple
 
-def of_inverse_NSE(obs: np.array, sim: np.array, idx: np.array=None) -> Tuple[float, np.array]:
+def of_inverse_nse(obs: np.array, sim: np.array, idx: np.array=None) -> Tuple[float, np.array]:
     """
     Calculates the Nash-Sutcliffe Efficiency (Nash & Sutcliffe, 1970) of the log of simulated streamflow.
     Ignores time steps with negative flow values. Adds a constant e of 1/100 of mean(obs) to avoid issues with zero

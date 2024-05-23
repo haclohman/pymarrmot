@@ -23,6 +23,7 @@ class m_19_australia_8p_3s(MARRMoT_model):
         """
         Creator method
         """
+        super().__init__()
         self.numStores = 3  # number of model stores
         self.numFluxes = 8  # number of model fluxes
         self.numParams = 8  # number of model parameters

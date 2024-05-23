@@ -43,7 +43,6 @@ def NewtonRaphson(fun, x0, options=None):
     # Initialize
     x0 = np.array(x0).astype(float)
     x0 = np.array(x0).reshape(-1, 1)  # Ensure column vector
-    #x0 = np.array(x0).reshape(-1, 1)  # Ensure column vector
     defaultopt = {'TolX': 1e-12, 'TolFun': 1e-6, 'MaxIter': 1000}
     if options is None:
         options = defaultopt

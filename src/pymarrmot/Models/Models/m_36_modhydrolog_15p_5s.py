@@ -1,3 +1,5 @@
+import numpy as np
+
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
 from pymarrmot.models.flux.evaporation import evap_1, evap_2
 from pymarrmot.models.flux.interception import interception_1
@@ -146,7 +148,7 @@ class M36Modhydrolog155s(MARRMoT_model):
         dS5 = flux_SRUN + flux_INT + flux_FLOW - flux_Q
 
         # outputs
-        dS = [dS1, dS2, dS3, dS4, dS5]
+        dS = np.array([dS1, dS2, dS3, dS4, dS5])
         fluxes = [flux_Ei, flux_EXC, flux_INF, flux_INT,
                   flux_REC, flux_SMF, flux_Et, flux_GWF,
                   flux_TRAP, flux_Ed, flux_DINF, flux_SEEP,

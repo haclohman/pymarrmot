@@ -133,6 +133,9 @@ m.input_climate = input_climatology
 m.solver_opts = input_solver_opts
 m.S0 = input_s0
 
+##Debug - Remove
+par_ini = np.array([2.17378236e+02, 2.66901321e-03, 1.24947658e-01, 9.86336592e-01, 9.78946001e-01])
+
 par_opt, of_cal, stopflag, output = m.calibrate(
     Q_obs,  # observed streamflow
     cal_idx,  # timesteps to use for model calibration

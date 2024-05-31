@@ -193,18 +193,13 @@ class MARRMoT_model:
         resnorm_v = np.full(3, np.inf)
         iter_v = np.ones(3, dtype=int)
 
-        # Solve using Newton-Raphson
-
-        # from scipy.optimize import minimize
-        #tried the following, but am getting tripped up by the Jacobian required argument
-        #     #result = minimize(self.ODE_approx_IE, s_old, method='Newton-CG', jac=self.JacobPattern, options={'maxiter': 1000})
-        # result = minimize(self.ODE_approx_IE, s_old, method='SLSQP', options={'maxiter': 1000})
-        # if not result.success:
-        #     print(result.message)
-
         tmp_Snew, tmp_fval, exit_flag = nr.NewtonRaphson(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
+        if(tmp_Snew<self.store_min.flatten()).any() or (tmp_Snew > self.store_max.flatten()).any():
+            tmp_Snew = np.max([tmp_Snew, self.store_min.flatten()], axis=0)
+            tmp_Snew = np.min([tmp_Snew, self.store_max.flatten()], axis=0)
+            tmp_fval = self.ODE_approx_IE(tmp_Snew)
+        
         tmp_resnorm = np.sum(tmp_fval**2)
-
         Snew_v[0, :], resnorm_v[0] = tmp_Snew, tmp_resnorm
 
         # If NewtonRaphson doesn't find a good enough solution, run fsolve
@@ -230,6 +225,99 @@ class MARRMoT_model:
         return Snew, resnorm, solver, iter
 
     def rerunSolver(obj, solverName, initGuess, Sold):
+        '''
+        rerunSolver - Restarts a root-finding solver with different starting points.
+        
+        Parameters:
+        -----------
+        obj : object
+            Instance of the class containing solver options.
+        solverName : str
+            Name of the solver to be used ('fsolve' or 'lsqnonlin').
+        initGuess : array_like
+            Initial guess for the solution.
+        Sold : array_like
+            Array of shape (numStores,) containing the previous storage values.
+
+        Returns:
+        --------
+        tuple
+            A tuple containing the following:
+                Snew : ndarray
+                    Array of shape (numStores,) containing the new storage values.
+                fval : ndarray
+                    The value of the function at the solution.
+                stopflag : int
+                    Flag indicating the reason for stopping the solver (0 for iteration count exceeded, 1 for normal function run).
+                stopiter : int
+                    Number of iterations taken by the solver.
+        '''
+        solver_opts = obj.solver_opts[solverName]
+        solve_fun = obj.ODE_approx_IE
+        max_iter = obj.solver_opts['resnorm_maxiter']
+        resnorm_tolerance = obj.solver_opts['resnorm_tolerance'] * min(abs(Sold)) + 1E-5
+
+        iter_count = 1
+        resnorm = resnorm_tolerance + 1
+        numStores = obj.numStores
+        stopflag = 1
+        Snew = -np.ones(numStores)
+        
+        Snew_v = np.zeros((numStores, max_iter))
+        fval_v = np.full((numStores, max_iter), np.inf)
+        resnorm_v = np.full(max_iter, np.inf)
+
+        while resnorm > resnorm_tolerance:
+            if iter_count == 1:
+                x0 = initGuess
+            elif iter_count == 2:
+                x0 = Sold
+            elif iter_count == 3:
+                x0 = np.maximum(-2 * 10**4, obj.store_min.flatten())
+            elif iter_count == 4:
+                x0 = np.minimum(2 * 10**4, obj.store_max.flatten())
+            else:
+                x0 = np.maximum(0, Sold + np.random.randn(numStores) * Sold / 10)
+
+            print(f'{iter_count}.x0={x0}')
+            if solverName.lower() == 'fsolve':
+                Snew_tmp, info_dict, ier, mesg = fsolve(solve_fun, x0, full_output = True)
+                fval_v[:,iter_count-1] = info_dict['fvec']
+                if(Snew_tmp<obj.store_min.flatten()).any() or (Snew_tmp > obj.store_max.flatten()).any():
+                    Snew_tmp = np.max([Snew_tmp, obj.store_min.flatten()], axis=0)
+                    Snew_tmp = np.min([Snew_tmp, obj.store_max.flatten()], axis=0)
+                    fval_v[:, iter_count - 1] = solve_fun(Snew_tmp)
+                Snew_v[:,iter_count-1] = Snew_tmp
+               
+            elif solverName.lower() == 'lsqnonlin':
+                solver_opts2 = {}
+                solver_opts2['max_nfev'] = solver_opts['MaxFunEvals']
+
+                res = least_squares(solve_fun, x0, bounds=(obj.store_min.flatten(), obj.store_max.flatten()), method='trf', **solver_opts2)
+                print(f'!!!Least Squares. Result = {res.x}')
+                Snew_v[:, iter_count - 1] = res.x
+                fval_v[:, iter_count - 1] = res.fun
+                stopflag = res.status
+            else:
+                raise ValueError("Only fsolve and lsqnonlin are supported.")
+
+            resnorm_v[iter_count - 1] = np.sum(fval_v[:, iter_count - 1]**2)
+            min_resnorm_idx = np.argmin(resnorm_v)
+            resnorm = resnorm_v[min_resnorm_idx]
+            fval = fval_v[:, min_resnorm_idx]
+            Snew = Snew_v[:, min_resnorm_idx]
+
+            if iter_count >= max_iter:
+                ##Stopflag = 5 indicates that rerun solver iterations exceeds the max_iter criteria
+                ##By using 5 we reserve the -1 to 4 values returned by the least squares solver
+                stopflag = 5
+                break
+
+            iter_count += 1
+
+        return Snew, fval, stopflag, iter_count
+
+    def rerunSolver_MatLab(obj, solverName, initGuess, Sold):
         """
         rerunSolver - Restarts a root-finding solver with different starting points.
         
@@ -285,7 +373,8 @@ class MARRMoT_model:
                 x0 = np.maximum(0, Sold + np.random.randn(numStores) * Sold / 10)
 
             if solverName.lower() == 'fsolve':
-                Snew_v[:, iter_count - 1], fval_v[:, iter_count - 1], _, stopflag = fsolve(solve_fun, x0, **solver_opts)
+                Snew_v, info_dict = fsolve(solve_fun, x0)
+                ##Snew_v[:, iter_count - 1], fval_v[:, iter_count - 1], _, stopflag = fsolve(solve_fun, x0)
             elif solverName.lower() == 'lsqnonlin':
                 res = least_squares(solve_fun, x0, bounds=(obj.store_min, np.inf), method='trf', **solver_opts)
                 Snew_v[:, iter_count - 1] = res.x
@@ -467,7 +556,7 @@ class MARRMoT_model:
         
         return out
 
-    def get_streamflow(obj, *args):
+    def get_streamflow(obj, pars):
         """
         GET_STREAMFLOW only returns the streamflow, runs the model if it hadn't run already.
 
@@ -481,8 +570,8 @@ class MARRMoT_model:
         Q : array_like
             Streamflow values.
         """
-        if args or not obj.status or obj.status == 0:
-            obj.run(*args)
+        if pars.all() or not obj.status or obj.status == 0:
+            obj.run(theta=pars)
 
         q = [x - 1 for x in obj.FluxGroups['Q']]
         Q = np.sum(obj.fluxes[:,q], axis=1)
@@ -573,6 +662,7 @@ class MARRMoT_model:
 
         # Helper function to calculate fitness given a set of parameters
         def fitness_fun(par):
+            print(par)
             Q_sim = obj.get_streamflow(par)
             obj_func = getattr(objective_functions, of_name)
             result = obj_func(Q_obs, Q_sim, cal_idx, *args)
@@ -583,7 +673,7 @@ class MARRMoT_model:
             return fitness
 
         #Documentation states, to provide sigma values for each parameter, specify sigma = 1, then CMA_stds as multipliers for each parameter
-        xopt, es = cma.fmin2(fitness_fun, par_ini, 1, {'CMA_stds': optim_opts['insigma'], 'bounds': [optim_opts['LBounds'], optim_opts['UBounds']]})
+        xopt, es = cma.fmin2(fitness_fun, par_ini, 1, {'CMA_stds': optim_opts['insigma'], 'bounds': [optim_opts['LBounds'], optim_opts['UBounds']], 'seed': 13})
 
         obj.input_climate.clear()
         obj.input_climate = input_climate_all.copy()

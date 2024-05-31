@@ -108,7 +108,13 @@ def NewtonRaphson(fun, x0, options=None):
             if lambda_ == 1:
                 lambda_ = -slope / 2 / (f - fold - slope)
             else:
+
+                lambda_ = float(lambda_)
+                lambda2 = float(lambda2)
+                lambda1 = float(lambda1)
+
                 A = 1 / (lambda1 - lambda2)
+                ## Modified for testing    
                 B = np.array([[1 / lambda1**2, -1 / lambda2**2], [-lambda2 / lambda1**2, lambda1 / lambda2**2]])
                 C = np.array([f - fold - lambda1 * slope, f2 - fold - lambda2 * slope])
                 a, b = np.dot(A * B, C)

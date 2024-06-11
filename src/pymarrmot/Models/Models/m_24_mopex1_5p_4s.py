@@ -19,26 +19,26 @@ class m_24_mopex1_5p_4s(MARRMoT_model):
     """
     def __init__(self):
         super().__init__()
-        self.numStores = 4                                          # number of model stores
-        self.numFluxes = 7                                          # number of model fluxes
-        self.numParams = 5
+        self.num_stores = 4                                          # number of model stores
+        self.num_fluxes = 7                                          # number of model fluxes
+        self.num_params = 5
 
-        self.JacobPattern = np.array([[1, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0],
                                        [1, 1, 0, 0],
                                        [1, 0, 1, 0],
                                        [0, 1, 0, 1]])              # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],                       # Sb1, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],                       # Sb1, Maximum soil moisture storage [mm]
                                     [0, 1],                          # tw, Groundwater leakage time [d-1]
                                     [0, 1],                          # tu, Slow flow routing response time [d-1]
                                     [1, 2000],                       # se, Root zone storage capacity [mm]
                                     [0, 1]])                         # tc, Mean residence time [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4"]                   # Names for the stores
-        self.FluxNames = ["et1", "q1f", "qw",
+        self.store_names = ["S1", "S2", "S3", "S4"]                   # Names for the stores
+        self.flux_names = ["et1", "q1f", "qw",
                           "et2", "q2u", "qf", "qs"]                # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [1, 4],                            # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 4],                            # Index or indices of fluxes to add to Actual ET
                            "Q": [6, 7]}                            # Index or indices of fluxes to add to Streamflow
 
     def init(self):

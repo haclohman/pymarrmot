@@ -1,45 +1,49 @@
-
 import numpy as np
+from scipy.integrate import quad
 
-def uh_4_full(d_base, delta_t):
+def uh_4_full(d_base: float, delta_t: float) -> np.ndarray:
     """
-    Unit hydrograph [days] with a triangle (linear).
-    
-    Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter.
-    This file is part of the Modular Assessment of Rainfall-Runoff Models
-    Toolbox (MARRMoT).
-    MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
-    WARRANTY. See <https://www.gnu.org/licenses/> for details.
-    
-    Parameters:
+    Generates a unit hydrograph with a triangular shape (linear).
+
+    Parameters
+    ----------
     d_base : float
         Time base of routing delay [d].
-    delta_t : numpy.ndarray
+    delta_t : float
         Time step size [d].
-    
-    Returns:
-    UH : numpy.ndarray
-        Unit hydrograph [nx2].
-        uh's first row contains coefficients to split flow at each
-        of n timesteps forward, the second row contains zeros now,
-        these are the still-to-flow values.
-    
-    Unit hydrograph spreads the input volume over a time period delay.
-    Percentage runoff goes up, peaks, and goes down again.
-    Example: d_base = 3.8 [days], delta_t = 1.
-        UH(1) = 0.14  [% of inflow]
-        UH(2) = 0.41
-        UH(3) = 0.36
-        UH(4) = 0.09
+
+    Returns
+    -------
+    np.ndarray
+        Unit hydrograph [nx2], where the first row contains coefficients 
+        to split flow at each of n timesteps forward, and the second row 
+        contains zeros (still-to-flow values).
     """
-    
-    UH = np.zeros((len(delta_t), 2))
-    T = d_base / 2
-    N = len(delta_t)
-    for i in range(N):
-        if delta_t[i] < T:
-            UH[i, 0] = 2 * delta_t[i] / d_base
-        else:
-            UH[i, 0] = 2 - 2 * delta_t[i] / d_base
-    
+    # Time step size
+    delay = d_base / delta_t
+    if delay == 0:
+        delay = 1  # any value below t = 1 means no delay, zero leads to problems
+    tt = np.arange(1, int(np.ceil(delay)) + 1)  # time series for which we need UH ordinates [days]
+
+    # Fraction of flow step size
+    ff = 0.5 / (0.5 * (0.5 * delay) ** 2)
+    d50 = 0.5 * delay
+
+    # Triangle function
+    def tri(t):
+        return max(ff * (t - d50) * np.sign(d50 - t) + ff * d50, 0)
+
+    # Unit hydrograph
+    UH = np.zeros(len(tt))
+    for t in range(len(tt)):
+        UH[t], _ = quad(tri, t, t + 1)  # integrate the triangle function over each time step
+
+    # Ensure UH sums to 1
+    tmp_diff = 1 - np.sum(UH)
+    tmp_weight = UH / np.sum(UH)
+    UH = UH + tmp_weight * tmp_diff
+
+    UH_2 = np.zeros_like(UH)
+    UH = np.vstack((UH, UH_2))
+
     return UH

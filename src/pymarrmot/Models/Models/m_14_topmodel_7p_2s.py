@@ -42,14 +42,14 @@ class m_14_topmodel_7p_2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 6  # number of model fluxes
-        self.numParams = 7
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 6  # number of model fluxes
+        self.num_params = 7
         
-        self.JacobPattern = np.array([[1, 1],
+        self.jacob_pattern = np.array([[1, 1],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],  # suzmax, Maximum soil moisture storage in unsaturated zone [mm]
+        self.par_ranges = np.array([[1, 2000],  # suzmax, Maximum soil moisture storage in unsaturated zone [mm]
                                     [0.05, 0.95],  # st, Threshold for flow generation and evap change as fraction of suzmax [-]
                                     [0, 1],  # kd, Leakage to saturated zone flow coefficient [mm/d]
                                     [0.1, 200],  # q0, Zero deficit base flow speed [mm/d]
@@ -57,10 +57,10 @@ class m_14_topmodel_7p_2s(MARRMoT_model):
                                     [1, 7.5],  # chi, Gamma distribution parameter [-]
                                     [0.1, 5]])  # phi, Gamma distribution parameter [-]
         
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["qof", "peff", "ea", "qex", "qv", "qb"]  # Names for the fluxes
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["qof", "peff", "ea", "qex", "qv", "qb"]  # Names for the fluxes
         
-        self.FluxGroups = {"Ea": 3,   # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": 3,   # Index or indices of fluxes to add to Actual ET
                            "Q": [1, 4, 6]}       # Index or indices of fluxes to add to Streamflow
         self.StoreSigns = [1, -1]  # Signs to give to stores (-1 is a deficit store), only needed for water balance
 

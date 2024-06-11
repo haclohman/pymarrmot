@@ -1,7 +1,7 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_7
-from pymarrmot.models.flux.saturation import saturation_1
+from pymarrmot.models.flux.evaporation.evap_7 import evap_7
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
 
 class m_01_collie1_1p_1s(MARRMoT_model):
     """
@@ -14,18 +14,14 @@ class m_01_collie1_1p_1s(MARRMoT_model):
     """
     def __init__(self):
         super().__init__()
-        self.numStores = 1                  # number of model stores
-        self.numFluxes = 2                  # number of model fluxes
-        self.numParams = 1
-        self.JacobPattern = [1]             # Jacobian matrix of model store ODEs
-        #self.parRanges = [1, 2000]          # Smax [mm]
-
-        self.parRanges = np.array([[1, 2000]])   # Smax, Maximum soil moisture storage [mm]
-                                                              
-
-        self.StoreNames = ["S1"]            # Names for the stores
-        self.FluxNames = ["ea", "qse"]      # Names for the fluxes
-        self.FluxGroups = {'Ea': 1, 'Q': 2} # Index or indices of fluxes to add to Actual ET and Streamflow
+        self.num_stores = 1                  # number of model stores
+        self.num_fluxes = 2                  # number of model fluxes
+        self.num_params = 1
+        self.jacob_pattern = [1]             # Jacobian matrix of model store ODEs
+        self.par_ranges = np.array([[1, 2000]])   # Smax, Maximum soil moisture storage [mm]
+        self.store_names = ["S1"]            # Names for the stores
+        self.flux_names = ["ea", "qse"]      # Names for the fluxes
+        self.flux_groups = {'Ea': 1, 'Q': 2} # Index or indices of fluxes to add to Actual ET and Streamflow
 
     def init(self):
         pass

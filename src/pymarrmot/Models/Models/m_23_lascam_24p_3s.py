@@ -10,7 +10,7 @@ from pymarrmot.models.flux.effective_1 import effective_1
 from pymarrmot.models.flux.saturation import saturation_11, saturation_12
 from pymarrmot.models.flux.baseflow import baseflow_8
 
-class M_23_LASCAM_24p_3s(MARRMoT_model):
+class m_23_lascam_24p_3s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Large-scale catchment water and salt balance model element
 
@@ -24,43 +24,43 @@ class M_23_LASCAM_24p_3s(MARRMoT_model):
         self.aux_theta = None  # auxiliary parameters
 
         # Model parameters
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 16  # number of model fluxes
-        self.numParams = 24
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 16  # number of model fluxes
+        self.num_params = 24
 
-        self.JacobPattern = np.ones((3, 3), dtype=int)  # Jacobian matrix of model store ODEs
+        self.jacob_pattern = np.ones((3, 3), dtype=int)  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 200],        # af, Catchment-scale infiltration parameter [mm/d]
-                                    [0, 5],         # bf, Catchment-scale infiltration non-linearity parameter [-]
-                                    [1, 2000],      # stot, Total catchment storage [mm]
-                                    [0.01, 0.99],   # xa, Fraction of Stot that is Amax [-]
-                                    [0.01, 0.99],   # xf, Fraction of Stot-Amx that is depth Fmax [-]
-                                    [0.01, 0.99],   # na, Fraction of Amax that is Amin [-]
-                                    [0, 5],         # ac, Variable contributing area scaling [-]
-                                    [0, 10],        # bc, Variable contributing area non-linearity [-]
-                                    [0, 5],         # ass, Subsurface saturation area scaling [-]
-                                    [0, 10],        # bss, Subsurface saturation area non-linearity [-]
-                                    [0, 200],       # c, Maximum infiltration rate [mm/d]
-                                    [0, 5],         # ag, Interception base parameter [mm/d]
-                                    [0, 1],         # bg, Interception fraction parameter [-]
-                                    [0, 1],         # gf, F-store evaporation scaling [-]
-                                    [0, 10],        # df, F-store evaporation non-linearity [-]
-                                    [0, 1],         # rd, Recharge time parameter [d-1]
-                                    [0, 1],         # ab, Groundwater flow scaling [-]
-                                    [0.01, 200],    # bb, Groundwater flow base rate [mm/d]
-                                    [0, 1],         # ga, A-store evaporation scaling [-]
-                                    [0, 10],        # da, A-store evaporation non-linearity [-]
-                                    [0.01, 200],    # aa, Subsurface storm flow rate [mm/d]
-                                    [1, 5],         # ba, Subsurface storm flow non-linearity [-]
-                                    [0, 1],         # gb, B-store evaporation scaling [-]
-                                    [0, 10]])       # db, B-store evaporation non-linearity [-]
+        self.par_ranges = np.array([[0, 200],       #1 af, Catchment-scale infiltration parameter [mm/d]
+                                    [0, 5],         #2 bf, Catchment-scale infiltration non-linearity parameter [-]
+                                    [1, 2000],      #3 stot, Total catchment storage [mm]
+                                    [0.01, 0.99],   #4 xa, Fraction of Stot that is Amax [-]
+                                    [0.01, 0.99],   #5 xf, Fraction of Stot-Amx that is depth Fmax [-]
+                                    [0.01, 0.99],   #6 na, Fraction of Amax that is Amin [-]
+                                    [0, 5],         #7 ac, Variable contributing area scaling [-]
+                                    [0, 10],        #8 bc, Variable contributing area non-linearity [-]
+                                    [0, 5],         #9 ass, Subsurface saturation area scaling [-]
+                                    [0, 10],        #10 bss, Subsurface saturation area non-linearity [-]
+                                    [0, 200],       #11 c, Maximum infiltration rate [mm/d]
+                                    [0, 5],         #12 ag, Interception base parameter [mm/d]
+                                    [0, 1],         #13 bg, Interception fraction parameter [-]
+                                    [0, 1],         #14 gf, F-store evaporation scaling [-]
+                                    [0, 10],        #15 df, F-store evaporation non-linearity [-]
+                                    [0, 1],         #16 rd, Recharge time parameter [d-1]
+                                    [0, 1],         #17 ab, Groundwater flow scaling [-]
+                                    [0.01, 200],    #18 bb, Groundwater flow base rate [mm/d]
+                                    [0, 1],         #19 ga, A-store evaporation scaling [-]
+                                    [0, 10],        #20 da, A-store evaporation non-linearity [-]
+                                    [0.01, 200],    #21 aa, Subsurface storm flow rate [mm/d]
+                                    [1, 5],         #22 ba, Subsurface storm flow non-linearity [-]
+                                    [0, 1],         #23 gb, B-store evaporation scaling [-]
+                                    [0, 10]])       #24 db, B-store evaporation non-linearity [-]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["ei", "pg", "qse", "qie", "pc",
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["ei", "pg", "qse", "qie", "pc",
                           "qsse", "qsie", "fa", "ef", "rf",
                           "ea1", "ea2", "qa", "ra", "qb", "eb"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [1, 9, 11, 12, 16],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 9, 11, 12, 16],  # Index or indices of fluxes to add to Actual ET
                            "Q": [3, 4, 13]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -97,7 +97,26 @@ class M_23_LASCAM_24p_3s(MARRMoT_model):
         """
         # Parameters
         theta = self.theta
-        af, bf, _, _, _, ac, bc, ass, bss, c, ag, bg, gf, df, td, ab, bb, ga, da, aa, ba, gb, db = theta
+        af   = theta[0];     # Catchment-scale infiltration parameter [mm/d]
+        bf   = theta[1];     # Catchment-scale infiltration non-linearity parameter [-]
+        ac   = theta[6];     # Variable contributing area scaling [-]
+        bc   = theta[7];     # Variable contributing area non-linearity [-]
+        ass  = theta[8];     # Subsurface saturation area scaling [-]
+        bss  = theta[9];     # Subsurface saturation area non-linearity [-]
+        c    = theta[10];    # Maximum infiltration rate [mm/d]
+        ag   = theta[11];    # Interception base parameter [mm/d]
+        bg   = theta[12];    # Interception fraction parameter [-]
+        gf   = theta[13];    # F-store evaporation scaling [-]
+        df   = theta[14];    # F-store evaporation non-linearity [-]
+        td   = theta[15];    # Recharge time parameter [d-1]
+        ab   = theta[16];    # Groundwater flow scaling [-]
+        bb   = theta[17];    # Groundwater flow base rate [mm/d]
+        ga   = theta[18];    # A-store evaporation scaling [-]
+        da   = theta[19];    # A-store evaporation non-linearity [-]
+        aa   = theta[20];    # Subsurface storm flow rate [mm/d]
+        ba   = theta[21];    # Subsurface storm flow non-linearity [-]
+        gb   = theta[22];    # B-store evaporation scaling [-]
+        db   = theta[23];    # B-store evaporation non-linearity [-]
 
         # Auxiliary parameters
         aux_theta = self.aux_theta

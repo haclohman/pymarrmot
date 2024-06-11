@@ -1,14 +1,13 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_1
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux.baseflow import baseflow_1
-from pymarrmot.models.flux.snowfall import snowfall_1
-from pymarrmot.models.flux.rainfall import rainfall_1
-from pymarrmot.models.flux.melt import melt_1
+from pymarrmot.models.flux.evaporation.evap_1 import evap_1
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
+from pymarrmot.models.flux.snowfall.snowfall_1 import snowfall_1
+from pymarrmot.models.flux.rainfall.rainfall_1 import rainfall_1
+from pymarrmot.models.flux.melt.melt_1 import melt_1
 
-
-class M06Alpine1_4p_2s(MARRMoT_model):
+class m_06_alpine1_4p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Alpine model v1
     """
@@ -18,22 +17,22 @@ class M06Alpine1_4p_2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 6  # number of model fluxes
-        self.numParams = 4
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 6  # number of model fluxes
+        self.num_params = 4
 
-        self.JacobPattern = np.array([[1, 0],
+        self.jacob_pattern = np.array([[1, 0],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[-3, 5],         # tt [degree celsius]
+        self.par_ranges = np.array([[-3, 5],         # tt [degree celsius]
                                     [0, 20],        # degree-day-factor [mm/degree celsius/day]
                                     [1, 2000],      # Smax [mm]
                                     [0, 1]])        # time delay of subsurface flow [d-1]
 
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["ps", "pr", "qn", "ea", "qse", "qss"]  # Names for the fluxes
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["ps", "pr", "qn", "ea", "qse", "qss"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": 4,      # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": 4,      # Index or indices of fluxes to add to Actual ET
                            "Q": [5, 6]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -56,7 +55,7 @@ class M06Alpine1_4p_2s(MARRMoT_model):
         theta = self.theta
         tt = theta[0]   # Threshold temperature for snowfall/snowmelt [celsius]
         ddf = theta[1]  # Degree-day-factor for snowmelt [mm/d/celsius]
-        Smax = theta[2]  # Maximum soil moisture storage [mm]
+        Smax = theta[2] # Maximum soil moisture storage [mm]
         tc = theta[3]   # Runoff coefficient [d-1]
 
         # delta_t

@@ -1,15 +1,17 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_1
-from pymarrmot.models.flux.split import split_1
-from pymarrmot.models.flux.saturation import saturation_2
-from pymarrmot.models.flux.capillary import capillary_2
-from pymarrmot.models.flux.baseflow import baseflow_1
-from pymarrmot.models.flux.interception import interception_2
-from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
+from pymarrmot.models.flux.evaporation.evap_1 import evap_1
+from pymarrmot.models.flux.split.split_1 import split_1
+from pymarrmot.models.flux.saturation.saturation_2 import saturation_2
+from pymarrmot.models.flux.capillary.capillary_2 import capillary_2
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
+from pymarrmot.models.flux.interception.interception_2 import interception_2
+from pymarrmot.models.unit_hydro.route import route
+from pymarrmot.models.unit_hydro.uh_3_half import uh_3_half
+from pymarrmot.models.unit_hydro.update_uh import update_uh
 
-class M13Hillslope7p2s(MARRMoT_model):
+class m_13_hillslope_7p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Hillslope model
 
@@ -30,14 +32,14 @@ class M13Hillslope7p2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 10  # number of model fluxes
-        self.numParams = 7
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 10  # number of model fluxes
+        self.num_params = 7
         
-        self.JacobPattern = np.array([[1, 1],
+        self.jacob_pattern = np.array([[1, 1],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 5],      # Dw, interception capacity [mm]
+        self.par_ranges = np.array([[0, 5],      # Dw, interception capacity [mm]
                                     [0, 10],     # Betaw, soil misture distribution parameter [-]
                                     [1, 2000],   # Swmax, soil misture depth [mm]
                                     [0, 1],      # a, surface/groundwater division [-]
@@ -45,11 +47,11 @@ class M13Hillslope7p2s(MARRMoT_model):
                                     [0, 4],      # c, capillary rise [mm/d]
                                     [0, 1]])     # kw, base flow time parameter [d-1]
         
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["pe", "ei", "ea", "qse", "qses",
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["pe", "ei", "ea", "qse", "qses",
                           "qseg", "c", "qhgw", "qhsrf", "qt"]  # Names for the fluxes
         
-        self.FluxGroups = {"Ea": [2, 3],   # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [2, 3],   # Index or indices of fluxes to add to Actual ET
                            "Q": [10]}       # Index or indices of fluxes to add to Streamflow
 
         # setting delta_t and theta triggers the function obj.init()

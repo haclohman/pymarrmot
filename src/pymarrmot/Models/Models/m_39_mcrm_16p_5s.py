@@ -68,13 +68,13 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
         delta_t = self.delta_t
         cmax = theta[1]  # Maximum fraction of area contributing to rapid runoff [-]
         ct = theta[2]  # Fraction of cmax that is the minimum contributing area c0 [-]
-        tau = theta[11]  # Routing delay [d]
+        tau = theta[10]  # Routing delay [d]
 
         c0 = ct * cmax  # Minimum fraction of area contributing to rapid runoff [-]
         self.aux_theta = [c0]
 
-        self.store_min = [0, -1E6, 0, 0, 0]  # Min and max of stores
-        self.store_max = [np.inf] * self.num_stores
+        self.store_min = np.array([0, -1E6, 0, 0, 0])  # Min and max of stores
+        self.store_max = np.array([np.inf] * self.num_stores)
 
         uh = uh_7_uniform(tau, delta_t)  # Initialize the unit hydrographs and still-to-flow vectors
         self.uhs = [uh]
@@ -91,20 +91,20 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
         fluxes (array): Model fluxes
         """
         theta = self.theta
-        smax = theta[0]  # Maximum interception storage [mm]
-        cmax = theta[1]  # Maximum fraction of area contributing to rapid runoff [-]
-        c1 = theta[3]  # Shape parameter for rapid flow distribution [mm-1]
-        ce = theta[4]  # Shape parameter for evaporation [mm-1]
-        dsurp = theta[5]  # Threshold for direct runoff [mm]
-        kd = theta[6]  # Direct runoff time parameter [d-1]
-        gamd = theta[7]  # Direct runoff flow non-linearity [-]
-        qpmax = theta[8]  # Maximum percolation rate [mm/d]
-        kg = theta[9]  # Groundwater time parameter [d-1]
-        sbf = theta[12]  # Maximum routing store depth [mm]
-        kcr = theta[13]  # Channel flow time parameter [d-1]
-        gamcr = theta[14]  # Channel flow non-linearity [-]
-        kor = theta[15]  # Out-of-bank flow time parameter [d-1]
-        gamor = theta[16]  # Out-of-bank flow non-linearity [-]
+        smax = theta[0]     # Maximum interception storage [mm]
+        cmax = theta[1]     # Maximum fraction of area contributing to rapid runoff [-]
+        c1 = theta[3]       # Shape parameter for rapid flow distribution [mm-1]
+        ce = theta[4]       # Shape parameter for evaporation [mm-1]
+        dsurp = theta[5]    # Threshold for direct runoff [mm]
+        kd = theta[6]       # Direct runoff time parameter [d-1]
+        gamd = theta[7]     # Direct runoff flow non-linearity [-]
+        qpmax = theta[8]    # Maximum percolation rate [mm/d]
+        kg = theta[9]       # Groundwater time parameter [d-1]
+        sbf = theta[11]     # Maximum routing store depth [mm]
+        kcr = theta[12]     # Channel flow time parameter [d-1]
+        gamcr = theta[13]   # Channel flow non-linearity [-]
+        kor = theta[14]     # Out-of-bank flow time parameter [d-1]
+        gamor = theta[15]   # Out-of-bank flow non-linearity [-]
 
         c0 = self.aux_theta[0]
 

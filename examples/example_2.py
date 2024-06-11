@@ -50,19 +50,19 @@ m.input_climate = input_climatology
 m.solver_opts = input_solver_opts
 m.S0 = input_s0
 
-model_range = m.parRanges
+model_range = m.par_ranges
 
 # 5. Run the model and extract all outputs
 numSample = 10
-numPar = m.numParams
+num_par = m.num_params
 
 results_mc_sampling = []
 
 results_mc_sampling.append(['parameter_values', 'output_ex', 'output_in', 'output_ss', 'output_wb'])
 
 for i in range(numSample):
-    #input_theta = model_range[:, 0] + np.random.rand(numPar) * (model_range[:, 1] - model_range[:, 0])
-    m.theta = model_range[:, 0] + np.random.rand(numPar) * (model_range[:, 1] - model_range[:, 0])
+    #input_theta = model_range[:, 0] + np.random.rand(num_par) * (model_range[:, 1] - model_range[:, 0])
+    m.theta = model_range[:, 0] + np.random.rand(num_par) * (model_range[:, 1] - model_range[:, 0])
 
     output_ex, output_in, output_ss, output_waterbalance = m.get_output(nargout=4) #(4, [], [], m.theta)
 

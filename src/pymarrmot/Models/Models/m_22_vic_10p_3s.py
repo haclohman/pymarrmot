@@ -28,15 +28,15 @@ class m_22_vic_10p_3s(MARRMoT_model):
         self.aux_theta = None  # auxiliary parameter set
 
         # Model parameters
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 11  # number of model fluxes
-        self.numParams = 10
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 11  # number of model fluxes
+        self.num_params = 10
 
-        self.JacobPattern = np.array([[1, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0],
                                       [1, 1, 0],
                                       [1, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0.1, 5],        # ibar, Mean interception capacity [mm]
+        self.par_ranges = np.array([[0.1, 5],        # ibar, Mean interception capacity [mm]
                                     [0, 1],         # idelta, Seasonal interception change as fraction of mean [-]
                                     [1, 365],       # ishift, Maximum interception peak timing [-]
                                     [1, 2000],      # stot, Maximum soil moisture capacity [mm]
@@ -47,11 +47,11 @@ class m_22_vic_10p_3s(MARRMoT_model):
                                     [0, 1],         # k2, Baseflow time parameter [d-1]
                                     [1, 5]])        # c2, Baseflow non-linearity parameter
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["ei", "peff", "iex", "qie", "inf", "et1",
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["ei", "peff", "iex", "qie", "inf", "et1",
                           "qex1", "pc", "et2", "qex2", "qb"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [1, 6, 9],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 6, 9],  # Index or indices of fluxes to add to Actual ET
                            "Q": [4, 7, 10, 11]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):

@@ -1,11 +1,12 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import (evap_6, evap_5)
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux.interflow import interflow_9
-from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.evaporation.evap_6 import evap_6
+from pymarrmot.models.flux.evaporation.evap_5 import evap_5
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.interflow.interflow_9 import interflow_9
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
 
-class M_04_NewZealand1_6P_1S(MARRMoT_model):
+class m_04_newzealand1_6p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: New Zealand model v1
 
@@ -24,13 +25,13 @@ class M_04_NewZealand1_6P_1S(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 1  # number of model stores
-        self.numFluxes = 5  # number of model fluxes
-        self.numParams = 6
+        self.num_stores = 1  # number of model stores
+        self.num_fluxes = 5  # number of model fluxes
+        self.num_params = 6
 
-        self.JacobPattern = [1]  # Jacobian matrix of model store ODEs
+        self.jacob_pattern = [1]  # Jacobian matrix of model store ODEs
 
-        self.parRanges = [
+        self.par_ranges = [
             [1, 2000],      # Smax, Maximum soil moisture storage [mm]
             [0.05, 0.95],   # sfc, Field capacity as fraction of maximum soil moisture [-]
             [0.05, 0.95],   # m, Fraction forest [-]
@@ -39,10 +40,10 @@ class M_04_NewZealand1_6P_1S(MARRMoT_model):
             [0, 1]          # tcbf, Baseflow runoff coefficient [d-1]
         ]
 
-        self.StoreNames = ["S1"]  # Names for the stores
-        self.FluxNames = ["veg", "ebs", "qse", "qss", "qbf"]  # Names for the fluxes
+        self.store_names = ["S1"]  # Names for the stores
+        self.flux_names = ["veg", "ebs", "qse", "qss", "qbf"]  # Names for the fluxes
 
-        self.FluxGroups = {
+        self.flux_groups = {
             "Ea": [1, 2],   # Index or indices of fluxes to add to Actual ET
             "Q": [3, 4, 5]  # Index or indices of fluxes to add to Streamflow
         }

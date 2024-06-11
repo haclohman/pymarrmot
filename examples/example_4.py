@@ -59,10 +59,10 @@ Q_obs = df['Q'].to_numpy()
 
 # 2. Define the model settings and create the model object
 m = m_29_hymod_5p_5s()  # Create an instance of the model object
-parRanges = m.parRanges  # Parameter ranges
-numParams = m.numParams  # Number of parameters
-numStores = m.numStores  # Number of stores
-input_s0 = np.zeros(numStores)  # Initial storages (see note in paragraph 5 on model warm-up)
+par_ranges = m.par_ranges  # Parameter ranges
+num_params = m.num_params  # Number of parameters
+num_stores = m.num_stores  # Number of stores
+input_s0 = np.zeros(num_stores)  # Initial storages (see note in paragraph 5 on model warm-up)
 
 # 3. Define the solver settings
 input_solver_opts = {
@@ -81,12 +81,12 @@ input_solver_opts = {
 #                 or type cmaes to see list of options and default values
 
 # starting sigma
-optim_opts = {'insigma': .3 * (parRanges[:, 1] - parRanges[:, 0])}  # starting sigma (this is default, could have left it blank)
+optim_opts = {'insigma': .3 * (par_ranges[:, 1] - par_ranges[:, 0])}  # starting sigma (this is default, could have left it blank)
 
 # other options
-optim_opts['LBounds'] = parRanges[:, 0]  # lower bounds of parameters
-optim_opts['UBounds'] = parRanges[:, 1]  # upper bounds of parameters
-optim_opts['PopSize'] = 4 + np.floor(3 * np.log(numParams))  # population size (default)
+optim_opts['LBounds'] = par_ranges[:, 0]  # lower bounds of parameters
+optim_opts['UBounds'] = par_ranges[:, 1]  # upper bounds of parameters
+optim_opts['PopSize'] = 4 + np.floor(3 * np.log(num_params))  # population size (default)
 optim_opts['TolX'] = 1e-6 * np.min(optim_opts['insigma'])  # stopping criterion on changes to parameters
 optim_opts['TolFun'] = 1e-6  # stopping criterion on changes to fitness function
 optim_opts['TolHistFun'] = 1e-6  # stopping criterion on changes to fitness function
@@ -106,7 +106,7 @@ optim_opts['EvalParallel'] = False  # change to true to run in parallel on a poo
 #optim_opts['Seed'] = 1234  # for reproducibility
 
 # initial parameter set
-par_ini = np.mean(parRanges, axis=1)  # same as default value
+par_ini = np.mean(par_ranges, axis=1)  # same as default value
 m.theta = par_ini  # set the initial parameter set
 
 # Choose the objective function

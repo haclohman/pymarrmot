@@ -25,15 +25,15 @@ class m_20_gsfb_8p_3s(MARRMoT_model):
         Creator method
         """
         super().__init__()
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 6  # number of model fluxes
-        self.numParams = 8  # number of model parameters
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 6  # number of model fluxes
+        self.num_params = 8  # number of model parameters
 
-        self.JacobPattern = np.array([[1, 0, 1],
+        self.jacob_pattern = np.array([[1, 0, 1],
                                       [1, 1, 0],
                                       [1, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 1],          # c, Recharge time coeffcient [d-1]
+        self.par_ranges = np.array([[0, 1],          # c, Recharge time coeffcient [d-1]
                                    [0.05, 0.95],    # ndc, Threshold fraction of Smax [-]
                                    [1, 2000],       # smax, Maximum soil moisture storage [mm]
                                    [0, 20],         # emax, Maximum evaporation flux [mm/d]
@@ -42,10 +42,10 @@ class m_20_gsfb_8p_3s(MARRMoT_model):
                                    [0, 1],          # dpf, Baseflow time coefficient [d-1]
                                    [1, 300]])       # sdrmax, Threshold before baseflow can occur [mm]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["ea", "qs", "f", "qb", "dp", "qdr"]  # Names for the fluxes
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["ea", "qs", "f", "qb", "dp", "qdr"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": 1,  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": 1,  # Index or indices of fluxes to add to Actual ET
                            "Q": [2, 4]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):

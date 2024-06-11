@@ -23,16 +23,16 @@ class m_31_mopex3_8p_5s(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 5  # number of model stores
-        self.numFluxes = 11  # number of model fluxes
-        self.numParams = 8
-        self.JacobPattern = np.array([[1, 0, 0, 0, 0],
+        self.num_stores = 5  # number of model stores
+        self.num_fluxes = 11  # number of model fluxes
+        self.num_params = 8
+        self.jacob_pattern = np.array([[1, 0, 0, 0, 0],
                                       [1, 1, 0, 0, 0],
                                       [0, 1, 1, 0, 0],
                                       [0, 1, 1, 1, 0],
                                       [0, 0, 1, 0, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[-3, 3],  # tcrit, Snowfall & snowmelt temperature [oC]
+        self.par_ranges = np.array([[-3, 3],  # tcrit, Snowfall & snowmelt temperature [oC]
                                    [0, 20],  # ddf, Degree-day factor for snowmelt [mm/oC/d]
                                    [1, 2000],  # Sb1, Maximum soil moisture storage [mm]
                                    [0, 1],  # tw, Groundwater leakage time [d-1]
@@ -41,11 +41,11 @@ class m_31_mopex3_8p_5s(MARRMoT_model):
                                    [1, 2000],  # Sb2, Root zone storage capacity [mm]
                                    [0, 1]])  # tc, Mean residence time [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5"]  # Names for the stores
-        self.FluxNames = ["ps", "pr", "qn", "et1", "q1f",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5"]  # Names for the stores
+        self.flux_names = ["ps", "pr", "qn", "et1", "q1f",
                           "qw", "et2", "q2f", "q2u", "qf", "qs"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [4, 7],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [4, 7],  # Index or indices of fluxes to add to Actual ET
                            "Q": [10, 11]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -82,7 +82,7 @@ class m_31_mopex3_8p_5s(MARRMoT_model):
         flux_q2f = saturation_1(flux_qw, S3, s3max)
         flux_q2u = baseflow_1(tu, S3)
         flux_qf = baseflow_1(tc, S4)
-        flux_qs = baseflow_1(tc, S)
+        flux_qs = baseflow_1(tc, S5)
 
         # Stores ODEs
         dS1 = flux_ps - flux_qn

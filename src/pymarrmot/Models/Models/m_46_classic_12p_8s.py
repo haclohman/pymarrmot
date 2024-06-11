@@ -7,7 +7,7 @@ from pymarrmot.models.flux.effective_1 import effective_1
 from pymarrmot.models.flux.saturation import saturation_1, saturation_9
 from pymarrmot.models.flux.baseflow import baseflow_1
 
-class MClassic12p8s(MARRMoT_model):
+class m_46_classic_12p_8s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: CLASSIC
 
@@ -26,11 +26,11 @@ class MClassic12p8s(MARRMoT_model):
         self.aux_theta = None  # Auxiliary parameters
 
         # Model attributes
-        self.numStores = 8  # number of model stores
-        self.numFluxes = 21  # number of model fluxes
-        self.numParams = 12
+        self.num_stores = 8  # number of model stores
+        self.num_fluxes = 21  # number of model fluxes
+        self.num_params = 12
 
-        self.JacobPattern = np.array([[1, 0, 0, 0, 0, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0, 0, 0, 0, 0],
                                        [1, 1, 0, 0, 0, 0, 0, 0],
                                        [1, 1, 1, 0, 0, 0, 0, 0],
                                        [0, 0, 0, 1, 0, 0, 0, 0],
@@ -40,20 +40,20 @@ class MClassic12p8s(MARRMoT_model):
                                        [0, 0, 0, 0, 0, 0, 0, 1]])
         # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 1], [0.01, 0.99], [1, 2000], [0, 1],
+        self.par_ranges = np.array([[0, 1], [0.01, 0.99], [1, 2000], [0, 1],
                                     [0, 1], [0, 1], [0.01, 0.99], [1, 2000],
                                     [0, 1], [0, 1], [0, 1], [0, 1]])
         # Parameter ranges
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
         # Names for the stores
 
-        self.FluxNames = ["pp", "ps", "pi", "epx", "ppx", "epy", "ppe", "q",
+        self.flux_names = ["pp", "ps", "pi", "epx", "ppx", "epy", "ppe", "q",
                           "psd", "psi", "esx", "psx", "esy", "pse", "psq",
                           "pss", "xq", "xs", "ei", "pie", "u"]
         # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [4, 6, 11, 13, 19],
+        self.flux_groups = {"Ea": [4, 6, 11, 13, 19],
                            "Q": [8, 17, 18, 21]}
         # Index or indices of fluxes for specific groups
 

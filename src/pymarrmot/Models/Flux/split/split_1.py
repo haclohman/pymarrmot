@@ -1,7 +1,18 @@
+def split_1(p1: float, In: float) -> float:
+    """
+    Split the flow.
 
-def split_1(p1, In):
-    # Description: Split flow (returns flux [mm/d])
-    # Constraints: -
-    # Inputs: p1 - fraction of flux to be diverted [-]
-    #         In - incoming flux [mm/d]
-    return p1 * In
+    Parameters
+    ----------
+    p1 : float
+        Fraction of flux to be diverted [-].
+    In : float
+        Incoming flux [mm/d].
+
+    Returns
+    -------
+    float
+        The split flow [mm/d].
+    """
+    out = p1 * In
+    return out

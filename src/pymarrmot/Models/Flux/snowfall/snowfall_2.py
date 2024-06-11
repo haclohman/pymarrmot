@@ -1,29 +1,24 @@
+import numpy as np
 
-# Python code
-def snowfall_1(In, T, p1, *varargin):
+def snowfall_2(In: float, T: float, p1: float, p2: float) -> float:
     """
-    Function for calculating snowfall based on temperature threshold
-    Args:
-    In: float - incoming precipitation flux [mm/d]
-    T: float - current temperature [oC]
-    p1: float - temperature threshold below which snowfall occurs [oC]
-    varargin (optional): float - smoothing variable r
+    Calculates snowfall based on a temperature threshold interval.
 
-    Returns:
-    float: snowfall based on temperature threshold
+    Parameters
+    ----------
+    In : float
+        Incoming precipitation flux [mm/d].
+    T : float
+        Current temperature [°C].
+    p1 : float
+        Midpoint of the combined rain/snow interval [°C].
+    p2 : float
+        Length of the mixed snow/rain interval [°C].
 
-    Note: The smoothing variable r is optional
+    Returns
+    -------
+    float
+        Snowfall amount [mm/d].
     """
-    if len(varargin) == 0:
-        return In * (smoothThreshold_temperature_logistic(T, p1))
-    elif len(varargin) == 1:
-        return In * (smoothThreshold_temperature_logistic(T, p1, varargin[0]))
-
-# Define the smoothing function (assuming it is defined elsewhere)
-def smoothThreshold_temperature_logistic(T, p1, r=0.01):
-    """
-    Placeholder for the function smoothThreshold_temperature_logistic in Python
-    This function needs to be implemented separately or imported from an existing module.
-    """
-    # Placeholder for the implementation of the function
-    pass
+    out = min(In, max(0, In * (p1 + 0.5 * p2 - T) / p2))
+    return out

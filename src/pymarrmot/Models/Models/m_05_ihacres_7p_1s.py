@@ -1,11 +1,14 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_12
-from pymarrmot.models.flux.split import split_1
-from pymarrmot.models.flux.saturation import saturation_5
-from pymarrmot.models.unit_hydro import (uh_5_half, uh_8_delay, route, update_uh)
+from pymarrmot.models.flux.evaporation.evap_12 import evap_12
+from pymarrmot.models.flux.split.split_1 import split_1
+from pymarrmot.models.flux.saturation.saturation_5 import saturation_5
+from pymarrmot.models.unit_hydro.uh_5_half import uh_5_half
+from pymarrmot.models.unit_hydro.uh_8_delay import uh_8_delay
+from pymarrmot.models.unit_hydro.route import route
+from pymarrmot.models.unit_hydro.update_uh import update_uh
 
-class M_05_IHACRES_7P_1S(MARRMoT_model):
+class m_05_ihacres_7p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: IHACRES
 
@@ -29,15 +32,15 @@ class M_05_IHACRES_7P_1S(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 1  # number of model stores
-        self.numFluxes = 7  # number of model fluxes
-        self.numParams = 7
+        self.num_stores = 1  # number of model stores
+        self.num_fluxes = 7  # number of model fluxes
+        self.num_params = 7
 
-        self.JacobPattern = [1]  # Jacobian matrix of model store ODEs
+        self.jacob_pattern = [1]  # Jacobian matrix of model store ODEs
 
-        self.parRanges = [
-            [1, 2000],   # lp, Wilting point [mm]
-            [1, 2000],   # d, Threshold for flow generation [mm]
+        self.par_ranges = [
+            [1, 2000],    # lp, Wilting point [mm]
+            [1, 2000],    # d, Threshold for flow generation [mm]
             [0, 10],      # p, Flow response non-linearity [-]
             [0, 1],       # alpha, Fast/slow flow division [-]
             [1, 700],     # tau_q, Fast flow routing delay [d]
@@ -45,10 +48,10 @@ class M_05_IHACRES_7P_1S(MARRMoT_model):
             [0, 119]      # tau_d, flow delay [d]
         ]
 
-        self.StoreNames = ["S1"]  # Names for the stores
-        self.FluxNames = ["Ea", "u", "uq", "us", "xq", "xs", "Qt"]  # Names for the fluxes
+        self.store_names = ["S1"]  # Names for the stores
+        self.flux_names = ["Ea", "u", "uq", "us", "xq", "xs", "Qt"]  # Names for the fluxes
 
-        self.FluxGroups = {
+        self.flux_groups = {
             "Ea": 1,    # Index or indices of fluxes to add to Actual ET
             "Q": 7      # Index or indices of fluxes to add to Streamflow
         }

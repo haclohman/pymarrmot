@@ -37,6 +37,8 @@ def uh_1_half(d_base, delta_t):
 
         UH[i - 1] = SH[i] - SH[i - 1]
 
-    UH = np.column_stack((UH, np.zeros_like(UH)))
+    ##UH = np.column_stack((UH, np.zeros_like(UH)))
+    zeros = np.zeros_like(UH)
+    UH = np.vstack([UH, zeros])
 
     return UH

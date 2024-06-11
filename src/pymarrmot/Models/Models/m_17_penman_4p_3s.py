@@ -32,27 +32,30 @@ class m_17_penman_4p_3s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 7  # number of model fluxes
-        self.numParams = 4
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 7  # number of model fluxes
+        self.num_params = 4
 
-        self.JacobPattern = np.array([[1, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0],
                                       [1, 1, 0],
                                       [1, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],  # smax, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],  # smax, Maximum soil moisture storage [mm]
                                     [0, 1],      # phi, Fraction of direct runoff [-]
                                     [0, 1],      # gam, Evaporation reduction in lower zone [-]
                                     [0, 1]])     # k1, Runoff coefficient [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["ea", "qex", "u1", "q12", "et", "u2", "q"]  # Names for the fluxes
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["ea", "qex", "u1", "q12", "et", "u2", "q"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [0, 4],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [0, 4],  # Index or indices of fluxes to add to Actual ET
                            "Q": [6]}      # Index or indices of fluxes to add to Streamflow
 
         self.StoreSigns = [1, -1, 1]  # Signs to give to stores (-1 is a deficit store), only needed for water balance
-
+    
+    def init(self):
+        pass
+    
     def model_fun(self, S):
         """
         MODEL_FUN are the model governing equations in state-space formulation

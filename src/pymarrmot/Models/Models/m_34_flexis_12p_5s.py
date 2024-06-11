@@ -12,20 +12,20 @@ from pymarrmot.models.flux.melt import melt_1
 from pymarrmot.models.flux.interception import interception_1
 from pymarrmot.models.unit_hydro import (uh_3_half, route, update_uh)
 
-class M34FlexIS(MARRMoT_model):
+class m_34_flexis_12p_5s(MARRMoT_model):
     def __init__(self):
         super().__init__()
-        self.numStores = 5                                             # number of model stores
-        self.numFluxes = 14                                            # number of model fluxes
-        self.numParams = 12
+        self.num_stores = 5                                             # number of model stores
+        self.num_fluxes = 14                                            # number of model fluxes
+        self.num_params = 12
             
-        self.JacobPattern = np.array([[1, 0, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0, 0],
                                       [1, 1, 0, 0, 0],
                                       [1, 1, 1, 0, 0],
                                       [1, 1, 1, 1, 0],
                                       [1, 1, 1, 0, 1]])              # Jacobian matrix of model store ODEs
                              
-        self.parRanges = np.array([[1, 2000],       # URmax, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],       # URmax, Maximum soil moisture storage [mm]
                                     [0, 10],         # beta, Unsaturated zone shape parameter [-]
                                     [0, 1],          # D, Fast/slow runoff distribution parameter [-]
                                     [0, 20],         # PERCmax, Maximum percolation rate [mm/d]
@@ -38,12 +38,12 @@ class M34FlexIS(MARRMoT_model):
                                     [-3, 5],         # TT, Threshold temperature for snowfall/snowmelt [oC]
                                     [0, 20]])        # ddf, Degree-day factor for snowmelt [mm/d/oC]
             
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5"]                   # Names for the stores
-        self.FluxNames  = ["ps", "pi", "m", "peff", "ei",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5"]                   # Names for the stores
+        self.flux_names  = ["ps", "pi", "m", "peff", "ei",
                            "ru", "eur", "rp", "rf", "rs",
                            "rf1", "rs1", "qf", "qs"]                     # Names for the fluxes
             
-        self.FluxGroups = {'Ea': [5, 7],                                   # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {'Ea': [5, 7],                                   # Index or indices of fluxes to add to Actual ET
                            'Q': [13, 14]}                                  # Index or indices of fluxes to add to Streamflow
             
     def init(self):

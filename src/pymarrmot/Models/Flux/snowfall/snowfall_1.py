@@ -1,29 +1,33 @@
+import numpy as np
+from pymarrmot.functions.flux_smoothing.smooth_threshold_temperature_logistic import smooth_threshold_temperature_logistic as sttl
 
-# Python code
-def snowfall_1(In, T, p1, *varargin):
+def snowfall_1(In: float, T: float, p1: float, *args: float) -> float:
     """
-    Function for calculating snowfall based on temperature threshold
-    Args:
-    In: float - incoming precipitation flux [mm/d]
-    T: float - current temperature [oC]
-    p1: float - temperature threshold below which snowfall occurs [oC]
-    varargin (optional): float - smoothing variable r
+    Calculates snowfall based on a temperature threshold.
 
-    Returns:
-    float: snowfall based on temperature threshold
+    Parameters
+    ----------
+    In : float
+        Incoming precipitation flux [mm/d].
+    T : float
+        Current temperature [°C].
+    p1 : float
+        Temperature threshold below which snowfall occurs [°C].
+    args : float, optional
+        Smoothing variable r (default is 0.01).
 
-    Note: The smoothing variable r is optional
+    Returns
+    -------
+    float
+        Outgoing snowfall flux [mm/d].
     """
-    if len(varargin) == 0:
-        return In * (smoothThreshold_temperature_logistic(T, p1))
-    elif len(varargin) == 1:
-        return In * (smoothThreshold_temperature_logistic(T, p1, varargin[0]))
+    if len(args) == 0:
+        r = 0.01
+    elif len(args) == 1:
+        r = args[0]
+    else:
+        raise ValueError("Too many input arguments for smoothing variable.")
 
-# Define the smoothing function (assuming it is defined elsewhere)
-def smoothThreshold_temperature_logistic(T, p1, r=0.01):
-    """
-    Placeholder for the function smoothThreshold_temperature_logistic in Python
-    This function needs to be implemented separately or imported from an existing module.
-    """
-    # Placeholder for the implementation of the function
-    pass
+    sttl_result = sttl(T, p1, r)
+    out = In * sttl_result
+    return out

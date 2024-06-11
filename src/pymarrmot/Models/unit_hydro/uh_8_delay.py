@@ -48,11 +48,11 @@ def uh_8_delay(t_delay, delta_t):
 
     UH = np.zeros((2, int(t_delay) + 2))
 
-    UH[0, int(t_start) + 1] = ord1
+    UH[0, int(t_start)] = ord1
 
-    UH[0, int(t_start) + 2] = ord2
+    UH[0, int(t_start) + 1] = ord2
 
-    UH[1, :] = np.zeros(UH.shape)
+    ##UH[1, :] = np.zeros(UH.shape)
 
 
     return UH

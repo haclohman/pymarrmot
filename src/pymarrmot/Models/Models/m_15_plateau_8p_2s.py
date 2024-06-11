@@ -7,7 +7,9 @@ from pymarrmot.models.flux.evaporation import evap_4
 from pymarrmot.models.flux.capillary import capillary_2
 from pymarrmot.models.flux.saturation import saturation_1
 from pymarrmot.models.flux.baseflow import baseflow_1
-from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
+from pymarrmot.models.unit_hydro.route import route
+from pymarrmot.models.unit_hydro.uh_3_half import uh_3_half
+from pymarrmot.models.unit_hydro.update_uh import update_uh
 
 class m_15_plateau_8p_2s(MARRMoT_model):
     """
@@ -29,14 +31,15 @@ class m_15_plateau_8p_2s(MARRMoT_model):
         """
         creator method
         """
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 9  # number of model fluxes
-        self.numParams = 8
+        super().__init__()
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 9  # number of model fluxes
+        self.num_params = 8
 
-        self.JacobPattern = np.array([[1, 1],
+        self.jacob_pattern = np.array([[1, 1],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 200],    # Fmax, maximum infiltration rate [mm/d]
+        self.par_ranges = np.array([[0, 200],    # Fmax, maximum infiltration rate [mm/d]
                                    [0, 5],      # Dp, interception capacity [mm]
                                    [1, 2000],   # SUmax, soil misture depth [mm]
                                    [0.05, 0.95],  # Swp, wilting point as fraction of Sumax [-]
@@ -45,26 +48,26 @@ class m_15_plateau_8p_2s(MARRMoT_model):
                                    [0, 4],      # c, capillary rise [mm/d]
                                    [0, 1]])     # kp, base flow time parameter [d-1]
 
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["pe", "ei", "pie", "pi",
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["pe", "ei", "pie", "pi",
                           "et", "r", "c", "qpgw", "qpieo"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [2, 5],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [2, 5],  # Index or indices of fluxes to add to Actual ET
                            "Q": [8, 9]}    # Index or indices of fluxes to add to Streamflow
 
     def init(self):
         """
         INITialisation function
         """
-        super().__init__()
+        #super().__init__()
         # parameters
         theta = self.theta
         delta_t = self.delta_t
         tp = theta[5]  # Time delay of surface flow [d]
 
         # min and max of stores
-        self.store_min = np.zeros(self.numStores)
-        self.store_max = np.full(self.numStores, np.inf)
+        self.store_min = np.zeros(self.num_stores)
+        self.store_max = np.full(self.num_stores, np.inf)
 
         # initialise the unit hydrographs and still-to-flow vectors
         uh = uh_3_half(tp, delta_t)

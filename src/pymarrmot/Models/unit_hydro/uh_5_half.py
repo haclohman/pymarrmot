@@ -57,5 +57,6 @@ def uh_5_half(d_base, delta_t):
     # ACCOUNT FOR <7,Inf> PART OF THE CURVE (i.e. add the missing tail end of the curve to the last delay step,
     # to ensure that 100% of flow is routed).
     UH[-1] += 1 - np.sum(UH)
-
-    return np.vstack((UH, np.zeros_like(UH))).T
+    zeros = np.zeros_like(UH)
+    UH = np.vstack([UH, zeros])
+    return UH

@@ -9,7 +9,7 @@ from pymarrmot.models.flux.saturation import saturation_6, saturation_1
 from pymarrmot.models.flux.infiltration import infiltration_4
 from pymarrmot.models.unit_hydro import (uh_6_gamma, update_uh, route)
 
-class SmarModel(MARRMoT_model):
+class m_40_smar_8p_6s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: SMAR
 
@@ -31,11 +31,11 @@ class SmarModel(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 6  # number of model stores
-        self.numFluxes = 20  # number of model fluxes
-        self.numParams = 8
+        self.num_stores = 6  # number of model stores
+        self.num_fluxes = 20  # number of model fluxes
+        self.num_params = 8
 
-        self.JacobPattern = np.array([
+        self.jacob_pattern = np.array([
             [1, 0, 0, 0, 0, 0],
             [1, 1, 0, 0, 0, 0],
             [1, 1, 1, 0, 0, 0],
@@ -44,7 +44,7 @@ class SmarModel(MARRMoT_model):
             [1, 1, 1, 1, 1, 1]
         ])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([
+        self.par_ranges = np.array([
             [0, 1],  # h, Maximum fraction of direct runoff [-]
             [0, 200],  # y, Infiltration rate [mm/d]
             [1, 2000],  # smax, Maximum soil moisture storage [mm]
@@ -55,13 +55,13 @@ class SmarModel(MARRMoT_model):
             [1, 120]  # n*k, Routing delay [d]
         ])
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
-        self.FluxNames = ["pstar", "estar", "evap", "r1", "i",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
+        self.flux_names = ["pstar", "estar", "evap", "r1", "i",
                           "r2", "e1", "e2", "e3", "e4",
                           "e5", "q1", "q2", "q3", "q4",
                           "r3", "rg", "r3star", "qr", "qg"]  # Names for the fluxes
 
-        self.FluxGroups = {'Ea': [2, 6, 7, 8, 9, 10],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {'Ea': [2, 6, 7, 8, 9, 10],  # Index or indices of fluxes to add to Actual ET
                            'Q': [18, 19]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -134,7 +134,7 @@ class SmarModel(MARRMoT_model):
         dS6 = flux_rg - flux_qg
 
         # outputs
-        dS = np.arry([dS1, dS2, dS3, dS4, dS5, dS6])
+        dS = np.array([dS1, dS2, dS3, dS4, dS5, dS6])
         fluxes = [flux_pstar, flux_estar, flux_evap, flux_r1, flux_i,
                   flux_r2, flux_e1, flux_e2, flux_e3, flux_e4,
                   flux_e5, flux_q1, flux_q2, flux_q3, flux_q4,

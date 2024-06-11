@@ -1,13 +1,16 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_5, evap_8, evap_9, evap_10
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux.interception import interception_3
-from pymarrmot.models.flux import excess_1
-from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.evaporation.evap_5 import evap_5
+from pymarrmot.models.flux.evaporation.evap_8 import evap_8
+from pymarrmot.models.flux.evaporation.evap_9 import evap_9
+from pymarrmot.models.flux.evaporation.evap_10 import evap_10
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.interception.interception_3 import interception_3
+from pymarrmot.models.flux.excess_1 import excess_1
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
 
-class M08_US1_5P_2S(MARRMoT_model):
+class m_08_us1_5p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: United States model v1
     """

@@ -9,7 +9,7 @@ from pymarrmot.models.flux.saturation import saturation_1
 from pymarrmot.models.flux.recharge import recharge_3
 from pymarrmot.models.flux.baseflow import baseflow_1
 
-class M30_MOPEX2_7P_5S(MARRMoT_model):
+class m_30_mopex2_7p_5s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: MOPEX-2
 

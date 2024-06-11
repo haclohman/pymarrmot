@@ -24,15 +24,15 @@ class m_21_flexb_9p_3s(MARRMoT_model):
         Creator method
         """
         super().__init__()
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 9  # number of model fluxes
-        self.numParams = 9  # number of model parameters
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 9  # number of model fluxes
+        self.num_params = 9  # number of model parameters
 
-        self.JacobPattern = np.array([[1, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0],
                                       [1, 1, 0],
                                       [1, 0, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],    # URmax, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],    # URmax, Maximum soil moisture storage [mm]
                                     [0, 10],       # beta, Unsaturated zone shape parameter [-]
                                     [0, 1],        # D, Fast/slow runoff distribution parameter [-]
                                     [0, 20],       # PERCmax, Maximum percolation rate [mm/d]
@@ -42,11 +42,11 @@ class m_21_flexb_9p_3s(MARRMoT_model):
                                     [0, 1],        # Kf, Fast runoff coefficient [d-1]
                                     [0, 1]])       # Ks, Slow runoff coefficient [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["ru", "eur", "ps", "rf", "rs",
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["ru", "eur", "ps", "rf", "rs",
                           "rfl", "rsl", "qf", "qs"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": 2,      # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": 2,      # Index or indices of fluxes to add to Actual ET
                            "Q": [8, 9]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -80,7 +80,13 @@ class m_21_flexb_9p_3s(MARRMoT_model):
         """
         # parameters
         theta = self.theta
-        s1max, beta, d, percmax, lp, kf, ks = theta
+        s1max = theta[0]
+        beta = theta[1]
+        d = theta[2]
+        percmax = theta[3]
+        lp = theta[4]
+        kf = theta[7]
+        ks = theta[8]
 
         # delta_t
         delta_t = self.delta_t

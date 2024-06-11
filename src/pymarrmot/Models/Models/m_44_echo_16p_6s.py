@@ -42,16 +42,16 @@ class m_44_echo_16p_6s(MARRMoT_model):
         super().__init__()
         self.aux_theta = None
 
-        self.numStores = 6
-        self.numFluxes = 20
-        self.numParams = 16
-        self.JacobPattern = [[1,0,0,0,0,0],
+        self.num_stores = 6
+        self.num_fluxes = 20
+        self.num_params = 16
+        self.jacob_pattern = [[1,0,0,0,0,0],
                              [1,1,1,0,0,0],
                              [1,1,1,0,0,0],
                              [1,1,1,1,0,0],
                              [0,0,0,1,1,0],
                              [0,0,0,1,0,1]]
-        self.parRanges = [[0, 5],
+        self.par_ranges = [[0, 5],
                           [-3, 5],
                           [-3, 3],
                           [0, 20],
@@ -67,12 +67,12 @@ class m_44_echo_16p_6s(MARRMoT_model):
                           [0, 20],
                           [0, 1],
                           [0, 1]]
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6"]
-        self.FluxNames = ["ei", "pn", "ps", "pr", "ms",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6"]
+        self.flux_names = ["ei", "pn", "ps", "pr", "ms",
                           "fs", "gs", "mw", "ew", "eq",
                           "rh", "eps", "et", "fi", "rd",
                           "l", "lf", "ls", "rf", "rs"]
-        self.FluxGroups = {"Ea": [1, 13],
+        self.flux_groups = {"Ea": [1, 13],
                            "Q": [11, 15, 19, 20]}
 
     def init(self):

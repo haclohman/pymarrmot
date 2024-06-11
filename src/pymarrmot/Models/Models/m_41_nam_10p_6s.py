@@ -32,18 +32,18 @@ class m_41_nam_10p_6s(MARRMoT_model):
         Creator method
         """
         super().__init__()
-        self.numStores = 6  # number of model stores
-        self.numFluxes = 14  # number of model fluxes
-        self.numParams = 10
+        self.num_stores = 6  # number of model stores
+        self.num_fluxes = 14  # number of model fluxes
+        self.num_params = 10
 
-        self.JacobPattern = np.array([[1, 0, 0, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0, 0, 0],
                                       [1, 1, 1, 0, 0, 0],
                                       [1, 1, 1, 0, 0, 0],
                                       [1, 1, 1, 1, 0, 0],
                                       [0, 1, 1, 0, 1, 0],
                                       [1, 1, 1, 0, 0, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 20],  # cs, Degree-day factor for snowmelt [mm/oC/d]
+        self.par_ranges = np.array([[0, 20],  # cs, Degree-day factor for snowmelt [mm/oC/d]
                                     [0, 1],   # cif, Runoff coefficient for interflow [d-1]
                                     [1, 2000],  # stot, Maximum total soil moisture depth [mm]
                                     [0, 0.99],  # cl1, Lower zone filling threshold for interflow generation [-]
@@ -54,11 +54,11 @@ class m_41_nam_10p_6s(MARRMoT_model):
                                     [0, 1],   # k1, Interflow routing delay [d-1]
                                     [0, 1]])  # kb, Baseflow routing delay [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
-        self.FluxNames = ["ps", "pr", "m", "eu", "pn", "of", "inf",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
+        self.flux_names = ["ps", "pr", "m", "eu", "pn", "of", "inf",
                           "if", "dl", "gw", "el", "qo", "qi", "qb"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [4, 11],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [4, 11],  # Index or indices of fluxes to add to Actual ET
                            "Q": [12, 13, 14]}  # Index or indices of fluxes to add to Streamflow
 
         self.aux_theta = None  # Auxiliary parameters

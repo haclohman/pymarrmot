@@ -11,7 +11,7 @@ from pymarrmot.models.flux.depression_1 import depression_1
 from pymarrmot.models.flux.baseflow import baseflow_1
 from pymarrmot.models.flux.exchange import(exchange_3, exchange_1)
 
-class M36Modhydrolog155s(MARRMoT_model):
+class m_36_modhydrolog_15p_5s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: MODHYDROLOG
 

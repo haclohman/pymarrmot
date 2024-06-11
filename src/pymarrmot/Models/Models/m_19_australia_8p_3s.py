@@ -24,15 +24,15 @@ class m_19_australia_8p_3s(MARRMoT_model):
         Creator method
         """
         super().__init__()
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 8  # number of model fluxes
-        self.numParams = 8  # number of model parameters
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 8  # number of model fluxes
+        self.num_params = 8  # number of model parameters
 
-        self.JacobPattern = np.array([[1, 1, 0],
+        self.jacob_pattern = np.array([[1, 1, 0],
                                        [1, 1, 0],
                                        [0, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],  # Sb, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],  # Sb, Maximum soil moisture storage [mm]
                                    [0.05, 0.95],  # phi, Porosity [-]
                                    [0.01, 1.00],  # Sfc, Wilting point as fraction of sb [-]
                                    [0, 1.00],  # alpha_ss, Subsurface flow constant [1/d]
@@ -41,11 +41,11 @@ class m_19_australia_8p_3s(MARRMoT_model):
                                    [0, 1.00],  # alpha_bf, Groundwater flow constant [d-1]
                                    [1, 5]])  # beta_bf, Groundwater non-linearity constant [-]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["eus", "rg", "se", "esat",
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["eus", "rg", "se", "esat",
                           "qse", "qss", "qr", "qbf"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [1, 4],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 4],  # Index or indices of fluxes to add to Actual ET
                            "Q": [5, 6, 8]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):

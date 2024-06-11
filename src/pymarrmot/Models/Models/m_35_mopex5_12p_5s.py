@@ -11,7 +11,7 @@ from pymarrmot.models.flux.saturation import saturation_1
 from pymarrmot.models.flux.recharge import recharge_3
 from pymarrmot.models.flux.baseflow import baseflow_1
 
-class Mopem_35_mopex5_12p_5s(MARRMoT_model):
+class m_35_mopex5_12p_5s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: MOPEX-5
 
@@ -30,7 +30,6 @@ class Mopem_35_mopex5_12p_5s(MARRMoT_model):
     """
 
     def __init__(self):
-        """Initialize the MOPEX-5 model."""
         super().__init__()
         self.num_stores = 5  # number of model stores
         self.num_fluxes = 13  # number of model fluxes
@@ -63,8 +62,9 @@ class Mopem_35_mopex5_12p_5s(MARRMoT_model):
                            "et2", "q2f", "q2u", "qf", "qs"]
 
         # Flux groups
-        self.flux_groups["Ea"] = [5, 6, 9]
-        self.flux_groups["Q"] = [12, 13]
+        self.flux_groups = {"Ea": [5, 6, 9], "Q": [12, 13]}
+        #self.flux_groups["Ea"] = [5, 6, 9]
+        #self.flux_groups["Q"] = [12, 13]
 
     def init(self):
         """Initialize the MOPEX-5 model."""

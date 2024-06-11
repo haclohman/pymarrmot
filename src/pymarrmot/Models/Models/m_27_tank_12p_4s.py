@@ -20,16 +20,16 @@ class m_27_tank_12p_4s(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 4                                              # number of model stores
-        self.numFluxes = 12                                             # number of model fluxes
-        self.numParams = 12
+        self.num_stores = 4                                              # number of model stores
+        self.num_fluxes = 12                                             # number of model fluxes
+        self.num_params = 12
 
-        self.JacobPattern = np.array([[1, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0],
                                       [1, 1, 0, 0],
                                       [1, 1, 1, 0],
                                       [1, 1, 1, 1]])                   # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 1],                              # a0, Time parameter for drainage 1>2 [d-1]
+        self.par_ranges = np.array([[0, 1],                              # a0, Time parameter for drainage 1>2 [d-1]
                                     [0, 1],                              # b0, Time parameter for drainage 2>3 [d-1]
                                     [0, 1],                              # c0, Time parameter for drainage 3>4 [d-1]
                                     [0, 1],                              # a1, Time parameter for surface runoff 1 [d-1]
@@ -42,12 +42,12 @@ class m_27_tank_12p_4s(MARRMoT_model):
                                     [0.01, 0.99],                        # f1, Fraction of st-t2 that is added to t2 to find threshold 1 [-] (ensures t1 > t2)
                                     [0.01, 0.99]])                       # f3, Fraction of st-t1-t2 that consitutes threshold 3 [-]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4"]                       # Names for the stores
-        self.FluxNames = ["y1", "y2", "y3", "y4", "y5",
+        self.store_names = ["S1", "S2", "S3", "S4"]                       # Names for the stores
+        self.flux_names = ["y1", "y2", "y3", "y4", "y5",
                           "e1", "e2", "e3", "e4",
                           "f12", "f23", "f34"]                         # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [6, 7, 8, 9],                           # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [6, 7, 8, 9],                           # Index or indices of fluxes to add to Actual ET
                            "Q": [1, 2, 3, 4, 5]}                        # Index or indices of fluxes to add to Streamflow
 
     def init(self):

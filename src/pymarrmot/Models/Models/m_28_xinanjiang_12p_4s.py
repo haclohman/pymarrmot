@@ -18,16 +18,16 @@ class m_28_xinanjiang_12p_4s(MARRMoT_model):
         Creator method.
         """
         super().__init__()
-        self.numStores = 4                                          # number of model stores
-        self.numFluxes = 10                                         # number of model fluxes
-        self.numParams = 12
+        self.num_stores = 4                                          # number of model stores
+        self.num_fluxes = 10                                         # number of model fluxes
+        self.num_params = 12
 
-        self.JacobPattern = np.array([[1, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0],
                                        [1, 1, 0, 0],
                                        [0, 1, 1, 0],
                                        [0, 1, 0, 1]])              # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 1],                           # aim,  Fraction impervious area [-]
+        self.par_ranges = np.array([[0, 1],                           # aim,  Fraction impervious area [-]
                                    [-0.49, 0.49],                   # a,    Tension water distribution inflection parameter [-]
                                    [0, 10],                         # b,    Tension water distribution shape parameter [-]
                                    [1, 2000],                       # stot, Total soil moisture storage (W+S) [mm]
@@ -40,11 +40,11 @@ class m_28_xinanjiang_12p_4s(MARRMoT_model):
                                    [0, 1],                          # ci,   Interflow time coefficient [d-1]
                                    [0, 1]])                         # cg,   Baseflow time coefficient [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4"]                  # Names for the stores
-        self.FluxNames = ["rb", "pi", "e", "r", "rs",
+        self.store_names = ["S1", "S2", "S3", "S4"]                  # Names for the stores
+        self.flux_names = ["rb", "pi", "e", "r", "rs",
                           "ri", "rg", "qs", "qi", "qg"]            # Names for the fluxes
 
-        self.FluxGroups = {'Ea': 3, 'Q': [8, 9, 10]}                # Index or indices of fluxes to add to Actual ET and Streamflow
+        self.flux_groups = {'Ea': 3, 'Q': [8, 9, 10]}                # Index or indices of fluxes to add to Actual ET and Streamflow
 
         self.aux_theta = None
 

@@ -1,8 +1,10 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import (evap_7, evap_3)
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux.interflow import interflow_8
+from pymarrmot.models.flux.evaporation.evap_7 import evap_7
+from pymarrmot.models.flux.evaporation.evap_3 import evap_3
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.interflow.interflow_8 import interflow_8
+
 class m_03_collie2_4p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Collie River v2
@@ -25,23 +27,23 @@ class m_03_collie2_4p_1s(MARRMoT_model):
         Initialize the Collie River v2 model.
         """
         super().__init__()
-        self.numStores = 1
-        self.numFluxes = 4
-        self.numParams = 4
+        self.num_stores = 1
+        self.num_fluxes = 4
+        self.num_params = 4
 
-        self.JacobPattern = [1]
+        self.jacob_pattern = [1]
 
-        self.parRanges = [
+        self.par_ranges = [
             [1, 2000],     # Smax [mm]
             [0.05, 0.95],  # fc as fraction of Smax
             [0, 1],        # a, subsurface runoff coefficient [d-1]
             [0.05, 0.95]   # M, fraction forest cover [-]
         ]
 
-        self.StoreNames = ["S1"]
-        self.FluxNames = ["eb", "ev", "qse", "qss"]
+        self.store_names = ["S1"]
+        self.flux_names = ["eb", "ev", "qse", "qss"]
 
-        self.FluxGroups = {
+        self.flux_groups = {
             'Ea': [1, 2],  # Index or indices of fluxes to add to Actual ET
             'Q': [3, 4]    # Index or indices of fluxes to add to Streamflow
         }

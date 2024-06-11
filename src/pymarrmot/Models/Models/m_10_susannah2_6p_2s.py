@@ -1,12 +1,12 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_7
-from pymarrmot.models.flux.interflow import interflow_3
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux import excess_1
+from pymarrmot.models.flux.evaporation.evap_7 import evap_7
+from pymarrmot.models.flux.interflow.interflow_3 import interflow_3
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.excess_1 import excess_1
 
-class m_10_Susannah2_6p_2s(MARRMoT_model):
+class m_10_susannah2_6p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Susannah Brook model v2
 
@@ -28,25 +28,25 @@ class m_10_Susannah2_6p_2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 8  # number of model fluxes
-        self.numParams = 6
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 8  # number of model fluxes
+        self.num_params = 6
         
-        self.JacobPattern = np.array([[1, 1],
+        self.jacob_pattern = np.array([[1, 1],
                                        [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],    # Sb, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],    # Sb, Maximum soil moisture storage [mm]
                                     [0.05, 0.95],  # phi, Porosity [-]
                                     [0.05, 0.95],  # Sfc, Wilting point as fraction of sb [-]
                                     [0, 1],        # r, Fraction of runoff coefficient [-]
                                     [0, 1],        # c, Subsurface flow constant [1/d] (should be > 0)
                                     [1, 5]])       # d, Subsurface flow constant [-] (should be > 0)
 
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["eus", "rg", "se", "esat",
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["eus", "rg", "se", "esat",
                           "qse", "qss", "qr", "qt"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [1, 4],   # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 4],   # Index or indices of fluxes to add to Actual ET
                            "Q": 8,         # Index or indices of fluxes to add to Streamflow
                            "GWsink": 7}   # Index or groundwater sink flux
 

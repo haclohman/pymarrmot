@@ -31,15 +31,15 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 3  # number of model stores
-        self.numFluxes = 10  # number of model fluxes
-        self.numParams = 7  # number of model parameters
+        self.num_stores = 3  # number of model stores
+        self.num_fluxes = 10  # number of model fluxes
+        self.num_params = 7  # number of model parameters
 
-        self.JacobPattern = np.array([[1, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0],
                                        [1, 1, 0],
                                        [1, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 5],      # INSC, Maximum interception capacity, [mm]
+        self.par_ranges = np.array([[0, 5],      # INSC, Maximum interception capacity, [mm]
                                     [0, 600],    # COEFF, Maximum infiltration loss parameter, [mm]
                                     [0, 15],     # SQ, Infiltration loss exponent, [-]
                                     [1, 2000],   # SMSC, Maximum soil moisture capacity, [mm]
@@ -47,11 +47,11 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
                                     [0, 1],      # CRAK, Proportionality constant, [-]
                                     [0, 1]])     # K, Slow flow time scale, [d-1]
 
-        self.StoreNames = ["S1", "S2", "S3"]  # Names for the stores
-        self.FluxNames = ["Ei", "EXC", "INF", "INT", "REC",
+        self.store_names = ["S1", "S2", "S3"]  # Names for the stores
+        self.flux_names = ["Ei", "EXC", "INF", "INT", "REC",
                           "Et", "GWF", "BAS", "SRUN", "Qt"]  # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [0, 5],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [0, 5],  # Index or indices of fluxes to add to Actual ET
                            "Q": 9}       # Index or indices of fluxes to add to Streamflow
 
     def model_fun(self, S):
@@ -108,3 +108,9 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
                            flux_Et, flux_GWF, flux_BAS, flux_SRUN, flux_Qt])
 
         return dS, fluxes
+    
+    def init(self):
+        pass
+
+    def step(self):
+        pass

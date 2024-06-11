@@ -1,8 +1,21 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from models.unit_hydro.uh_4_full import(uh_4_full)
-from models.unit_hydro.update_uh import(update_uh)
+from pymarrmot.models.unit_hydro.uh_4_full import uh_4_full
+from pymarrmot.models.unit_hydro.update_uh import update_uh
+from pymarrmot.models.flux.snowfall.snowfall_2 import snowfall_2
+from pymarrmot.models.flux.refreeze_1 import refreeze_1
+from pymarrmot.models.flux.melt.melt_1 import melt_1
+from pymarrmot.models.flux.rainfall.rainfall_2 import rainfall_2
+from pymarrmot.models.flux.infiltration.infiltration_3 import infiltration_3
+from pymarrmot.models.flux.excess_1 import excess_1
+from pymarrmot.models.flux.capillary.capillary_1 import capillary_1
+from pymarrmot.models.flux.evaporation.evap_3 import evap_3
+from pymarrmot.models.flux.recharge.recharge_2 import recharge_2
+from pymarrmot.models.flux.interflow.interflow_2 import interflow_2
+from pymarrmot.models.flux.percolation.percolation_1 import percolation_1
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
+from pymarrmot.models.unit_hydro.route import route
 
 class m_37_hbv_15p_5s(MARRMoT_model):
     """
@@ -22,9 +35,6 @@ class m_37_hbv_15p_5s(MARRMoT_model):
     """
 
     def __init__(self):
-        """
-        Creator method
-        """
         super().__init__()
         self.num_stores = 5  # number of model stores
         self.num_fluxes = 13  # number of model fluxes
@@ -105,7 +115,7 @@ class m_37_hbv_15p_5s(MARRMoT_model):
 
         # stores at previous timestep
         t = self.t
-        if t == 1:
+        if t == 0:
             S2old = self.S0[1]
         else:
             S2old = self.stores[t - 1, 1]
@@ -115,6 +125,35 @@ class m_37_hbv_15p_5s(MARRMoT_model):
         Ep = self.input_climate['pet'][t]
         T = self.input_climate['temp'][t]
 
+        #  fluxes functions
+        flux_sf   = snowfall_2(P,T,tt,tti)
+        flux_refr = refreeze_1(cfr,cfmax,ttm,T,S2,delta_t)
+        flux_melt = melt_1(cfmax,ttm,T,S1,delta_t)
+        flux_rf   = rainfall_2(P,T,tt,tti)
+        flux_in   = infiltration_3(flux_rf+flux_melt,S2,whc*S1)
+        flux_se   = excess_1(S2old,whc*S1,delta_t)
+        flux_cf   = capillary_1(cflux,S3,fc,S4,delta_t)
+        flux_ea   = evap_3(lp,S3,fc,Ep,delta_t)
+        flux_r    = recharge_2(beta,S3,fc,flux_in+flux_se)
+        flux_q0   = interflow_2(k0,S4,alpha,delta_t)
+        flux_perc = percolation_1(perc,S4,delta_t)
+        flux_q1   = baseflow_1(k1,S5)
+        flux_qt   = route(flux_q0 + flux_q1, uh)
+
+        #   stores ODEs
+        dS1 = flux_sf   + flux_refr - flux_melt
+        dS2 = flux_rf   + flux_melt - flux_refr - flux_in - flux_se
+        dS3 = flux_in   + flux_se   + flux_cf   - flux_ea - flux_r
+        dS4 = flux_r    - flux_cf   - flux_q0   - flux_perc
+        dS5 = flux_perc - flux_q1
+            
+        #   outputs
+        dS = [dS1, dS2, dS3, dS4, dS5]
+        fluxes = [flux_sf,   flux_refr, flux_melt, flux_rf, flux_in,
+                    flux_se,   flux_cf,   flux_ea,   flux_r,  flux_q0,
+                    flux_perc, flux_q1, flux_qt]
+        
+        return dS, fluxes
 
     def step(self):
         """

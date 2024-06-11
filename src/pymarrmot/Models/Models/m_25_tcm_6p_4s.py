@@ -19,29 +19,29 @@ class m_25_tcm_6p_4s(MARRMoT_model):
     """
     def __init__(self):
         super().__init__()
-        self.numStores = 4                                          # number of model stores
-        self.numFluxes = 11                                         # number of model fluxes
-        self.numParams = 6
+        self.num_stores = 4                                          # number of model stores
+        self.num_fluxes = 11                                         # number of model fluxes
+        self.num_params = 6
 
-        self.JacobPattern = np.array([[1, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0],
                                        [1, 1, 0, 0],
                                        [1, 1, 1, 0],
-                                       [0, 0, 1, 1]])              # Jacobian matrix of model store ODEs
+                                       [0, 0, 1, 1]])                # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[0, 1],                           # phi, Fraction preferential recharge [-]
+        self.par_ranges = np.array([[0, 1],                          # phi, Fraction preferential recharge [-]
                                     [1, 2000],                       # rc, Maximum soil moisture depth [mm]
                                     [0, 1],                          # gam, Fraction of Ep reduction with depth [-]
                                     [0, 1],                          # k1, Runoff coefficient [d-1]
                                     [0, 1],                          # fa, Fraction of mean(P) that forms abstraction rate [mm/d]
                                     [0, 1]])                         # k2, Runoff coefficient [mm-1 d-1]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4"]                   # Names for the stores
-        self.FluxNames = ["pn", "en", "pby", "pin", "ea",
-                          "et", "qex1", "qex2", "quz", "a", "q"]    # Names for the fluxes
+        self.store_names = ["S1", "S2", "S3", "S4"]                  # Names for the stores
+        self.flux_names = ["pn", "en", "pby", "pin", "ea",
+                          "et", "qex1", "qex2", "quz", "a", "q"]     # Names for the fluxes
 
-        self.FluxGroups = {"Ea": [2, 5, 6],                          # Index or indices of fluxes to add to Actual ET
-                           "Q": 11,                                 # Index or indices of fluxes to add to Streamflow
-                           "Abstraction": 10}                      # Index or abstraction flux (just needed for water balance)
+        self.flux_groups = {"Ea": [2, 5, 6],                         # Index or indices of fluxes to add to Actual ET
+                           "Q": 11,                                  # Index or indices of fluxes to add to Streamflow
+                           "Abstraction": 10}                        # Index or abstraction flux (just needed for water balance)
 
         self.StoreSigns = [1, -1, 1, 1]                              # Signs to give to stores (-1 is a deficit store), only needed for water balance
 
@@ -50,7 +50,8 @@ class m_25_tcm_6p_4s(MARRMoT_model):
         Initialization function.
         """
         fa = self.theta[4]    # Fraction of average P abstracted [-]
-        P = self.input_climate[:, 0]
+        #P = self.input_climate[:, 0]
+        P = self.input_climate['precip']
 
         ca = fa * np.mean(P)    # Abstraction rate [mm/day]
         self.aux_theta = np.array([ca])
@@ -70,6 +71,12 @@ class m_25_tcm_6p_4s(MARRMoT_model):
             State derivatives and fluxes.
         """
         # parameters
+        phi = self.theta[0];     # Fraction preferential recharge [-]
+        rc  = self.theta[1];     # Maximum soil moisture depth [mm]
+        gam = self.theta[2];     # Fraction of Ep reduction with depth [-]
+        k1  = self.theta[3];     # Runoff coefficient [d-1]
+        k2  = self.theta[5];     # Runoff coefficient [mm-1 d-1]
+        
         phi, rc, gam, k1, _, k2 = self.theta
         ca = self.aux_theta[0]    # Abstraction rate [mm/day]
 

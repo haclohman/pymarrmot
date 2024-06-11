@@ -1,6 +1,6 @@
 import numpy as np
 
-def smooth_threshold_temperature_logistic(P, T, Tt, r=0.01):
+def smooth_threshold_temperature_logistic(T, Tt, r=0.01):
     """
     Logistic smoother for temperature threshold functions.
 
@@ -12,13 +12,13 @@ def smooth_threshold_temperature_logistic(P, T, Tt, r=0.01):
     Sf = P * 1 / (1 + exp((T - Tt) / r))
 
     Inputs:
-    P       : current precipitation
+
     T       : current temperature
     Tt      : threshold temperature below which snowfall occurs
     r       : smoothing parameter rho, default = 0.01
 
     NOTE: this function only outputs the multiplier. This needs to be
-    applied to the proper flux outside of this function.
+    applied to the proper flux (P in Sf equation) outside of this function.
     """
     # Calculate multiplier
     out = 1 / (1 + np.exp((T - Tt) / r))

@@ -1,31 +1,17 @@
 """
-Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
-This file is part of the Modular Assessment of Rainfall-Runoff Models
-Toolbox (MARRMoT).
-MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
-WARRANTY. See <https://www.gnu.org/licenses/> for details.
-
-Contact: l.trotter@unimelb.edu.au
-
-This example workflow  contains an example application of multiple models
-to a single catchment.
-It includes 6 steps:
-
-1. Data preparation
-2. Model choice and setup
-3. Model solver settings
-For each model in list
-    4. Model generation and set-up
-    5. Model runs
-6. Output visualization
+This is a test to run models 31 to 40 with the same input data and solver options.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from pymarrmot.models.models.m_29_hymod_5p_5s import m_29_hymod_5p_5s
-from pymarrmot.models.models.m_01_collie1_1p_1s import m_01_collie1_1p_1s
-from pymarrmot.models.models.m_27_tank_12p_4s import m_27_tank_12p_4s
+from pymarrmot.models.models.m_41_nam_10p_6s import m_41_nam_10p_6s
+from pymarrmot.models.models.m_42_hycymodel_12p_6s import m_42_hycymodel_12p_6s
+from pymarrmot.models.models.m_43_gsmsocont_12p_6s import m_43_gsmsocont_12p_6s
+from pymarrmot.models.models.m_44_echo_16p_6s import m_44_echo_16p_6s
+from pymarrmot.models.models.m_45_prms_18p_7s import m_45_prms_18p_7s
+from pymarrmot.models.models.m_46_classic_12p_8s import m_46_classic_12p_8s
+from pymarrmot.models.models.m_47_ihm19_16p_4s import m_47_ihm19_16p_4s
 
 # 1. Prepare data
 df = pd.read_csv('c:/users/ssheeder/repos/pymarrmot/examples/Example_DataSet.csv')
@@ -39,9 +25,13 @@ input_climatology = {
 }
 
 # 2. Define the model settings
-model_list = [m_29_hymod_5p_5s,
-              m_01_collie1_1p_1s,
-              m_27_tank_12p_4s]
+model_list =   [m_41_nam_10p_6s,
+                m_42_hycymodel_12p_6s,
+                m_43_gsmsocont_12p_6s,
+                m_44_echo_16p_6s,
+                m_45_prms_18p_7s,
+                m_46_classic_12p_8s,
+                m_47_ihm19_16p_4s]
 
 # 3. Define the solver settings
 input_solver_opts = {
@@ -58,7 +48,7 @@ for model in model_list:
     print(f"Now starting model {model}.")
     m = model()
     m.delta_t = 1
-    model_range = m.par_ranges
+    model_range = np.array(m.par_ranges)
     num_par = m.num_params
     num_store = m.num_stores
 
@@ -86,4 +76,5 @@ plt.grid(True)
 plt.xticks(rotation=45)
 plt.ylim([0, 70])
 plt.tight_layout()
-plt.show()
+plt.show(block=True)
+

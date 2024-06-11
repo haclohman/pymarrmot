@@ -35,15 +35,15 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
         super().__init__()
         self.theta_derived = None
 
-        self.numStores = 5
-        self.numFluxes = 20
-        self.numParams = 11
-        self.JacobPattern = np.array([[1,1,0,0,0],
+        self.num_stores = 5
+        self.num_fluxes = 20
+        self.num_params = 11
+        self.jacob_pattern = np.array([[1,1,0,0,0],
                                       [1,1,1,1,1],
                                       [1,1,1,1,1],
                                       [0,1,1,1,1],
                                       [0,1,1,1,1]])
-        self.parRanges = np.array([[0       , 1],        # pctim, Fraction impervious area [-]
+        self.par_ranges = np.array([[0       , 1],       # pctim, Fraction impervious area [-]
                                    [1       , 2000],     # smax, Maximum total storage depth [mm]
                                    [0.005   , 0.995],    # f1, fraction of smax that is Maximum upper zone tension water storage [mm]
                                    [0.005   , 0.995],    # f2, fraction of smax-S1max that is Maximum upper zone free water storage [mm]
@@ -54,12 +54,12 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
                                    [0       , 1],        # pfree, Fraction of percolation directed to free water stores [-]
                                    [0       , 1],        # klzp, Primary baseflow runoff coefficient [d-1]
                                    [0       , 1]])       # klzs, Supplemental baseflow runoff coefficient [d-1]
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5"]
-        self.FluxNames  = ["qdir", "peff", "ru", "euztw", "twexu",
+        self.store_names = ["S1", "S2", "S3", "S4", "S5"]
+        self.flux_names  = ["qdir", "peff", "ru", "euztw", "twexu",
                            "qsur", "qint", "euzfw", "pc", "pctw",
                            "elztw", "twexl", "twexlp", "twexls", "pcfwp",
                            "pcfws", "rlp", "rls", "qbfp", "qbfs"]
-        self.FluxGroups = {"Ea": [4, 8, 11], "Q": [1, 6, 7, 19, 20]}
+        self.flux_groups = {"Ea": [4, 8, 11], "Q": [1, 6, 7, 19, 20]}
 
     def init(self):
         theta = self.theta
@@ -81,7 +81,7 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
                       (lzfwpm*(1-klzp))/(lzfwsm*klzs+lzfwpm*klzp))    # Base percolation rate multiplication factor [-]: can return Inf, hence the min(10000,...)
         self.theta_derived = [uztwm, uzfwm, lztwm, lzfwpm, lzfwsm,
                              pbase, zperc]
-        self.store_max = [uztwm,uzfwm,lztwm,lzfwpm,lzfwsm]
+        self.store_max = np.array([uztwm,uzfwm,lztwm,lzfwpm,lzfwsm])
 
     def model_fun(self, S: list[float]) -> tuple[list[float], list[float]]:
         theta   = self.theta
@@ -124,11 +124,15 @@ class m_33_sacramento_11p_5s(MARRMoT_model):
         flux_pc      = percolation_4(pbase,zperc,rexp,max(0,lztwm-S3)+max(0,lzfwpm-S4)+max(0,lzfwsm-S5),lztwm+lzfwpm+lzfwsm,S2,uzfwm,delta_t)
         flux_pctw    = split_1(1-pfree,flux_pc)
         flux_elztw   = evap_7(S3,lztwm,max(0,Ep-flux_euztw-flux_euzfw),delta_t)
-        flux_twexl   = saturation_1(flux_pctw,S3,lztwm)  
-        flux_twexlp  = split_1(deficit_based_distribution(S4,lzfwpm,S5,lzfwsm),flux_twexl)
-        flux_twexls  = split_1(deficit_based_distribution(S5,lzfwsm,S4,lzfwpm),flux_twexl)
-        flux_pcfwp   = split_1(pfree*deficit_based_distribution(S4,lzfwpm,S5,lzfwsm),flux_pc)
-        flux_pcfws   = split_1(pfree*deficit_based_distribution(S5,lzfwsm,S4,lzfwpm),flux_pc) 
+        flux_twexl   = saturation_1(flux_pctw,S3,lztwm)
+
+        # modified from MatLab to specify the first position in the tuple returned from deficit_based_distribution
+        # Matlab will use only the first of the two outputs by default, but Python requires us to specify this
+        flux_twexlp  = split_1(deficit_based_distribution(S4,lzfwpm,S5,lzfwsm)[0],flux_twexl)
+        flux_twexls  = split_1(deficit_based_distribution(S5,lzfwsm,S4,lzfwpm)[0],flux_twexl)
+        flux_pcfwp   = split_1(pfree*deficit_based_distribution(S4,lzfwpm,S5,lzfwsm)[0],flux_pc)
+        flux_pcfws   = split_1(pfree*deficit_based_distribution(S5,lzfwsm,S4,lzfwpm)[0],flux_pc)
+
         flux_rlp     = soilmoisture_2(S3,lztwm,S4,lzfwpm,S5,lzfwsm)
         flux_rls     = soilmoisture_2(S3,lztwm,S5,lzfwsm,S4,lzfwpm)   
         flux_qbfp    = baseflow_1(klzp,S4)

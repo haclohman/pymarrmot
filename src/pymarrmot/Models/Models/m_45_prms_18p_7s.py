@@ -13,7 +13,7 @@ from pymarrmot.models.flux.recharge import recharge_7, recharge_2
 from pymarrmot.models.flux.interflow import interflow_4
 from pymarrmot.models.flux.evaporation import evap_1, evap_7, evap_15
 
-class M45Prms18p7s(MARRMoT_model):
+class m_45_prms_18p_7s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: PRMS
 
@@ -37,11 +37,11 @@ class M45Prms18p7s(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 7  # number of model stores
-        self.numFluxes = 25  # number of model fluxes
-        self.numParams = 18
+        self.num_stores = 7  # number of model stores
+        self.num_fluxes = 25  # number of model fluxes
+        self.num_params = 18
 
-        self.JacobPattern = [
+        self.jacob_pattern = [
             [1, 0, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 0, 0],
@@ -51,7 +51,7 @@ class M45Prms18p7s(MARRMoT_model):
             [1, 1, 1, 1, 1, 1, 1]
         ]  # Jacobian matrix of model store ODEs
 
-        self.parRanges = [
+        self.par_ranges = [
             [-3, 5],         # tt, Temperature threshold for snowfall and melt [oC]
             [0, 20],         # ddf,  Degree-day factor for snowmelt [mm/oC/d]
             [0, 1],          # alpha, Fraction of rainfall on soil moisture going to interception [-]
@@ -72,8 +72,8 @@ class M45Prms18p7s(MARRMoT_model):
             [0, 1]           # k6, Groundwater sink coefficient [d-1]
         ]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]  # Names for the stores
-        self.FluxNames = [
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]  # Names for the stores
+        self.flux_names = [
             "ps", "pr", "pim", "psm", "pby",
             "pin", "ptf", "m", "mim", "msm",
             "sas", "sro", "inf", "pc", "excs",
@@ -81,7 +81,7 @@ class M45Prms18p7s(MARRMoT_model):
             "snk", "ein", "eim", "ea", "et"
         ]  # Names for the fluxes
 
-        self.FluxGroups = {
+        self.flux_groups = {
             "Ea": [22, 23, 24, 25],  # Index or indices of fluxes to add to Actual ET
             "Q": [11, 12, 19, 20],    # Index or indices of fluxes to add to Streamflow
             "Sink": 21                # index of sink fluxes

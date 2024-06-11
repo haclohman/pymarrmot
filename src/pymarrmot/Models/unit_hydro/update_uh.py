@@ -1,31 +1,28 @@
-def update_uh(uh, flux_in):
-# UPDATE_UH calculates new still-to-flow values of a unit hydrograph at the
-# based on a flux routed through it at this timestep.
-    return uh
+import numpy as np
 
-"""Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
-# This file is part of the Modular Assessment of Rainfall-Runoff Models
-# Toolbox (MARRMoT).
-# MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
-# WARRANTY. See <https://www.gnu.org/licenses/> for details.
+def update_uh(uh: np.ndarray, flux_in: float) -> np.ndarray:
+    """
+    Calculates new still-to-flow values of a unit hydrograph based on a flux routed through it at this timestep.
 
-#     Parameters
+    Parameters
     ----------
-# uh        - unit hydrograph    np.array([nx2])
-#               uh's first row contains coeficients to splut flow at each
-#               of n timesteps forward, the second row contains
-#               still-to-flow values.
-# flux_in   - input flux         np.array([1x1])
-%
-#     Returns
+    uh : np.ndarray
+        Unit hydrograph of shape (2, n). The first row contains coefficients to split flow at each of n timesteps forward,
+        the second row contains still-to-flow values.
+    flux_in : float
+        Input flux.
+
+    Returns
     -------
-# uh        - update unit hydrograph np.array([nx2])
-#               UPDATE_UH does not change the first row, i.e. the
-#               coefficients, but only the still-to-flow values.
-%
-
-    uh(2,:)   = (uh(1,:) .* flux_in) + uh(2,:)
-    uh(2,:)   = circshift(uh(2,:),-1)
-uh(2,end) = 0;
-
-end
+    np.ndarray
+        Updated unit hydrograph of shape (2, n) with updated still-to-flow values.
+    """
+    if uh.shape[0] != 2:
+        raise ValueError("Unit hydrograph (uh) must have two rows.")
+    
+    # Update the still-to-flow values
+    uh[1, :] = (uh[0, :] * flux_in) + uh[1, :]
+    uh[1, :] = np.roll(uh[1, :], -1)
+    uh[1, -1] = 0
+    
+    return uh

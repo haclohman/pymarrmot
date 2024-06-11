@@ -1,15 +1,15 @@
 import numpy as np
 
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.evaporation import evap_1
-from pymarrmot.models.flux.snowfall import snowfall_1
-from pymarrmot.models.flux.rainfall import rainfall_1
-from pymarrmot.models.flux.melt import melt_1
-from pymarrmot.models.flux.saturation import saturation_1
-from pymarrmot.models.flux.interflow import interflow_8
-from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.evaporation.evap_1 import evap_1
+from pymarrmot.models.flux.snowfall.snowfall_1 import snowfall_1
+from pymarrmot.models.flux.rainfall.rainfall_1 import rainfall_1
+from pymarrmot.models.flux.melt.melt_1 import melt_1
+from pymarrmot.models.flux.saturation.saturation_1 import saturation_1
+from pymarrmot.models.flux.interflow.interflow_8 import interflow_8
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
 
-class M12Alpine2_6p_2s(MARRMoT_model):
+class m_12_alpine2_6p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Alpine model v2
 
@@ -31,24 +31,24 @@ class M12Alpine2_6p_2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 7  # number of model fluxes
-        self.numParams = 6
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 7  # number of model fluxes
+        self.num_params = 6
         
-        self.JacobPattern = np.array([[1, 0],
+        self.jacob_pattern = np.array([[1, 0],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[-3, 5],       # tt [celsius]
+        self.par_ranges = np.array([[-3, 5],       # tt [celsius]
                                     [0, 20],      # degree-day-factor [mm/degree celsius/d]
                                     [1, 2000],    # Smax [mm]
                                     [0.05, 0.95], # Field capacity as fraction of Smax [-]
                                     [0, 1],       # time delay of interflow [d-1]
                                     [0, 1]])      # time delay of baseflow [d-1]
         
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["ps", "pr", "qn", "ea", "qse", "qin", "qbf"]  # Names for the fluxes
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["ps", "pr", "qn", "ea", "qse", "qin", "qbf"]  # Names for the fluxes
         
-        self.FluxGroups = {"Ea": [4],    # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [4],    # Index or indices of fluxes to add to Actual ET
                            "Q": [5, 6, 7]} # Index or indices of fluxes to add to Streamflow
 
         # setting delta_t and theta triggers the function obj.init()

@@ -16,14 +16,14 @@ class MARRMoT_model:
     def __init__(self):
 
         #static attributes, set for each model in the model definition
-        self.numStores = None           #number of model stores
-        self.numFluxes = None           #number of model fluxes
-        self.numParams = None           #number of model parameters
-        self.parRanges = None           #default parameter ranges
-        self.JacobPattern = None        #pattern of the Jacobian matrix of model store ODEs
-        self.StoreNames = None          #names for the stores
-        self.FluxNames = None           #Names for the fluxes
-        self.FluxGroups = None          #Grouping of fluxes (useful for water balance and output)
+        self.num_stores = None           #number of model stores
+        self.num_fluxes = None           #number of model fluxes
+        self.num_params = None           #number of model parameters
+        self.par_ranges = None           #default parameter ranges
+        self.jacob_pattern = None        #pattern of the Jacobian matrix of model store ODEs
+        self.store_names = None          #names for the stores
+        self.flux_names = None           #Names for the fluxes
+        self.flux_groups = None          #Grouping of fluxes (useful for water balance and output)
         self.StoreSigns = None          #Signs to give to stores (-1 is a deficit store), assumes all 1 if not given
                                         
         #attributes set at the beginning of the simulation directly by the user
@@ -50,11 +50,11 @@ class MARRMoT_model:
         """
         if name == 'theta':
             if value is not None:
-                if value.size == self.numParams:
+                if value.size == self.num_params:
                     super().__setattr__(name, value)
                     self.reset()
                 else:
-                    raise ValueError(f'theta must have {self.numParams} elements')
+                    raise ValueError(f'theta must have {self.num_params} elements')
             else:
                 super().__setattr__(name, value)   
         elif name == 'delta_t':
@@ -84,11 +84,11 @@ class MARRMoT_model:
                 super().__setattr__(name, value)
         elif name == 'S0':
             if value is not None:
-                if value.size == self.numStores:
+                if value.size == self.num_stores:
                     super().__setattr__(name, value)
                     self.reset()
                 else:
-                    raise ValueError(f'S0 must have {self.numStores} elements')
+                    raise ValueError(f'S0 must have {self.num_stores} elements')
             else:
                 super().__setattr__(name, value)
         elif name == 'solver_opts':
@@ -122,11 +122,11 @@ class MARRMoT_model:
         INIT_ runs before each model run to initialise store limits,
         auxiliary parameters etc. it calls INIT which is model specific
         """
-        self.store_min = np.zeros((self.numStores, 1))
-        self.store_max = np.inf * np.ones((self.numStores, 1))
+        self.store_min = np.zeros((self.num_stores, 1))
+        self.store_max = np.inf * np.ones((self.num_stores, 1))
         t_end = self.input_climate['precip'].shape[0]
-        self.stores = np.zeros((t_end, self.numStores))
-        self.fluxes = np.zeros((t_end, self.numFluxes))
+        self.stores = np.zeros((t_end, self.num_stores))
+        self.fluxes = np.zeros((t_end, self.num_fluxes))
         self.solver_data = {
             'resnorm': np.zeros(t_end),
             'solver': np.full(t_end, 'None'),
@@ -169,14 +169,14 @@ class MARRMoT_model:
         self : object
             Instance of the class containing solver options.
         Sold : array_like
-            Array of shape (numStores,) containing the initial storage values.
+            Array of shape (num_stores,) containing the initial storage values.
 
         Returns:
         --------
         tuple
             A tuple containing the following:
                 Snew : ndarray
-                    Array of shape (numStores,) containing the new storage values.
+                    Array of shape (num_stores,) containing the new storage values.
                 resnorm : float
                     The residual norm of the solution.
                 solver : str
@@ -189,11 +189,12 @@ class MARRMoT_model:
         # Reduce tolerance to a fraction of the smallest store
         resnorm_tolerance = solver_opts['resnorm_tolerance'] * min(abs(s_old)) + 1E-5
         # Create vectors for each solver
-        Snew_v = np.zeros((3, self.numStores))
+        Snew_v = np.zeros((3, self.num_stores))
         resnorm_v = np.full(3, np.inf)
         iter_v = np.ones(3, dtype=int)
 
         tmp_Snew, tmp_fval, exit_flag = nr.NewtonRaphson(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
+       
         if(tmp_Snew<self.store_min.flatten()).any() or (tmp_Snew > self.store_max.flatten()).any():
             tmp_Snew = np.max([tmp_Snew, self.store_min.flatten()], axis=0)
             tmp_Snew = np.min([tmp_Snew, self.store_max.flatten()], axis=0)
@@ -237,14 +238,14 @@ class MARRMoT_model:
         initGuess : array_like
             Initial guess for the solution.
         Sold : array_like
-            Array of shape (numStores,) containing the previous storage values.
+            Array of shape (num_stores,) containing the previous storage values.
 
         Returns:
         --------
         tuple
             A tuple containing the following:
                 Snew : ndarray
-                    Array of shape (numStores,) containing the new storage values.
+                    Array of shape (num_stores,) containing the new storage values.
                 fval : ndarray
                     The value of the function at the solution.
                 stopflag : int
@@ -259,12 +260,12 @@ class MARRMoT_model:
 
         iter_count = 1
         resnorm = resnorm_tolerance + 1
-        numStores = obj.numStores
+        num_stores = obj.num_stores
         stopflag = 1
-        Snew = -np.ones(numStores)
+        Snew = -np.ones(num_stores)
         
-        Snew_v = np.zeros((numStores, max_iter))
-        fval_v = np.full((numStores, max_iter), np.inf)
+        Snew_v = np.zeros((num_stores, max_iter))
+        fval_v = np.full((num_stores, max_iter), np.inf)
         resnorm_v = np.full(max_iter, np.inf)
 
         while resnorm > resnorm_tolerance:
@@ -277,9 +278,9 @@ class MARRMoT_model:
             elif iter_count == 4:
                 x0 = np.minimum(2 * 10**4, obj.store_max.flatten())
             else:
-                x0 = np.maximum(0, Sold + np.random.randn(numStores) * Sold / 10)
+                x0 = np.maximum(0, Sold + np.random.randn(num_stores) * Sold / 10)
 
-            print(f'{iter_count}.x0={x0}')
+            #print(f'{iter_count}.x0={x0}')
             if solverName.lower() == 'fsolve':
                 Snew_tmp, info_dict, ier, mesg = fsolve(solve_fun, x0, full_output = True)
                 fval_v[:,iter_count-1] = info_dict['fvec']
@@ -292,9 +293,11 @@ class MARRMoT_model:
             elif solverName.lower() == 'lsqnonlin':
                 solver_opts2 = {}
                 solver_opts2['max_nfev'] = solver_opts['MaxFunEvals']
-
+                if(x0<obj.store_min.flatten()).any() or (x0 > obj.store_max.flatten()).any():
+                    x0 = np.max([x0, obj.store_min.flatten()], axis=0)
+                    x0 = np.min([x0, obj.store_max.flatten()], axis=0)
                 res = least_squares(solve_fun, x0, bounds=(obj.store_min.flatten(), obj.store_max.flatten()), method='trf', **solver_opts2)
-                print(f'!!!Least Squares. Result = {res.x}')
+                #print(f'!!!Least Squares. Result = {res.x}')
                 Snew_v[:, iter_count - 1] = res.x
                 fval_v[:, iter_count - 1] = res.fun
                 stopflag = res.status
@@ -315,6 +318,9 @@ class MARRMoT_model:
 
             iter_count += 1
 
+            
+            
+
         return Snew, fval, stopflag, iter_count
 
     def rerunSolver_MatLab(obj, solverName, initGuess, Sold):
@@ -330,14 +336,14 @@ class MARRMoT_model:
         initGuess : array_like
             Initial guess for the solution.
         Sold : array_like
-            Array of shape (numStores,) containing the previous storage values.
+            Array of shape (num_stores,) containing the previous storage values.
 
         Returns:
         --------
         tuple
             A tuple containing the following:
                 Snew : ndarray
-                    Array of shape (numStores,) containing the new storage values.
+                    Array of shape (num_stores,) containing the new storage values.
                 fval : ndarray
                     The value of the function at the solution.
                 stopflag : int
@@ -352,12 +358,12 @@ class MARRMoT_model:
 
         iter_count = 1
         resnorm = resnorm_tolerance + 1
-        numStores = obj.numStores
+        num_stores = obj.num_stores
         stopflag = 1
-        Snew = -np.ones(numStores)
+        Snew = -np.ones(num_stores)
         
-        Snew_v = np.zeros((numStores, max_iter))
-        fval_v = np.full((numStores, max_iter), np.inf)
+        Snew_v = np.zeros((num_stores, max_iter))
+        fval_v = np.full((num_stores, max_iter), np.inf)
         resnorm_v = np.full(max_iter, np.inf)
 
         while resnorm > resnorm_tolerance:
@@ -370,7 +376,7 @@ class MARRMoT_model:
             elif iter_count == 4:
                 x0 = np.minimum(2 * 10**4, obj.store_max)
             else:
-                x0 = np.maximum(0, Sold + np.random.randn(numStores) * Sold / 10)
+                x0 = np.maximum(0, Sold + np.random.randn(num_stores) * Sold / 10)
 
             if solverName.lower() == 'fsolve':
                 Snew_v, info_dict = fsolve(solve_fun, x0)
@@ -441,7 +447,8 @@ class MARRMoT_model:
             dS, f = obj.model_fun(Snew)
 
             obj.fluxes[t, :] = f * obj.delta_t
-            obj.stores[t, :] = Sold + dS.T * obj.delta_t
+
+            obj.stores[t, :] = Sold + dS * obj.delta_t
 
             obj.solver_data['resnorm'][t] = resnorm
             obj.solver_data['solver'][t] = solver
@@ -480,17 +487,17 @@ class MARRMoT_model:
             obj.run(*args)
 
         fluxOutput = {}
-        for fg in obj.FluxGroups:
-            idx = np.abs(obj.FluxGroups[fg])
-            signs = np.sign(obj.FluxGroups[fg])
+        for fg in obj.flux_groups:
+            idx = np.abs(obj.flux_groups[fg])
+            signs = np.sign(obj.flux_groups[fg])
             if idx.size == 1:
                 fluxOutput[fg] = signs * obj.fluxes[:, idx - 1]
             else:
                 fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx - 1], axis=1)
 
-        fluxInternal = {obj.FluxNames[i]: obj.fluxes[:, i] for i in range(obj.numFluxes)}
+        fluxInternal = {obj.flux_names[i]: obj.fluxes[:, i] for i in range(obj.num_fluxes)}
 
-        storeInternal = {obj.StoreNames[i]: obj.stores[:, i] for i in range(obj.numStores)}
+        storeInternal = {obj.store_names[i]: obj.stores[:, i] for i in range(obj.num_stores)}
 
         if nargout == 4:
             waterBalance = obj.check_waterbalance()
@@ -520,16 +527,16 @@ class MARRMoT_model:
             obj.run(*args)
 
         P = obj.input_climate['precip'][()]
-        fg = obj.FluxGroups.keys()
+        fg = obj.flux_groups.keys()
         OutFluxes = np.zeros(len(fg))
         for k in range(len(fg)):
-            idx = np.abs(obj.FluxGroups[list(fg)[k]])
-            signs = np.sign(obj.FluxGroups[list(fg)[k]])
+            idx = np.abs(obj.flux_groups[list(fg)[k]])
+            signs = np.sign(obj.flux_groups[list(fg)[k]])
             OutFluxes[k] = np.sum(signs*obj.fluxes[:,idx-1])
             # OpenAI interpretation: OutFluxes[k] = np.sum(np.sum(signs * obj.fluxes[:, idx], 1), 2)
         
         if obj.StoreSigns is None:
-            obj.StoreSigns = np.ones(obj.numStores)
+            obj.StoreSigns = np.ones(obj.num_stores)
         dS = obj.StoreSigns * (obj.stores[-1] - obj.S0)
         if obj.uhs is None:
             R = np.array([])
@@ -542,7 +549,7 @@ class MARRMoT_model:
         print('Total P  =', np.sum(P), 'mm.')
         for k, fg_k in enumerate(fg):
             print('Total', fg_k, '=', -OutFluxes[k], 'mm.')
-        for s in range(obj.numStores):
+        for s in range(obj.num_stores):
             if obj.StoreSigns[s] == -1:
                 ending = ' (deficit store).'
             else:
@@ -573,9 +580,9 @@ class MARRMoT_model:
         if pars.all() or not obj.status or obj.status == 0:
             obj.run(theta=pars)
 
-        q = [x - 1 for x in obj.FluxGroups['Q']]
+        q = [x - 1 for x in obj.flux_groups['Q']]
         Q = np.sum(obj.fluxes[:,q], axis=1)
-        #Q = np.sum(obj.fluxes[:, obj.FluxGroups['Q']], axis=1)
+        #Q = np.sum(obj.fluxes[:, obj.flux_groups['Q']], axis=1)
         return Q
         
     def calibrate(obj, Q_obs, cal_idx, optim_fun, par_ini=None, optim_opts=None, of_name=None,
@@ -658,7 +665,7 @@ class MARRMoT_model:
         Q_obs = Q_obs[:max(cal_idx)]
 
         if par_ini is None:
-            par_ini = np.mean(obj.parRanges, axis=1)
+            par_ini = np.mean(obj.par_ranges, axis=1)
 
         # Helper function to calculate fitness given a set of parameters
         def fitness_fun(par):
@@ -692,15 +699,15 @@ class MARRMoT_model:
         solver_opts = {
             'resnorm_tolerance': 0.1,  # Root-finding convergence tolerance
             'resnorm_maxiter': 6,      # Maximum number of re-runs used in rerunSolver
-            'NewtonRaphson': {'MaxIter': obj.numStores * 10},
-            'fsolve': {'JacobPattern': obj.JacobPattern},
-            'lsqnonlin': {'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
+            'NewtonRaphson': {'MaxIter': obj.num_stores * 10},
+            'fsolve': {'jacob_pattern': obj.jacob_pattern},
+            'lsqnonlin': {'jacob_pattern': obj.jacob_pattern, 'MaxFunEvals': 1000}
         }
 
         # In the original code there were two separate
         # if not obj.isOctave:
-        #     solver_opts['fsolve'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern}
-        #     solver_opts['lsqnonlin'] = {'Display': 'none', 'JacobPattern': obj.JacobPattern, 'MaxFunEvals': 1000}
+        #     solver_opts['fsolve'] = {'Display': 'none', 'jacob_pattern': obj.jacob_pattern}
+        #     solver_opts['lsqnonlin'] = {'Display': 'none', 'jacob_pattern': obj.jacob_pattern, 'MaxFunEvals': 1000}
         # else:
         #     solver_opts['fsolve'] = {'Display': 'off'}
         #     solver_opts['lsqnonlin'] = {'Display': 'off', 'MaxFunEvals': 1000}
@@ -746,7 +753,7 @@ class MARRMoT_model:
 '''
 Not sure if this stuff is used, but not ready to get rid of it yet...
     def solve_fluxes(self, Sold):
-        fluxes = np.zeros((self.numFluxes, 1))
+        fluxes = np.zeros((self.num_fluxes, 1))
         fluxes[self.uhs] = Sold[self.uhs] / self.theta[self.uhs]
         return fluxes
 
@@ -796,10 +803,10 @@ Not sure if this stuff is used, but not ready to get rid of it yet...
         return default_opts
 
     def check_input(self):
-        assert self.numStores == len(self.StoreNames), 'numStores must equal length of StoreNames'
-        assert self.numFluxes == len(self.FluxNames), 'numFluxes must equal length of FluxNames'
-        assert self.numParams == len(self.parRanges), 'numParams must equal length of parRanges'
-        assert self.numParams == len(self.JacobPattern), 'numParams must equal length of JacobPattern'
+        assert self.num_stores == len(self.store_names), 'num_stores must equal length of store_names'
+        assert self.num_fluxes == len(self.flux_names), 'num_fluxes must equal length of flux_names'
+        assert self.num_params == len(self.par_ranges), 'num_params must equal length of par_ranges'
+        assert self.num_params == len(self.jacob_pattern), 'num_params must equal length of jacob_pattern'
 
     def jacob_fun(self, S):
         S = S.reshape(-1, 1)

@@ -1,28 +1,34 @@
 
-def interception_1(In, S, Smax, *varargin):
-    # Flux function
-    # Description: Interception excess when maximum capacity is reached
-    # Constraints: -
-    # @(Inputs): In - incoming flux [mm/d]
-    #            S  - current storage [mm]
-    #            Smax - maximum storage [mm]
-    #            varargin(1) - smoothing variable r (default 0.01)
-    #            varargin(2) - smoothing variable e (default 5.00)
-    
-    if len(varargin) == 0:
-        r = 0.01  # default value for smoothing variable r
-        e = 5.00  # default value for smoothing variable e
-    elif len(varargin) == 1:
-        r = varargin[0]
-        e = 5.00  # default value for smoothing variable e
-    elif len(varargin) == 2:
-        r = varargin[0]
-        e = varargin[1]
-    
-    # write the logic for the function here
-    # ...
-    pass  # placeholder for the logic
-    
-    # replace "pass" with the actual logic for the function
+import numpy as np
+from pymarrmot.functions.flux_smoothing.smooth_threshold_storage_logistic import smooth_threshold_storage_logistic as stsl
 
-    return out  # replace "out" with the actual output variable name
+def interception_1(In: np.ndarray, S: np.ndarray, Smax: float, *args: float) -> np.ndarray:
+    """
+    Interception excess when maximum capacity is reached.
+
+    Parameters
+    ----------
+    In : np.ndarray
+        Incoming flux [mm/d].
+    S : np.ndarray
+        Current storage [mm].
+    Smax : float
+        Maximum storage [mm].
+    *args : float, optional
+        Additional smoothing variables r and e.
+
+    Returns
+    -------
+    np.ndarray
+        Outgoing flux after interception [mm/d].
+    """
+    if len(args) == 0:
+        out = In * (1 - stsl(S, Smax))
+    elif len(args) == 1:
+        out = In * (1 - stsl(S, Smax, args[0]))
+    elif len(args) == 2:
+        out = In * (1 - stsl(S, Smax, args[0], args[1]))
+    else:
+        raise ValueError("Too many arguments provided for smoothing variables.")
+
+    return out

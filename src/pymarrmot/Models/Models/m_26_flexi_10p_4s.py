@@ -9,7 +9,7 @@ from pymarrmot.models.flux.percolation import percolation_2
 from pymarrmot.models.flux.baseflow import baseflow_1
 from pymarrmot.models.unit_hydro import (route, uh_3_half, update_uh)
 
-class FlexiModel(MARRMoT_model):
+class m_26_flexi_10p_4s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Flex-I
 
@@ -21,16 +21,16 @@ class FlexiModel(MARRMoT_model):
     """
     def __init__(self):
         super().__init__()
-        self.numStores = 4                                              # number of model stores
-        self.numFluxes = 11                                             # number of model fluxes
-        self.numParams = 10 
+        self.num_stores = 4                                              # number of model stores
+        self.num_fluxes = 11                                             # number of model fluxes
+        self.num_params = 10 
 
-        self.JacobPattern = np.array([[1, 0, 0, 0],
+        self.jacob_pattern = np.array([[1, 0, 0, 0],
                                       [1, 1, 0, 0],
                                       [1, 1, 1, 0],
                                       [1, 1, 0, 1]])                   # Jacobian matrix of model store ODEs
                               
-        self.parRanges = np.array([[1, 2000],                           # URmax, Maximum soil moisture storage [mm]
+        self.par_ranges = np.array([[1, 2000],                           # URmax, Maximum soil moisture storage [mm]
                                     [0, 10],                             # beta, Unsaturated zone shape parameter [-]
                                     [0, 1],                              # D, Fast/slow runoff distribution parameter [-]
                                     [0, 20],                             # PERCmax, Maximum percolation rate [mm/d]
@@ -41,11 +41,11 @@ class FlexiModel(MARRMoT_model):
                                     [0, 1],                              # Ks, Slow runoff coefficient [d-1]
                                     [0, 5]])                             # Imax, Maximum interception storage [mm]
             
-        self.StoreNames = ["S1", "S2", "S3", "S4"]                       # Names for the stores
-        self.FluxNames = ["peff", "ei", "ru",  "eur", "ps",
+        self.store_names = ["S1", "S2", "S3", "S4"]                       # Names for the stores
+        self.flux_names = ["peff", "ei", "ru",  "eur", "ps",
                           "rf",   "rs", "rfl", "rsl", "qf", "qs"]        # Names for the fluxes
             
-        self.FluxGroups = {"Ea": [2, 4],                                 # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [2, 4],                                 # Index or indices of fluxes to add to Actual ET
                            "Q": [10, 11]}                                # Index or indices of fluxes to add to Streamflow
 
         self.uhs = None

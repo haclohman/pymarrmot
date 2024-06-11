@@ -1,11 +1,11 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.interception import interception_2
-from pymarrmot.models.flux.evaporation import evap_1
-from pymarrmot.models.flux.saturation import saturation_2
-from pymarrmot.models.flux.baseflow import baseflow_1
+from pymarrmot.models.flux.interception.interception_2 import interception_2
+from pymarrmot.models.flux.evaporation.evap_1 import evap_1
+from pymarrmot.models.flux.saturation.saturation_2 import saturation_2
+from pymarrmot.models.flux.baseflow.baseflow_1 import baseflow_1
 
-class M_02_Wetland_4p_1s(MARRMoT_model):
+class m_02_wetland_4p_1s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Wetland model
     Model reference:

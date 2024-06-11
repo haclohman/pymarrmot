@@ -31,11 +31,11 @@ class m_43_gsmsocont_12p_6s(MARRMoT_model):
 
     def __init__(self):
         super().__init__()
-        self.numStores = 6  # number of model stores
-        self.numFluxes = 19  # number of model fluxes
-        self.numParams = 12
+        self.num_stores = 6  # number of model stores
+        self.num_fluxes = 19  # number of model fluxes
+        self.num_params = 12
 
-        self.JacobPattern = [
+        self.jacob_pattern = [
             [1, 0, 0, 0, 0, 0],
             [1, 1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 0],
@@ -44,7 +44,7 @@ class m_43_gsmsocont_12p_6s(MARRMoT_model):
             [0, 0, 0, 1, 1, 1]
         ]  # Jacobian matrix of model store ODEs
 
-        self.parRanges = [
+        self.par_ranges = [
             [0, 1],     # fice,   Fraction of catchment covered by glacier [-]
             [-3, 5],    # t0,     Threshold temperature for snowfall [oC]
             [0, 20],    # asnow,  Degree-day factor for snow melt [mm/oC/d]
@@ -59,15 +59,15 @@ class m_43_gsmsocont_12p_6s(MARRMoT_model):
             [0, 1]      # beta,   Runoff coefficient for quick flow [mm^(4/3)/d]
         ]
 
-        self.StoreNames = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
-        self.FluxNames = [
+        self.store_names = ["S1", "S2", "S3", "S4", "S5", "S6"]  # Names for the stores
+        self.flux_names = [
             "pice", "pices", "picer", "mis", "pirs",
             "piri", "mii", "qis", "qii", "pni",
             "pnis", "pnir", "mnis", "peq", "peff",
             "pinf", "et", "qsl", "qqu"
         ]  # Names for the fluxes
 
-        self.FluxGroups = {
+        self.flux_groups = {
             "Ea": [17],                             # Index or indices of fluxes to add to Actual ET
             "Q": [8, 9, 18, 19],                    # Index or indices of fluxes to add to Streamflow
             "GlacierMelt": -7                       # Index of flows from glacier melt

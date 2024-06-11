@@ -8,7 +8,7 @@ from pymarrmot.models.flux.saturation import saturation_1
 from pymarrmot.models.flux.interflow import interflow_9
 from pymarrmot.models.unit_hydro import (route, uh_4_full, update_uh)
 
-class M11Collie3_6p_2s(MARRMoT_model):
+class m_11_collie3_6p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: Collie river v3
 
@@ -30,24 +30,24 @@ class M11Collie3_6p_2s(MARRMoT_model):
         creator method
         """
         super().__init__()
-        self.numStores = 2  # number of model stores
-        self.numFluxes = 7  # number of model fluxes
-        self.numParams = 6
+        self.num_stores = 2  # number of model stores
+        self.num_fluxes = 7  # number of model fluxes
+        self.num_params = 6
         
-        self.JacobPattern = np.array([[1, 0],
+        self.jacob_pattern = np.array([[1, 0],
                                       [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.parRanges = np.array([[1, 2000],   # Smax [mm]
+        self.par_ranges = np.array([[1, 2000],   # Smax [mm]
                                     [0.05, 0.95],  # fc as fraction of Smax [-] 
                                     [0, 1],       # a, subsurface runoff coefficient [d-1]
                                     [0.05, 0.95],  # M, fraction forest cover [-]
                                     [1, 5],       # b, flow non-linearity [-]
                                     [0, 1]])      # lambda, flow distribution [-]
         
-        self.StoreNames = ["S1", "S2"]  # Names for the stores
-        self.FluxNames = ["eb", "ev", "qse", "qss", "qsss", "qsg", "qt"]  # Names for the fluxes
+        self.store_names = ["S1", "S2"]  # Names for the stores
+        self.flux_names = ["eb", "ev", "qse", "qss", "qsss", "qsg", "qt"]  # Names for the fluxes
         
-        self.FluxGroups = {"Ea": [1, 2],   # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 2],   # Index or indices of fluxes to add to Actual ET
                            "Q": 7}         # Index or indices of fluxes to add to Streamflow
 
         # setting delta_t and theta triggers the function obj.init()

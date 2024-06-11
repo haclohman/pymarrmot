@@ -1,13 +1,16 @@
 import numpy as np
 from pymarrmot.models.models.marrmot_model import MARRMoT_model
-from pymarrmot.models.flux.saturation import saturation_4
-from pymarrmot.models.flux.evaporation import evap_11
-from pymarrmot.models.flux.percolation import percolation_3
-from pymarrmot.models.flux.recharge import recharge_2
-from pymarrmot.models.flux.baseflow import baseflow_3
-from pymarrmot.models.unit_hydro import (uh_1_half, uh_2_full, route, update_uh)
+from pymarrmot.models.flux.saturation.saturation_4 import saturation_4
+from pymarrmot.models.flux.evaporation.evap_11 import evap_11
+from pymarrmot.models.flux.percolation.percolation_3 import percolation_3
+from pymarrmot.models.flux.recharge.recharge_2 import recharge_2
+from pymarrmot.models.flux.baseflow.baseflow_3 import baseflow_3
+from pymarrmot.models.unit_hydro.uh_1_half import uh_1_half
+from pymarrmot.models.unit_hydro.uh_2_full import uh_2_full
+from pymarrmot.models.unit_hydro.route import route
+from pymarrmot.models.unit_hydro.update_uh import update_uh
 
-class M07_GR4J_4P_2S(MARRMoT_model):
+class m_07_gr4j_4p_2s(MARRMoT_model):
     """
     Class for hydrologic conceptual model: GR4J
     """
@@ -38,7 +41,7 @@ class M07_GR4J_4P_2S(MARRMoT_model):
         """
         INITialisation function
         """
-        super().__init__()
+        ##super().__init__()
         theta = self.theta
         delta_t = self.delta_t
         x1 = theta[0]  # Maximum soil moisture storage [mm]
@@ -46,7 +49,8 @@ class M07_GR4J_4P_2S(MARRMoT_model):
         x4 = theta[3]  # Flow delay [d]
 
         # max of stores
-        self.store_max = [x1, x3]
+        #self.store_max = [x1, x3]
+        self.store_max = np.array([x1, x3])
 
         # initialise the unit hydrographs and still-to-flow vectors
         uh_q9 = uh_1_half(x4, delta_t)

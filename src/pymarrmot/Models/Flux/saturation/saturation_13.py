@@ -22,5 +22,8 @@ def saturation_13(p1: float, p2: float, S: float, In: float) -> float:
         The saturation excess flow [mm/d].
     """
     S = max(0, S)  # Ensure storage is non-negative
-    out = In * norm.cdf(np.log10(S / p1) / np.log10(p1 / p2))
+    if S == 0:
+        out = 0
+    else:
+        out = In * norm.cdf(np.log10(S / p1) / np.log10(p1 / p2))
     return out

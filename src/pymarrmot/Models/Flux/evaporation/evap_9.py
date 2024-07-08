@@ -12,6 +12,9 @@ def evap_9(S1, S2, p1, Smax, Ep, dt):
     #               Ep   - potential evapotranspiration rate [mm/d]
     #               dt   - time step size [d]
 
-    out = max(min(S1/(S1+S2)*(1-p1)*S1/(Smax-S2)*Ep, S1/dt), 0)
+    if S1 + S2 == 0:
+        out = 0
+    else:
+        out = max(min(S1/(S1+S2)*(1-p1)*S1/(Smax-S2)*Ep, S1/dt), 0)
 
     return out

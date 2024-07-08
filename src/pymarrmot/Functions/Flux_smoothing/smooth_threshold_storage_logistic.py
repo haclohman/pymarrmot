@@ -34,10 +34,16 @@ def smooth_threshold_storage_logistic(s, smax, r=0.01, e=5.0):
     if smax < 0:
         smax = 0
 
-    # Calculate multiplier
+    # Calculate multiplier (additional if/else statement to avoid overflow warning)
     if r * smax == 0:
-        out = 1 / (1 + np.exp((s - smax + r * e * smax) / r))
+        if (s - smax + r * e * smax) / r >= 700:
+            out = 0
+        else:
+            out = 1 / (1 + np.exp((s - smax + r * e * smax) / r))
     else:
-        out = 1 / (1 + np.exp((s - smax + r * e * smax) / (r * smax)))
+        if (s - smax + r * e * smax) / (r * smax) >= 700:
+            out = 0
+        else:
+            out = 1 / (1 + np.exp((s - smax + r * e * smax) / (r * smax)))
 
     return out

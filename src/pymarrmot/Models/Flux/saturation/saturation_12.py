@@ -9,4 +9,5 @@ def saturation_12(p1, p2, In):
     #         In - incoming flux [mm/d]
     
     out = max(0, (p1 - p2) / (1 - p2)) * In
+
     return out

@@ -11,5 +11,21 @@ def infiltration_5(p1, p2, S1, S1max, S2, S2max):
 	              S2    - current storage in S2 [mm]
 	              S2max - maximum storage in S2 [mm]
 	"""
-	out = max(0, min(10**9, p1 * (1 - S1 / S1max) * max(0, S2 / S2max)**(-1 * p2)))
+	
+	# prevents issues with small negative S2 values, as well as mathematical errors when S2 = 0
+	# If S2/S2max = 1.0, scaler =  1
+	# If S2/S2max = 0.5, scaler >  1
+	# If S2/S2max = 0.1, scaler >> 1
+	# Thus, 
+	# if S2/S2max = 0.00, scaler >>> 1
+	# However, Python does not calculate 0**-1 (DIV0 error) and we need the code below
+	if S2 / S2max > 0:
+		scaler = (S2 / S2max)**(-1*p2)
+	
+	else:
+		scaler = 10**9 # Something large, but we cannot compute (0/S2max)**(-1*p2)
+	
+	# Resume function calculation
+	# max(0,x) prevents issues with small negative values for S1
+	out = max(0, p1 * (1 - S1 / S1max) * scaler)
 	return out

@@ -120,7 +120,7 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
         P = self.input_climate['precip'][t]
         Ep = self.input_climate['pet'][t]
         T = self.input_climate['temp'][t]
-
+              
         flux_ec = evap_1(S1, Ep, delta_t)
         flux_qt = interception_1(P, S1, smax)
         flux_qr = saturation_10(cmax, c0, c1, S2, flux_qt)

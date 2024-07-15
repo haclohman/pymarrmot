@@ -10,5 +10,11 @@ def evap_17(p1, S, Ep):
         Ep - potential evapotranspiration rate [mm/d]
     '''
     import numpy as np
-    out = 1 / (1 + np.exp(-1 * p1 * S)) * Ep
+    
+    #bug fix: 11July2024 - SAS - if else statement added to prevent overflow in np.exp term
+    if abs(-1 * p1 * S) > 700:
+        out = 0
+    else:
+        out = 1 / (1 + np.exp(-1 * p1 * S)) * Ep
+    
     return out

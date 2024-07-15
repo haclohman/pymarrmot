@@ -34,7 +34,8 @@ def smooth_threshold_storage_logistic(s, smax, r=0.01, e=5.0):
     if smax < 0:
         smax = 0
 
-    # Calculate multiplier (additional if/else statement to avoid overflow warning)
+    # Calculate multiplier
+    #bug fix: 11July2024 - SAS - nested if else statement added to prevent overflow in np.exp term
     if r * smax == 0:
         if (s - smax + r * e * smax) / r >= 700:
             out = 0

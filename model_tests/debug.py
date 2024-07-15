@@ -14,8 +14,6 @@ def handle_warning(message, category, filename, lineno, file=None, line=None):
     if response == 'n':
         raise category(message)
 
-
-import os
 import numpy as np
 import pandas as pd
 import pymarrmot.models.models as models
@@ -46,8 +44,8 @@ df_parameters = pd.read_csv(parameter_ranges_file)
 
 # 3. The model we are debugging, and its position in the parameters file
 model_list = []
-model_list.append('m_23_lascam_24p_3s')
-i = 22 # m_XX minus 1
+model_list.append('m_39_mcrm_16p_5s')
+i = 38 # m_XX minus 1
 
 # 4. Define the solver settings
 input_solver_opts = {

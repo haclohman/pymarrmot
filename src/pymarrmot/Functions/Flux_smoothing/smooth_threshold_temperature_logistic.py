@@ -20,7 +20,9 @@ def smooth_threshold_temperature_logistic(T, Tt, r=0.01):
     NOTE: this function only outputs the multiplier. This needs to be
     applied to the proper flux (P in Sf equation) outside of this function.
     """
-    # Calculate multiplier (additional if/else statement to avoid overflow warning)
+    # Calculate multiplier 
+    #bug fix: 11July2024 - SAS - if else statement added to prevent overflow in np.exp term
+    
     if (T - Tt) / r >= 700:
         out = 0
     else:

@@ -19,7 +19,9 @@ def uh_2_full(d_base: float, delta_t: float) -> np.ndarray:
         (still-to-flow values).
     """
     delay = d_base / delta_t
-    tt = np.arange(1, 2 * np.ceil(delay) + 1)
+
+    #bug fix: 15July2024 - SAS - original code had 2*np.ceil(delay)+1
+    tt = np.arange(1, np.ceil(delay) + 1)
 
     SH = np.zeros(len(tt) + 1)
     UH = np.zeros((2, len(tt)))

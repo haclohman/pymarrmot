@@ -49,10 +49,10 @@ for ranges in par_ranges_all_models:
         array_size = int(array_size/2)
         # for each parameter
         for i in range(array_size):
-            results_5th.append((ranges[i,1] - ranges[i,0])*0.05 + ranges[0,0])
-            results_25th.append((ranges[i,1] - ranges[i,0])*0.25 + ranges[0,0])
-            results_50th.append((ranges[i,1] - ranges[i,0])*0.50 + ranges[0,0])
-            results_75th.append((ranges[i,1] - ranges[i,0])*0.75 + ranges[0,0])
+            results_5th.append((ranges[i,1] - ranges[i,0])*0.05 + ranges[i,0])
+            results_25th.append((ranges[i,1] - ranges[i,0])*0.25 + ranges[i,0])
+            results_50th.append((ranges[i,1] - ranges[i,0])*0.50 + ranges[i,0])
+            results_75th.append((ranges[i,1] - ranges[i,0])*0.75 + ranges[i,0])
     elif _type == list:
         list_length = len(ranges)
         # for each parameter

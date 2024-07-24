@@ -44,8 +44,8 @@ df_parameters = pd.read_csv(parameter_ranges_file)
 
 # 3. The model we are debugging, and its position in the parameters file
 model_list = []
-model_list.append('m_39_mcrm_16p_5s')
-i = 38 # m_XX minus 1
+model_list.append('m_16_newzealand2_8p_2s')
+i = 15 # m_XX minus 1
 
 # 4. Define the solver settings
 input_solver_opts = {
@@ -74,6 +74,23 @@ for model in model_list:
 
     results.append([model, input_theta, output_ex, output_in, output_ss, output_waterbalance])
     i += 1
+
+    # 6. Export the results
+    results_df = pd.DataFrame()
+    results_df['date'] = input_climatology['dates']
+    i=0
+    for result in results:
+        if i != 0:
+            name = result[0]
+            ## output_ex
+            for ex in result[2]:
+                results_df[ex] = result[2][ex]
+            for in_ in result[3]:
+                results_df[in_] = result[3][in_]
+            for ss in result[4]:
+                results_df[ss] = result[4][ss] 
+            results_df.to_csv(f'C:/Users/ssheeder/Repos/pymarrmot/model_tests/Results/results_{name}.csv', index=False)       
+        i += 1
 
 print("***************************************")
 print("Model runs complete.")

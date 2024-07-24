@@ -12,4 +12,5 @@ def evap_16(p1, S1, S2, S2min, Ep, dt):
 	#               Ep    - potential evapotranspiration rate [mm/d]
 	#               dt    - time step size [d]
     
-    return min((p1 * Ep) * smooth_threshold_storage_logistic(S2, S2min), S1 / dt)
+	out = min((p1 * Ep) * smooth_threshold_storage_logistic(S2, S2min), S1 / dt)
+	return out

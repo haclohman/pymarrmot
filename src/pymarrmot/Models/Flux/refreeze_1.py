@@ -12,4 +12,6 @@ def refreeze_1(p1, p2, p3, T, S, dt):
       S  - current storage [mm]
       dt - time step size [d]
     '''
-    return max(min(p1*p2*(p3-T), S/dt), 0)
+
+    out = max(min(p1*p2*(p3-T), S/dt), 0)
+    return out

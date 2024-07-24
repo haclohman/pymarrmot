@@ -1,4 +1,3 @@
-
 def saturation_6(p1, S, Smax, In):
     # Flux function
     # Description: Saturation excess from a store with different degrees of saturation (linear variant)

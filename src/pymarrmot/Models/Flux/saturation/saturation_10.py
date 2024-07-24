@@ -22,5 +22,5 @@ def saturation_10(p1: float, p2: float, p3: float, S: float, In: float) -> float
     float
         The saturation excess flow [mm/d].
     """
-    out = np.minimum(p1, p2 + p2 * np.exp(p3 * S)) * In
+    out = min(p1, p2 + p2 * np.exp(p3 * S)) * In
     return out

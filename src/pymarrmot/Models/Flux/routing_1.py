@@ -1,4 +1,3 @@
-
 def routing_1(p1, p2, p3, S, dt):
     # non-linear routing
     # Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
@@ -18,4 +17,5 @@ def routing_1(p1, p2, p3, S, dt):
     #               S    - current storage [mm]
     #               dt   - time step size [d]
 
-    return min([S/dt, p1*(max(S,0)**p2), p3*S/dt])
+    out = min([S/dt, p1*(max(S,0)**p2), p3*S/dt])
+    return out

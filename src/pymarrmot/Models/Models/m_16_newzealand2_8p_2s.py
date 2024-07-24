@@ -51,7 +51,7 @@ class m_16_newzealand2_8p_2s(MARRMoT_model):
                           "qse",  "qss", "qbf", "qt"]  # Names for the fluxes
 
         self.flux_groups = {"Ea": [0, 2, 3],  # Index or indices of fluxes to add to Actual ET
-                           "Q": 7}           # Index or indices of fluxes to add to Streamflow
+                           "Q": 7}            # Index or indices of fluxes to add to Streamflow
 
     def init(self):
         """

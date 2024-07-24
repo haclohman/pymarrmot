@@ -31,8 +31,7 @@ def smooth_threshold_storage_logistic(s, smax, r=0.01, e=5.0):
     modules). This simply means that S becomes T, and Smax T0.
     """
 
-    if smax < 0:
-        smax = 0
+    smax = max(0, smax)
 
     # Calculate multiplier
     #bug fix: 11July2024 - SAS - nested if else statement added to prevent overflow in np.exp term

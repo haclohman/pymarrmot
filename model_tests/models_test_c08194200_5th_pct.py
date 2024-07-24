@@ -24,6 +24,9 @@ import pymarrmot.models.models as models
 import warnings
 warnings.showwarning = handle_warning
 
+import time
+start_time = time.time()
+
 # User-defined options
 climate_data_file = 'C:/Users/ssheeder/Repos/pymarrmot/model_tests/Forcing/c08194200.csv'
 parameter_ranges_file = 'C:/Users/ssheeder/Repos/pymarrmot/model_tests/Parameters/par_ranges_5th_percentile.csv'
@@ -81,5 +84,26 @@ for model in model_list:
     i += 1
 
 print("***************************************")
-print("Model runs complete.")
+print("Model runs complete. Exporting results.")
+print("***************************************")
+
+# 6. Export the results
+i=0
+for result in results:
+    if i != 0:
+        results_df = pd.DataFrame()
+        results_df['date'] = input_climatology['dates']
+        name = result[0]
+        ## output_ex
+        for ex in result[2]:
+            results_df['ex_' + ex] = result[2][ex]
+        for in_ in result[3]:
+            results_df['in_' + in_] = result[3][in_]
+        for ss in result[4]:
+            results_df['ss_' + ss] = result[4][ss] 
+        results_df.to_csv(f'C:/Users/ssheeder/Repos/pymarrmot/model_tests/Results/p05/python/p05_sims_{name}.csv', index=False) 
+    i += 1
+
+print("***************************************")
+print("Finished! Time taken (minutes): " + str((time.time() - start_time) / 60))
 print("***************************************")

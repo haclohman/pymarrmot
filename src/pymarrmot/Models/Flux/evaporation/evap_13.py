@@ -9,4 +9,5 @@ def evap_13(p1, p2, Ep, S, dt):
     #   S - current storage [mm]
     #   dt - time step size [d]
     
-    return min((p1**p2)*Ep, S/dt)
+    out = min((p1**p2)*Ep, S/dt)
+    return out

@@ -61,8 +61,8 @@ class m_40_smar_8p_6s(MARRMoT_model):
                           "e5", "q1", "q2", "q3", "q4",
                           "r3", "rg", "r3star", "qr", "qg"]  # Names for the fluxes
 
-        self.flux_groups = {'Ea': [2, 6, 7, 8, 9, 10],  # Index or indices of fluxes to add to Actual ET
-                           'Q': [18, 19]}  # Index or indices of fluxes to add to Streamflow
+        self.flux_groups = {'Ea': [3, 7, 8, 9, 10, 11],  # Index or indices of fluxes to add to Actual ET
+                           'Q': [19, 20]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
         """

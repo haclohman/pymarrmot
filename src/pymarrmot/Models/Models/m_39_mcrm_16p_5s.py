@@ -36,28 +36,28 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
                                        [1, 1, 1, 1, 0],
                                        [1, 1, 1, 1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.par_ranges = np.array([[0, 5],  # smax, Maximum interception storage [mm]
+        self.par_ranges = np.array([[0, 5],         # smax, Maximum interception storage [mm]
                                      [0.01, 0.99],  # cmax, Maximum fraction of area contributing to rapid runoff [-]
                                      [0.01, 0.99],  # ct, Fraction of cmax that is the minimum contributing area [-]
-                                     [0, 2],  # c1, Shape parameter for rapid flow distribution [mm-1]
-                                     [0, 1],  # ce, Shape parameter for evaporation [mm-1]
-                                     [1, 2000],  # dsurp, Threshold for direct runoff [mm]
-                                     [0, 1],  # kd, Direct runoff time parameter [d-1]
-                                     [1, 5],  # gamd, Direct runoff flow non-linearity [-]
-                                     [0, 20],  # qpmax, Maximum percolation rate [mm/d]
-                                     [0, 1],  # kg, Groundwater time parameter [d-1]
-                                     [1, 120],  # tau, Routing delay [d]
-                                     [1, 300],  # sbf, Maximum routing store depth [mm]
-                                     [0, 1],  # kcr, Channel flow time parameter [d-1]
-                                     [1, 5],  # gamcr, Channel flow non-linearity [-]
-                                     [0, 1],  # kor, Out-of-bank flow time parameter [d-1]
-                                     [1, 5]])  # gamor, Out-of-bank flow non-linearity [-]
+                                     [0, 2],        # c1, Shape parameter for rapid flow distribution [mm-1]
+                                     [0, 1],        # ce, Shape parameter for evaporation [mm-1]
+                                     [1, 2000],     # dsurp, Threshold for direct runoff [mm]
+                                     [0, 1],        # kd, Direct runoff time parameter [d-1]
+                                     [1, 5],        # gamd, Direct runoff flow non-linearity [-]
+                                     [0, 20],       # qpmax, Maximum percolation rate [mm/d]
+                                     [0, 1],        # kg, Groundwater time parameter [d-1]
+                                     [1, 120],      # tau, Routing delay [d]
+                                     [1, 300],      # sbf, Maximum routing store depth [mm]
+                                     [0, 1],        # kcr, Channel flow time parameter [d-1]
+                                     [1, 5],        # gamcr, Channel flow non-linearity [-]
+                                     [0, 1],        # kor, Out-of-bank flow time parameter [d-1]
+                                     [1, 5]])       # gamor, Out-of-bank flow non-linearity [-]
 
-        self.store_names = ["S1", "S2", "S3", "S4", "S5"]  # Names for the stores
-        self.flux_names = ["ec", "qt", "qr", "er", "qn", "qd",
-                           "qp", "qb", "uib", "uob", "qic", "qoc"]  # Names for the fluxes
+        self.store_names = ["S1", "S2", "S3", "S4", "S5"]           # Names for the stores
+        self.flux_names = ["ec", "qt", "qr", "er", "qn", "qd",      # Names for the fluxes
+                           "qp", "qb", "uib", "uob", "qic", "qoc"]  
 
-        self.flux_groups = {"Ea": [1, 4],  # Index or indices of fluxes to add to Actual ET
+        self.flux_groups = {"Ea": [1, 4],   # Index or indices of fluxes to add to Actual ET
                             "Q": [11, 12]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
@@ -66,11 +66,11 @@ class m_39_mcrm_16p_5s(MARRMoT_model):
         """
         theta = self.theta
         delta_t = self.delta_t
-        cmax = theta[1]  # Maximum fraction of area contributing to rapid runoff [-]
-        ct = theta[2]  # Fraction of cmax that is the minimum contributing area c0 [-]
-        tau = theta[10]  # Routing delay [d]
+        cmax = theta[1]     # Maximum fraction of area contributing to rapid runoff [-]
+        ct = theta[2]       # Fraction of cmax that is the minimum contributing area c0 [-]
+        tau = theta[10]     # Routing delay [d]
 
-        c0 = ct * cmax  # Minimum fraction of area contributing to rapid runoff [-]
+        c0 = ct * cmax      # Minimum fraction of area contributing to rapid runoff [-]
         self.aux_theta = [c0]
 
         self.store_min = np.array([0, -1E6, 0, 0, 0])  # Min and max of stores

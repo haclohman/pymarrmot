@@ -51,8 +51,8 @@ class m_18_simhyd_7p_3s(MARRMoT_model):
         self.flux_names = ["Ei", "EXC", "INF", "INT", "REC",
                           "Et", "GWF", "BAS", "SRUN", "Qt"]  # Names for the fluxes
 
-        self.flux_groups = {"Ea": [0, 5],  # Index or indices of fluxes to add to Actual ET
-                           "Q": 9}       # Index or indices of fluxes to add to Streamflow
+        self.flux_groups = {"Ea": [1, 6],  # Index or indices of fluxes to add to Actual ET
+                           "Q": 10}       # Index or indices of fluxes to add to Streamflow
 
     def model_fun(self, S):
         """

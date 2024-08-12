@@ -490,10 +490,18 @@ class MARRMoT_model:
         for fg in obj.flux_groups:
             idx = np.abs(obj.flux_groups[fg])
             signs = np.sign(obj.flux_groups[fg])
+            #indices for fluxes are 1-based in model definition files, so convert to 0-based
+            idx = idx - 1
+            
+            #bug fix: 08Aug2024 - SAS - original code creates array signs, which seems to be unnecessary,
+            #as idx is the absolute value of the flux group indices
+            #the code is therefore rearranged to eliminate signs from the calculation
+            #original code (can result in sign = 0): signs = np.sign(obj.flux_groups[fg]) (see Matlab code for use
+            #of signs in calculation of fluxOutput)
             if idx.size == 1:
-                fluxOutput[fg] = signs * obj.fluxes[:, idx - 1]
+                fluxOutput[fg] =  signs * obj.fluxes[:, idx]
             else:
-                fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx - 1], axis=1)
+                fluxOutput[fg] = np.sum(signs * obj.fluxes[:, idx], axis=1)
 
         fluxInternal = {obj.flux_names[i]: obj.fluxes[:, i] for i in range(obj.num_fluxes)}
 

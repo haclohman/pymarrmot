@@ -44,10 +44,10 @@ df_parameters = pd.read_csv(parameter_ranges_file)
 
 # 3. The model we are debugging, and its position in the parameters file
 model_list = []
-model_list.append('m_16_newzealand2_8p_2s')
-i = 15 # m_XX minus 1
+model_list.append('m_43_gsmsocont_12p_6s')
+i = 42 # m_XX minus 1
 
-# 4. Define the solver settings
+# 4. Define the solver nsettings
 input_solver_opts = {
     'resnorm_tolerance': 0.1,
     'resnorm_maxiter': 6

@@ -66,8 +66,8 @@ class m_37_hbv_15p_5s(MARRMoT_model):
         self.flux_names = ["sf", "refr", "melt", "rf", "in", "se", "cf",
                            "ea", "r", "q0", "perc", "q1", "qt"]  # Names for the fluxes
 
-        self.flux_groups = {"Ea": 7,  # Index or indices of fluxes to add to Actual ET
-                            "Q": 12}   # Index or indices of fluxes to add to Streamflow
+        self.flux_groups = {"Ea": 8,  # Index or indices of fluxes to add to Actual ET
+                            "Q": 13}   # Index or indices of fluxes to add to Streamflow
 
     def init(self):
         """

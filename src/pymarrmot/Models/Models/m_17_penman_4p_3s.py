@@ -48,8 +48,8 @@ class m_17_penman_4p_3s(MARRMoT_model):
         self.store_names = ["S1", "S2", "S3"]  # Names for the stores
         self.flux_names = ["ea", "qex", "u1", "q12", "et", "u2", "q"]  # Names for the fluxes
 
-        self.flux_groups = {"Ea": [0, 4],  # Index or indices of fluxes to add to Actual ET
-                           "Q": [6]}      # Index or indices of fluxes to add to Streamflow
+        self.flux_groups = {"Ea": [1, 5],  # Index or indices of fluxes to add to Actual ET
+                           "Q": [7]}      # Index or indices of fluxes to add to Streamflow
 
         self.StoreSigns = [1, -1, 1]  # Signs to give to stores (-1 is a deficit store), only needed for water balance
     

@@ -694,7 +694,7 @@ class MARRMoT_model:
         obj.input_climate = input_climate_all.copy()
 
         return es.best.x, es.best.f, es.stop(), es.result
-
+    
     def default_solver_opts(obj):
         """
         Function to return default solver options.

@@ -3,33 +3,44 @@ import numpy as np
 
 def uh_3_half(d_base: float, delta_t: float) -> np.ndarray:
     """
-    Calculate unit hydrograph [days] with half a triangle (linear).
+    Unit Hydrograph with half a triangle (linear).
 
-    Parameters:
-    d_base (float): time base of routing delay [d]
-    delta_t (float): time step size [d]
-
-    Returns:
-    np.ndarray: Unit hydrograph [nx2]
-               uh's first row contains coefficients to split flow at each
-               of n timesteps forward, the second row contains zeros now,
-               these are the still-to-flow values.
+    Parameters
+    ----------
+    d_base : float
+        Time base of routing delay [days].
+    delta_t : float
+        Time step size [days].
+    
+    Returns
+    -------
+    np.ndarray
+        Unit hydrograph as a 2-row array:
+        - First row contains coefficients to split flow at each of `n` timesteps forward.
+        - Second row contains zeros (still-to-flow values).
     """
+    # Calculate the delay
+    delay = d_base / delta_t
+    if delay == 0:
+        delay = 1  # Prevent division by zero, any value below t = 1 means no delay
+    
+    # Time series for which we need UH ordinates
+    tt = np.arange(1, int(np.ceil(delay)) + 1)
+    
+    # Calculate fraction of flow per time step
+    ff = 1 / (0.5 * delay**2)
+    
+    # Initialize the Unit Hydrograph array
+    UH = np.zeros(len(tt))
+    
+    # Populate the Unit Hydrograph
+    for t in range(1, len(tt) + 1):
+        if t <= delay:
+            UH[t - 1] = ff * (0.5 * t**2 - 0.5 * (t - 1)**2)
+        else:
+            UH[t - 1] = ff * (0.5 * delay**2 - 0.5 * (t - 1)**2)
+    
+    # Add the second row of zeros to represent "still-to-flow" values
+    UH_full = np.vstack((UH, np.zeros_like(UH)))
 
-    # Unit hydrograph spreads the input volume over a time period delay.
-    # Percentage of input returned only increases.
-    # Example: d_base = 3.8 [days], delta_t = 1
-    # UH(1) = 0.04  [% of inflow]
-    # UH(2) = 0.17
-    # UH(3) = 0.35
-    # UH(4) = 0.45
-
-    # Implementation of the unit hydrograph calculation
-    # (code from MATLAB file converted to Python)
-
-    # Time step
-
-    # Implement the unit hydrograph calculation here
-
-    # Placeholder return value
-    return np.array([[0.04, 0.17, 0.35, 0.45], [0, 0, 0, 0]])
+    return UH_full

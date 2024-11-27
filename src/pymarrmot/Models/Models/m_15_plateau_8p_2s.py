@@ -110,7 +110,7 @@ class m_15_plateau_8p_2s(MARRMoT_model):
         flux_ei = P - flux_pe  # track 'intercepted' water
         flux_pi = infiltration_4(flux_pe, fmax)
         flux_pie = flux_pe - flux_pi
-        flux_et = evap_4(Ep, p, S1, lp * sumax, sumax, delta_t)
+        flux_et = evap_4(Ep, p, S1, lp, sumax, delta_t)
         flux_c = capillary_2(c, S2, delta_t)
         flux_r = saturation_1((flux_pi + flux_c), S1, sumax)
         flux_qpgw = baseflow_1(kp, S2)

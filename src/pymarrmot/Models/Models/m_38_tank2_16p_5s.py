@@ -55,8 +55,8 @@ class m_38_tank2_16p_5s(MARRMoT_model):
                            "e1", "e2", "e3", "e4",
                            "f12", "f23", "f34"]  # Names for the fluxes
 
-        self.flux_groups = {"Ea": [7, 8, 9, 10],  # Index or indices of fluxes to add to Actual ET
-                            "Q": [2, 3, 4, 5, 6]}  # Index or indices of fluxes to add to Streamflow
+        self.flux_groups = {"Ea": [8, 9, 10, 11],  # Index or indices of fluxes to add to Actual ET
+                            "Q": [3, 4, 5, 6,7]}  # Index or indices of fluxes to add to Streamflow
 
     def init(self):
         """

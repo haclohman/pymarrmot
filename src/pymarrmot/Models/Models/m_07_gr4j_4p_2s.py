@@ -24,7 +24,7 @@ class m_07_gr4j_4p_2s(MARRMoT_model):
         self.jacob_pattern = np.array([[1, 1],
                                         [1, 1]])  # Jacobian matrix of model store ODEs
 
-        self.par_ranges = np.array([[1, 2000],   # x1 [mm]
+        self.par_ranges = np.array([[1, 2000],    # x1 [mm]
                                      [-20, 20],   # x2 [mm/d]
                                      [1, 300],    # x3 [mm]
                                      [0.5, 15]])  # x4 [d]

@@ -10,7 +10,6 @@ from pymarrmot.functions.objective_functions.of_inverse_kge import of_inverse_kg
 from pymarrmot.functions.objective_functions.of_mean_hilo_kge import of_mean_hilo_kge
 import pandas as pd
 
-
 # 1. Prepare data
 df = pd.read_csv('c:/users/ssheeder/repos/pymarrmot/examples/Example_DataSet.csv')
 

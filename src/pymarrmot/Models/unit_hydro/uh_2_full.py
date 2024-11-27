@@ -40,9 +40,3 @@ def uh_2_full(d_base: float, delta_t: float) -> np.ndarray:
     
     return UH
 
-# Example usage:
-# d_base = 3.8
-# delta_t = 1
-# UH = uh_2_full(d_base, delta_t)
-# print(UH)
-

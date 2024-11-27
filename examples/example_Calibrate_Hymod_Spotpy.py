@@ -26,10 +26,10 @@ from pymarrmot.functions.autocalibration.spotpy_setup import spotpy_setup as set
 import matplotlib.pyplot as plt
 
 #Set the number of model runs
-reps = 5000
-spotpy_setup = setup(of.kge_non_parametric)
+reps = 10000
+spotpy_setup = setup(of.kge)
 sampler=spotpy.algorithms.sceua(spotpy_setup, dbname='SCEUA_hymod', dbformat='csv')
-sampler.sample(reps, ngs=7, kstop=3, peps=0.1, pcento=0.1)
+sampler.sample(reps, ngs=7, kstop=10, peps=0.001, pcento=0.001)
 results = spotpy.analyser.load_csv_results('SCEUA_hymod')
 
 #find the run_id with the minimal objective function value

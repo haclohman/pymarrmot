@@ -90,16 +90,16 @@ class spotpy_setup(object):
             # Spotpy minimizes the objective function, so for objective functions where fitness improves with increasing result, we need to multiply by -1
             
             # calculation of kge-lowflow (based on kge being selected as objective function)
-            # score = self.obj_func(evaluation, simulation)
-            # eval_inverse = [0.001 if (i<=0) else 1/i for i in evaluation]
-            # sim_inverse = [0.001 if (i<=0) else 1/i for i in simulation]
-            # score2 = self.obj_func(eval_inverse, sim_inverse)
-            # result = (score + score2)/2
-            # like = -1*result
+            score = self.obj_func(evaluation, simulation)
+            eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation]
+            sim_inverse = [1000 if (i<=0) else 1/i for i in simulation]
+            score2 = self.obj_func(eval_inverse, sim_inverse)
+            result = (score + score2)/2
+            like = -1*result
 
             # Calculation of kge 
-            result = self.obj_func(evaluation, simulation)
-            like = -1*result
+            # result = self.obj_func(evaluation, simulation)
+            # like = -1*result
 
 
         return like

@@ -1,12 +1,4 @@
 """
-Copyright (C) 2019, 2021 Wouter J.M. Knoben, Luca Trotter
-This file is part of the Modular Assessment of Rainfall-Runoff Models
-Toolbox (MARRMoT).
-MARRMoT is a free software (GNU GPL v3) and distributed WITHOUT ANY
-WARRANTY. See <https://www.gnu.org/licenses/> for details.
-
-Contact: l.trotter@unimelb.edu.au
-
 This example workflow contains an example application of a single model
 to a single catchment.
 It includes 5 steps:
@@ -34,7 +26,6 @@ input_climatology = {
 }
 
 # 2. Define the model settings
-
 input_s0 = np.array([1, 7, 3, 8, 22])
 
 # 3. Define the solver settings
@@ -52,7 +43,7 @@ m.S0 = input_s0
 
 model_range = m.par_ranges
 
-# 5. Run the model and extract all outputs
+# 5. Run the model and extract all outputs (10 runs, random parameterization)
 numSample = 10
 num_par = m.num_params
 

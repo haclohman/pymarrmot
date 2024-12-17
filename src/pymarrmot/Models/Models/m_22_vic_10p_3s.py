@@ -103,7 +103,7 @@ class m_22_vic_10p_3s(MARRMoT_model):
         T = self.input_climate['temp'][t]
 
         # Fluxes functions
-        aux_imax = phenology_2(ibar, idelta, ishift, self.t, tmax, delta_t)
+        aux_imax = phenology_2(ibar, idelta, ishift, self.t+1, tmax, delta_t)
         flux_ei = evap_7(S1, aux_imax, Ep, delta_t)
         flux_peff = interception_1(P, S1, aux_imax)
         flux_iex = excess_1(S1, aux_imax, delta_t)

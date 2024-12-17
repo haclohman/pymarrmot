@@ -77,7 +77,6 @@ class m_25_tcm_6p_4s(MARRMoT_model):
         k1  = self.theta[3];     # Runoff coefficient [d-1]
         k2  = self.theta[5];     # Runoff coefficient [mm-1 d-1]
         
-        phi, rc, gam, k1, _, k2 = self.theta
         ca = self.aux_theta[0]    # Abstraction rate [mm/day]
 
         # delta_t

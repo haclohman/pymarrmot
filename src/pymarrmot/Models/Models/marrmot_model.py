@@ -193,6 +193,7 @@ class MARRMoT_model:
         resnorm_v = np.full(3, np.inf)
         iter_v = np.ones(3, dtype=int)
 
+        # NewtonRaphson solver
         tmp_Snew, tmp_fval, exit_flag = nr.NewtonRaphson(self.ODE_approx_IE, s_old, solver_opts['NewtonRaphson'])
        
         if(tmp_Snew<self.store_min.flatten()).any() or (tmp_Snew > self.store_max.flatten()).any():

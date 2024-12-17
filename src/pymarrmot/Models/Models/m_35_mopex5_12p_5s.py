@@ -107,7 +107,7 @@ class m_35_mopex5_12p_5s(MARRMoT_model):
         flux_pr = rainfall_1(P, T, tcrit)
         flux_qn = melt_1(ddf, tcrit, T, S1, delta_t)
         flux_et1 = evap_7(S2, s2max, flux_epc, delta_t)
-        flux_i = interception_4(i_alpha, i_s, self.t, tmax, flux_pr, delta_t)
+        flux_i = interception_4(i_alpha, i_s, self.t+1, tmax, flux_pr, delta_t)
         flux_q1f = saturation_1(flux_pr + flux_qn, S2, s2max)
         flux_qw = recharge_3(tw, S2)
         flux_et2 = evap_7(S3, se * s3max, flux_epc, delta_t)

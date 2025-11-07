@@ -29,7 +29,8 @@ class spotpy_setup(object):
     ks = Uniform(low=par_ranges['ks'][0], high=par_ranges['ks'][1], optguess=0.5592)       # ks, base flow time parameter [d-1]   
     
     # class variables
-    m = None
+    m = m_29_hymod_5p_5s()
+    m.delta_t = 1/24  # time step in days (1 hour)
     trueObs = None
 
     # Step 2: Write the def init function, which takes care of any things which need to be done only once
@@ -49,12 +50,13 @@ class spotpy_setup(object):
         }
 
         #Create a model object
-        self.m = m_29_hymod_5p_5s()
+        #m = m_29_hymod_5p_5s()
 
         #Time step of the model (in days)
-        self.m.delta_t = 1/24
+
         self.m.S0 = np.array(input_s0)
         self.m.solver_opts = input_solver_opts
+        
 
         #USGS 03463300 - SOUTH TOE RIVER NEAR CELO, NC - usgsbasin-03463300_combined.parquet
         #USGS 02138500 - LINVILLE RIVER NEAR NEBO, NC - usgsbasin-02138500_combined.parquet
@@ -71,7 +73,8 @@ class spotpy_setup(object):
             'temp': df['temp_c'].to_numpy(),       
             'pet': df['pet_mm'].to_numpy()      
         }
-        self.trueObs = df[['value_time','discharge_mm']]
+        self.trueObs = df['discharge_mm'].tolist()
+        #self.trueObs = df[['value_time','discharge_mm']]
 
         # # Clean up the evaluation and simulation data - remove any NaNs and missing values from evaluation dataset, and corresponding values from simulation dataset
         # nan_indices = np.argwhere(np.isnan(trueObs))
@@ -90,13 +93,14 @@ class spotpy_setup(object):
         
         #Here the model is actually started with a unique parameter combination that it gets from spotpy for each time the model is called
         (output_ex, output_in, output_ss, output_waterbalance) = self.m.get_output(nargout=4)
-        sim_q = output_ex['Q']
+        return output_ex['Q'].tolist()
+        # sim_q = output_ex['Q']
         
 
-        result_df = self.trueObs.copy()
-        result_df['simulated_discharge_mm'] = sim_q
-        result_df.drop(columns=['discharge_mm'], inplace=True)
-        return result_df
+        # result_df = self.trueObs.copy()
+        # result_df['simulated_discharge_mm'] = sim_q
+        # result_df.drop(columns=['discharge_mm'], inplace=True)
+        # return result_df
         #return sim_q.tolist()
     
     # Step 4: Write the def evaluation function, which returns the observations
@@ -107,20 +111,23 @@ class spotpy_setup(object):
     def objectivefunction(self, simulation, evaluation, params=None):
     #SPOTPY expects to get one or multiple values back, 
     #that define the performance of the model run
+       #add simulation and evaluation lists to dataframe
+        simulation_df = pd.DataFrame({'value_time': self.m.input_climate['dates'], 'simulated_discharge_mm': simulation})
+        evaluation_df = pd.DataFrame({'value_time': self.m.input_climate['dates'], 'discharge_mm': evaluation})
        #left join on 'value_time' to align simulation and evaluation data
-        merged_df = pd.merge(evaluation, simulation, on='value_time', how='left')
-        evaluation = merged_df['discharge_mm'].to_numpy()
-        simulation = merged_df['simulated_discharge_mm'].to_numpy()
+        merged_df = pd.merge(evaluation_df, simulation_df, on='value_time', how='left')
+        evaluation_array = merged_df['discharge_mm'].to_numpy()
+        simulation_array = merged_df['simulated_discharge_mm'].to_numpy()
 
         if not self.obj_func:
             # This is used if not overwritten by user
-            score = rmse(evaluation, simulation)
+            score = rmse(evaluation_array, simulation_array)
             like = score
         else:
             # Spotpy minimizes the objective function, so for objective functions where fitness improves with increasing result, we need to multiply by -1
             
             # calculation of kge-lowflow (based on kge being selected as objective function)
-            score = self.obj_func(evaluation, simulation)
+            score = self.obj_func(evaluation_array, simulation_array)
             eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation]
             sim_inverse = [1000 if (i<=0) else 1/i for i in simulation]
             score2 = self.obj_func(eval_inverse, sim_inverse)

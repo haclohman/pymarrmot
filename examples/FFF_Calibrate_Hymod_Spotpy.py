@@ -19,7 +19,7 @@ objective function. The 'spotpy_setup' class is used to set up the model for
 calibration and to run the SCE-UA optimization algorithm.
 """
 import os
-import numpy as np
+import sys
 import spotpy
 import spotpy.objectivefunctions as of
 from pymarrmot.functions.autocalibration.spotpy_setup_hymod import spotpy_setup as setup
@@ -42,14 +42,26 @@ bestindex,bestobjf = spotpy.analyser.get_minlikeindex(results)
 best_model_run = results[bestindex]
 
 #And filter results for simulation results only:
-fields=[word for word in best_model_run.dtype.names if word.startswith('sim')]
-best_simulation = list(best_model_run[fields])
+if best_model_run is not None and hasattr(best_model_run, 'dtype'):
+    fields=[word for word in best_model_run.dtype.names if word.startswith('sim')]
+    best_simulation = list(best_model_run[fields])
+else:
+    print("best_model_run is None or has no dtype attribute")
+    sys.exit()
+    
+df = spotpy_setup.evaluation()
+if df is not None:
+    eval_list = df['discharge_mm']
+    eval_list = eval_list.tolist()
+else:
+    print("Evaluation data is None")
+    sys.exit()
 
 #Timeseries plot of the best model run
 fig= plt.figure(figsize=(16,9))
 ax = plt.subplot(1,1,1)
 ax.plot(best_simulation,color='black',linestyle='solid', label='Best objf.='+str(bestobjf))
-ax.plot(spotpy_setup.evaluation(),color='red',markersize=3, label='Observation data')
+ax.plot(eval_list,color='red',markersize=3, label='Observation data')
 plt.xlabel('Number of Observation Points')
 plt.ylabel ('Discharge [cfs]')
 plt.legend(loc='upper right')
@@ -59,7 +71,7 @@ fig.savefig('SCEUA_hymod_best.png',dpi=300)
 #Sort the simulated and observed data, and calculate the exceedance probability
 sim_sorted = best_simulation
 sim_sorted.sort(reverse=True)
-obs_sorted = spotpy_setup.evaluation()
+obs_sorted = eval_list
 obs_sorted.sort(reverse=True)
 exceedance_prob = [(x/(len(sim_sorted) + 1)*100) for x in range(len(sim_sorted))]
 #get the FDC plot

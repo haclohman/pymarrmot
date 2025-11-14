@@ -22,7 +22,7 @@ import os
 import sys
 import spotpy
 import spotpy.objectivefunctions as of
-from pymarrmot.functions.autocalibration.spotpy_setup_hymod import spotpy_setup as setup
+from pymarrmot.functions.autocalibration.spotpy_setup_hymod_hourly import spotpy_setup as setup
 import matplotlib.pyplot as plt
 
 if not os.path.exists('output'):

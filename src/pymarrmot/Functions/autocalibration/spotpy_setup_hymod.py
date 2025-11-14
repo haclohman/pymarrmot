@@ -49,15 +49,9 @@ class spotpy_setup(object):
             'resnorm_maxiter': 6
         }
 
-        #Create a model object
-        #m = m_29_hymod_5p_5s()
-
-        #Time step of the model (in days)
-
         self.m.S0 = np.array(input_s0)
         self.m.solver_opts = input_solver_opts
         
-
         #USGS 03463300 - SOUTH TOE RIVER NEAR CELO, NC - usgsbasin-03463300_combined.parquet
         #USGS 02138500 - LINVILLE RIVER NEAR NEBO, NC - usgsbasin-02138500_combined.parquet
         #USGS 03441000 - DAVIDSON RIVER NEAR BREVARD, NC - usgsbasin-03441000_combined.parquet
@@ -74,16 +68,6 @@ class spotpy_setup(object):
             'pet': df['pet_mm'].to_numpy()      
         }
         self.trueObs = df['discharge_mm'].tolist()
-        #self.trueObs = df[['value_time','discharge_mm']]
-
-        # # Clean up the evaluation and simulation data - remove any NaNs and missing values from evaluation dataset, and corresponding values from simulation dataset
-        # nan_indices = np.argwhere(np.isnan(trueObs))
-        # #missing_indices = np.argwhere(trueObs == "")
-        # #unique_values = list(set(nan_indices + missing_indices))
-        # if len(nan_indices) > 0:
-        #     print(f"WARNING: {len(nan_indices)} NaN and missing values found in evaluation dataset. These values will be removed from the evaluation and simulation datasets before calculating model fitness.")
-        #     trueObs = np.delete(trueObs, nan_indices)
-
         self.m.input_climate = input_climatology
             
     # Step 3: Write the def simulation function, which starts your model and returns the results
@@ -94,14 +78,6 @@ class spotpy_setup(object):
         #Here the model is actually started with a unique parameter combination that it gets from spotpy for each time the model is called
         (output_ex, output_in, output_ss, output_waterbalance) = self.m.get_output(nargout=4)
         return output_ex['Q'].tolist()
-        # sim_q = output_ex['Q']
-        
-
-        # result_df = self.trueObs.copy()
-        # result_df['simulated_discharge_mm'] = sim_q
-        # result_df.drop(columns=['discharge_mm'], inplace=True)
-        # return result_df
-        #return sim_q.tolist()
     
     # Step 4: Write the def evaluation function, which returns the observations
     def evaluation(self):

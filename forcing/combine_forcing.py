@@ -21,10 +21,13 @@ pet_files = os.listdir(pet_dir)
 unique_locations = []
 for pet_file in pet_files:
     if pet_file.endswith('.parquet'):
+        
         # read PET file
         df_pet = pd.read_parquet(os.path.join(pet_dir, pet_file))
         location_id = pet_file.replace('_pet.parquet','')
-        
+        df_pet['value_time'] = pd.to_datetime(df_pet.index)
+        df_pet = df_pet.reset_index(drop=True)
+
         # read matching precip file
         precip_file = os.path.join(precip_dir, location_id + '.parquet')
         df_precip = pd.read_parquet(precip_file)
@@ -38,10 +41,10 @@ for pet_file in pet_files:
         df_usgs = pd.read_parquet(usgs_file)
         
         # join dataframes on value_time
-        df_pet['value_time'] = pd.to_datetime(df_pet.index)
-        df_combined = df_pet.merge(df_precip, on=['value_time', 'value_time'])
-        df_combined = df_combined.merge(df_temp, on=['value_time','value_time'])
-        df_combined = df_combined.merge(df_usgs, on=['value_time','value_time'])
+
+        df_combined = pd.merge(df_pet, df_precip, on='value_time', how='inner')
+        df_combined = pd.merge(df_combined, df_temp, on='value_time', how='inner')
+        df_combined = pd.merge(df_combined, df_usgs, on='value_time', how='left')
         
         # drop and order columns
         df_combined = df_combined[['value_time', 'precip_mm', 'temp_c', 'PET_daily_mm_hourly', 'discharge_mm']]

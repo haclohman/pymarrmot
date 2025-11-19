@@ -58,7 +58,7 @@ class spotpy_setup(object):
         #USGS 03479000 - WATAUGA RIVER NEAR SUGAR GROVE, NC - usgsbasin-03479000_combined.parquet
         #USGS 03456100 - WEST FORK PIGEON RIVER AT BETHEL, NC - usgsbasin-03456100_combined.parquet
 
-        df = pd.read_parquet('C:/Users/ssheeder/Repos/pymarrmot/forcing/pymarrmot/combined_forcing/usgsbasin-03463300_combined.parquet')
+        df = pd.read_parquet('C:/Users/ssheeder/Repos/pymarrmot/forcing/pymarrmot/combined_forcing/12_year/usgsbasin-03463300_combined.parquet')
 
         # Create a climatology data input structure
         input_climatology = {
@@ -92,20 +92,22 @@ class spotpy_setup(object):
         evaluation_df = pd.DataFrame({'value_time': self.m.input_climate['dates'], 'discharge_mm': evaluation})
        #left join on 'value_time' to align simulation and evaluation data
         merged_df = pd.merge(evaluation_df, simulation_df, on='value_time', how='left')
-        evaluation_array = merged_df['discharge_mm'].to_numpy()
-        simulation_array = merged_df['simulated_discharge_mm'].to_numpy()
+        #evaluation_array = merged_df['discharge_mm'].to_numpy()
+        #simulation_array = merged_df['simulated_discharge_mm'].to_numpy()
+        evaluation_list = merged_df['discharge_mm'].tolist()
+        simulation_list = merged_df['simulated_discharge_mm'].tolist()
 
         if not self.obj_func:
             # This is used if not overwritten by user
-            score = rmse(evaluation_array, simulation_array)
+            score = rmse(evaluation_list, simulation_list)
             like = score
         else:
             # Spotpy minimizes the objective function, so for objective functions where fitness improves with increasing result, we need to multiply by -1
             
             # calculation of kge-lowflow (based on kge being selected as objective function)
-            score = self.obj_func(evaluation_array, simulation_array)
-            eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation]
-            sim_inverse = [1000 if (i<=0) else 1/i for i in simulation]
+            score = self.obj_func(evaluation_list, simulation_list)
+            eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation_list]
+            sim_inverse = [1000 if (i<=0) else 1/i for i in simulation_list]
             score2 = self.obj_func(eval_inverse, sim_inverse)
             result = (score + score2)/2
             like = -1*result

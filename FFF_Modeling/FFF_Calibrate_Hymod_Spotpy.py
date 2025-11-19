@@ -29,9 +29,9 @@ if not os.path.exists('output'):
     os.makedirs('output')
 
 #Set the number of model runs
-reps = 10
+reps = 5
 spotpy_setup = setup(of.kge)
-sampler=spotpy.algorithms.sceua(spotpy_setup, dbname='./output/' + 'SCEUA_hymod', dbformat='csv')
+sampler=spotpy.algorithms.sceua(spotpy_setup, dbname='./output/' + 'SCEUA_hymod_hourly_south_toe_river', dbformat='csv')
 sampler.sample(reps) #, ngs=7, kstop=10, peps=0.001, pcento=0.001
 results = spotpy.analyser.load_csv_results('./output/SCEUA_hymod')
 

@@ -38,10 +38,12 @@ class spotpy_setup(object):
         self.obj_func = obj_func
         
         #initial storage values - set as average of the range
-        input_s0 = []
-        #loop over par_ranges dictionary and get average value for each key
-        for key in self.par_ranges:
-            input_s0.append((self.par_ranges[key][0]+self.par_ranges[key][1])/2) 
+        # Initial storage values
+        input_s0 = np.array([15,  # Initial soil moisture storage [mm]
+                     7,           # Initial fast flow 1 storage [mm]
+                     3,           # Initial fast flow 2 storage [mm]
+                     8,           # Initial fast flow 3 storage [mm]
+                     22])         # Initial slow flow storage [mm]
 
         #Define the solver settings
         input_solver_opts = {
@@ -49,14 +51,12 @@ class spotpy_setup(object):
             'resnorm_maxiter': 6
         }
 
-        self.m.S0 = np.array(input_s0)
+        self.m.S0 = input_s0
         self.m.solver_opts = input_solver_opts
         
         #USGS 03463300 - SOUTH TOE RIVER NEAR CELO, NC - usgsbasin-03463300_combined.parquet
         #USGS 02138500 - LINVILLE RIVER NEAR NEBO, NC - usgsbasin-02138500_combined.parquet
         #USGS 03441000 - DAVIDSON RIVER NEAR BREVARD, NC - usgsbasin-03441000_combined.parquet
-        #USGS 03479000 - WATAUGA RIVER NEAR SUGAR GROVE, NC - usgsbasin-03479000_combined.parquet
-        #USGS 03456100 - WEST FORK PIGEON RIVER AT BETHEL, NC - usgsbasin-03456100_combined.parquet
 
         df = pd.read_parquet('C:/Users/ssheeder/Repos/pymarrmot/forcing/pymarrmot/combined_forcing/12_year/usgsbasin-03463300_combined.parquet')
 
@@ -90,10 +90,10 @@ class spotpy_setup(object):
        #add simulation and evaluation lists to dataframe
         simulation_df = pd.DataFrame({'value_time': self.m.input_climate['dates'], 'simulated_discharge_mm': simulation})
         evaluation_df = pd.DataFrame({'value_time': self.m.input_climate['dates'], 'discharge_mm': evaluation})
-       #left join on 'value_time' to align simulation and evaluation data
-        merged_df = pd.merge(evaluation_df, simulation_df, on='value_time', how='left')
-        #evaluation_array = merged_df['discharge_mm'].to_numpy()
-        #simulation_array = merged_df['simulated_discharge_mm'].to_numpy()
+       #inner join on 'value_time' to align simulation and evaluation data
+        merged_df = pd.merge(evaluation_df, simulation_df, on='value_time', how='inner')
+        #elimination of any rows with NaN values
+        merged_df = merged_df.dropna(subset=['discharge_mm', 'simulated_discharge_mm'])
         evaluation_list = merged_df['discharge_mm'].tolist()
         simulation_list = merged_df['simulated_discharge_mm'].tolist()
 

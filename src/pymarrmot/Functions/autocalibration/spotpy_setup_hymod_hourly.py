@@ -37,7 +37,6 @@ class spotpy_setup(object):
     def __init__(self,obj_func=None):
         self.obj_func = obj_func
         
-        #initial storage values - set as average of the range
         # Initial storage values
         input_s0 = np.array([15,  # Initial soil moisture storage [mm]
                      7,           # Initial fast flow 1 storage [mm]
@@ -106,9 +105,10 @@ class spotpy_setup(object):
             
             # calculation of kge-lowflow (based on kge being selected as objective function)
             score = self.obj_func(evaluation_list, simulation_list)
-            eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation_list]
-            sim_inverse = [1000 if (i<=0) else 1/i for i in simulation_list]
-            score2 = self.obj_func(eval_inverse, sim_inverse)
-            result = (score + score2)/2
-            like = -1*result
+            # removing the low flow component to focus on high flows for the FFF project
+            # eval_inverse = [1000 if (i<=0) else 1/i for i in evaluation_list]
+            # sim_inverse = [1000 if (i<=0) else 1/i for i in simulation_list]
+            # score2 = self.obj_func(eval_inverse, sim_inverse)
+            # result = (score + score2)/2
+            like = -1*score
         return like
